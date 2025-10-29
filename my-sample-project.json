@@ -1,0 +1,93 @@
+{
+    "name": "My sample project",
+    "version": "1.0.0",
+    "description": "A sample project to demonstrate the Builder tool",
+    "author": "Your Name",
+    "license": "EUPL-1.2",
+    "projectFolder": "my-sample-project",
+    "generateDatabase": true,
+    "generateBackend": false,
+    "generateFrontend": false,
+    "database": {
+        "type": "Oracle",
+        "tables": [
+            {
+                "name": "table1",
+                "referencingTo": [
+                    "table2"
+                ],
+                "fields": [
+                    {
+                        "name": "pk",
+                        "type": "number",
+                        "nullable": false,
+                        "isPrimaryKey": true,
+                        "comment": "Primary key"
+                    },
+                    {
+                        "name": "description",
+                        "type": "varchar2(255 char)",
+                        "nullable": false,
+                        "comment": "Description of the entity"
+                    },
+                    {
+                        "name": "table2_fk",
+                        "type": "number",
+                        "nullable": true,
+                        "isForeignKey": true,
+                        "foreignKey": {
+                            "referencedTable": "table2",
+                            "referencedColumn": "pk"
+                        },
+                        "comment": "Foreign key referencing table2"
+                    },
+                    {
+                        "name": "created_on",
+                        "type": "timestamp(6)",
+                        "default": "systimestamp",
+                        "comment": "Creation timestamp"
+                    },
+                    {
+                        "name": "modified_on",
+                        "type": "timestamp(6)",
+                        "default": "systimestamp",
+                        "comment": "Last update timestamp"
+                    }
+                ]
+            },
+            {
+                "name": "table2",
+                "referencedBy": [
+                    "table1"
+                ],
+                "fields": [
+                    {
+                        "name": "pk",
+                        "type": "number",
+                        "nullable": false,
+                        "isPrimaryKey": true,
+                        "comment": "Primary key"
+                    },
+                    {
+                        "name": "description",
+                        "type": "varchar2(255 char)",
+                        "nullable": false,
+                        "comment": "Description of the entity"
+                    },
+                    {
+                        "name": "created_on",
+                        "type": "timestamp(6)",
+                        "default": "systimestamp",
+                        "comment": "Creation timestamp"
+                    },
+                    {
+                        "name": "modified_on",
+                        "type": "timestamp(6)",
+                        "default": "systimestamp",
+                        "comment": "Last update timestamp"
+                    }
+                ]
+            }
+        ]
+    }
+}
