@@ -1,0 +1,31 @@
+{
+  "name": "builder",
+  "version": "0.0.0",
+  "description": "A tool that will build a new project: folder structure, set a base eUI frontend, a base ExpressJs Backend, generate SQL for the database ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maquejp/builder.git"
+  },
+  "keywords": [
+    "builder",
+    "structured",
+    "frontend",
+    "backend",
+    "eUI",
+    "Angular",
+    "NodeJs",
+    "ExpressJs",
+    "SQL",
+    "Database"
+  ],
+  "author": "Jean-Philippe Maquestiaux",
+  "license": "EUPL-1.2",
+  "bugs": {
+    "url": "https://github.com/maquejp/builder/issues"
+  },
+  "homepage": "https://github.com/maquejp/builder#readme"
+}
