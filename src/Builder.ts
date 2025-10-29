@@ -80,6 +80,83 @@ export class Builder {
   }
 
   /**
+   * Get project information for display in the UI
+   */
+  public getProjectInfo(): any {
+    try {
+      if (this.configManager.isConfigurationLoaded()) {
+        const metadata = this.configManager.getProjectMetadata();
+        const dbConfig = this.configManager.getDatabaseConfig();
+        const frontendConfig = this.configManager.getFrontendConfig();
+        const backendConfig = this.configManager.getBackendConfig();
+        const testingConfig = this.configManager.getTestingConfig();
+
+        return {
+          ...metadata,
+          database: dbConfig
+            ? {
+                type: dbConfig.type,
+                tablesCount: dbConfig.tables?.length || 0,
+                tables:
+                  dbConfig.tables?.map((t) => t.name).join(", ") || "None",
+              }
+            : null,
+          frontend: frontendConfig
+            ? {
+                framework: frontendConfig.framework || "Not specified",
+                version: frontendConfig.version || "Not specified",
+                routing: frontendConfig.routing || false,
+                authentication: frontendConfig.authentication || false,
+              }
+            : null,
+          backend: backendConfig
+            ? {
+                framework: backendConfig.framework || "Not specified",
+                version: backendConfig.version || "Not specified",
+                port: backendConfig.port || "Not specified",
+                apiPrefix: backendConfig.apiPrefix || "Not specified",
+              }
+            : null,
+          testing: testingConfig
+            ? {
+                framework: testingConfig.framework || "Not specified",
+                coverage: testingConfig.coverage || false,
+                e2e: testingConfig.e2e || false,
+                unit: testingConfig.unit || false,
+              }
+            : null,
+        };
+      } else {
+        return {
+          name: "No Project Loaded",
+          version: "N/A",
+          author: "N/A",
+          license: "N/A",
+          description: "No project configuration has been loaded yet.",
+          projectFolder: "N/A",
+          database: null,
+          frontend: null,
+          backend: null,
+          testing: null,
+        };
+      }
+    } catch (error) {
+      return {
+        name: "Error Loading Project",
+        version: "N/A",
+        author: "N/A",
+        license: "N/A",
+        description: "An error occurred while loading project information.",
+        projectFolder: "N/A",
+        database: null,
+        frontend: null,
+        backend: null,
+        testing: null,
+      };
+    }
+  }
+
+  /**
    * Welcome method that renders the UI
    */
   private welcome(): void {
