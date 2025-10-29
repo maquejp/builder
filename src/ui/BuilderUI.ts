@@ -47,7 +47,7 @@ export class BuilderUI {
    * Setup the main UI components
    */
   private setupUI(): void {
-    // Header/Welcome Box
+    // Header Box
     this.headerBox = blessed.box({
       top: 0,
       left: "center",

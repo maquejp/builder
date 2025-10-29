@@ -5,7 +5,7 @@
  * License: EUPL-1.2
  */
 var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function (t) {
+    __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -28,10 +28,10 @@ var Builder = /** @class */ (function () {
         this.actions = [];
         this.menuOptions = menuOptions;
         this.configManager = configManager;
-        var welcomeContent = "{center}{bold}".concat(appTitle, "{/bold}\n{green-fg}").concat(appSubTitle, "{/green-fg}\n{yellow-fg}").concat(appDescription, "{/yellow-fg}{/center}");
+        var headerContent = "{center}{bold}".concat(appTitle, "{/bold}\n{green-fg}").concat(appSubTitle, "{/green-fg}\n{yellow-fg}").concat(appDescription, "{/yellow-fg}{/center}");
         this.ui = new ui_1.BuilderUI({
             builder: this,
-            headerContent: welcomeContent,
+            headerContent: headerContent,
             menuOptions: menuOptions,
         });
         // Initialize actions
@@ -73,36 +73,34 @@ var Builder = /** @class */ (function () {
                 var frontendConfig = this.configManager.getFrontendConfig();
                 var backendConfig = this.configManager.getBackendConfig();
                 var testingConfig = this.configManager.getTestingConfig();
-                return __assign(__assign({}, metadata), {
-                    database: dbConfig
+                return __assign(__assign({}, metadata), { database: dbConfig
                         ? {
                             type: dbConfig.type,
                             tablesCount: ((_a = dbConfig.tables) === null || _a === void 0 ? void 0 : _a.length) || 0,
                             tables: ((_b = dbConfig.tables) === null || _b === void 0 ? void 0 : _b.map(function (t) { return t.name; }).join(", ")) || "None",
                         }
                         : null, frontend: frontendConfig
-                            ? {
-                                framework: frontendConfig.framework || "Not specified",
-                                version: frontendConfig.version || "Not specified",
-                                routing: frontendConfig.routing || false,
-                                authentication: frontendConfig.authentication || false,
-                            }
-                            : null, backend: backendConfig
-                                ? {
-                                    framework: backendConfig.framework || "Not specified",
-                                    version: backendConfig.version || "Not specified",
-                                    port: backendConfig.port || "Not specified",
-                                    apiPrefix: backendConfig.apiPrefix || "Not specified",
-                                }
-                                : null, testing: testingConfig
-                                    ? {
-                                        framework: testingConfig.framework || "Not specified",
-                                        coverage: testingConfig.coverage || false,
-                                        e2e: testingConfig.e2e || false,
-                                        unit: testingConfig.unit || false,
-                                    }
-                                    : null
-                });
+                        ? {
+                            framework: frontendConfig.framework || "Not specified",
+                            version: frontendConfig.version || "Not specified",
+                            routing: frontendConfig.routing || false,
+                            authentication: frontendConfig.authentication || false,
+                        }
+                        : null, backend: backendConfig
+                        ? {
+                            framework: backendConfig.framework || "Not specified",
+                            version: backendConfig.version || "Not specified",
+                            port: backendConfig.port || "Not specified",
+                            apiPrefix: backendConfig.apiPrefix || "Not specified",
+                        }
+                        : null, testing: testingConfig
+                        ? {
+                            framework: testingConfig.framework || "Not specified",
+                            coverage: testingConfig.coverage || false,
+                            e2e: testingConfig.e2e || false,
+                            unit: testingConfig.unit || false,
+                        }
+                        : null });
             }
             else {
                 return {

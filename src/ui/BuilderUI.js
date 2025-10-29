@@ -21,10 +21,10 @@ var blessed = require("blessed");
  */
 var BuilderUI = /** @class */ (function () {
     function BuilderUI(_a) {
-        var builder = _a.builder, _b = _a.title, title = _b === void 0 ? "Project Builder" : _b, _c = _a.welcomeContent, welcomeContent = _c === void 0 ? "{center}{bold}Builder v0.0.0{/bold}\n{green-fg}Ready to create amazing projects!{/green-fg}{/center}" : _c, _d = _a.menuOptions, menuOptions = _d === void 0 ? [] : _d;
+        var builder = _a.builder, _b = _a.title, title = _b === void 0 ? "Project Builder" : _b, _c = _a.headerContent, headerContent = _c === void 0 ? "{center}{bold}Builder v0.0.0{/bold}\n{green-fg}Ready to create amazing projects!{/green-fg}{/center}" : _c, _d = _a.menuOptions, menuOptions = _d === void 0 ? [] : _d;
         this.currentSelection = 0;
         this.builder = builder;
-        this.welcomeContent = welcomeContent;
+        this.headerContent = headerContent;
         this.menuOptions = __spreadArray(__spreadArray([], menuOptions, true), ["Exit"], false);
         this.screen = blessed.screen({
             smartCSR: true,
@@ -37,13 +37,13 @@ var BuilderUI = /** @class */ (function () {
      * Setup the main UI components
      */
     BuilderUI.prototype.setupUI = function () {
-        // Header/Welcome Box
+        // Header Box
         this.headerBox = blessed.box({
             top: 0,
             left: "center",
             width: "100%",
             height: "70%",
-            content: this.welcomeContent,
+            content: this.headerContent,
             tags: true,
             border: {
                 type: "line",
@@ -301,7 +301,7 @@ var BuilderUI = /** @class */ (function () {
      * Update the welcome box content
      */
     BuilderUI.prototype.updateWelcomeContent = function (content) {
-        this.welcomeContent = content;
+        this.headerContent = content;
         this.headerBox.setContent(content);
         this.screen.render();
     };
