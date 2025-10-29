@@ -6,14 +6,15 @@
 
 import { BaseAction } from "../BaseAction";
 import { BuilderUI } from "../../ui/BuilderUI";
+import { ProjectConfigurationManager } from "../../config";
 
 /**
  * Frontend Generator Action
  * Handles the generation of Angular frontend application
  */
 export class FrontendGenerator extends BaseAction {
-  constructor(ui: BuilderUI) {
-    super(ui);
+  constructor(ui: BuilderUI, configManager: ProjectConfigurationManager) {
+    super(ui, configManager);
   }
 
   /**

@@ -6,14 +6,15 @@
 
 import { BaseAction } from "../BaseAction";
 import { BuilderUI } from "../../ui/BuilderUI";
+import { ProjectConfigurationManager } from "../../config";
 
 /**
  * Test Generator Action
  * Handles the generation of unit and integration tests for the backend
  */
 export class TestGenerator extends BaseAction {
-  constructor(ui: BuilderUI) {
-    super(ui);
+  constructor(ui: BuilderUI, configManager: ProjectConfigurationManager) {
+    super(ui, configManager);
   }
 
   /**

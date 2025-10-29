@@ -13,6 +13,7 @@ import {
   FrontendGenerator,
   TestGenerator,
 } from "./actions";
+import { ProjectConfigurationManager } from "./config";
 
 /**
  * Main Builder class focused on business logic
@@ -21,19 +22,24 @@ export class Builder {
   private ui!: BuilderUI;
   private menuOptions: string[];
   private actions: BaseAction[] = [];
+  private configManager: ProjectConfigurationManager;
 
   constructor({
     appTitle,
     appSubTitle,
     appDescription,
     menuOptions,
+    configManager,
   }: {
     appTitle: string;
     appSubTitle: string;
     appDescription: string;
     menuOptions: string[];
+    configManager: ProjectConfigurationManager;
   }) {
     this.menuOptions = menuOptions;
+    this.configManager = configManager;
+
     const welcomeContent = `{center}{bold}${appTitle}{/bold}\n{green-fg}${appSubTitle}{/green-fg}\n{yellow-fg}${appDescription}{/yellow-fg}{/center}`;
 
     this.ui = new BuilderUI({
@@ -51,11 +57,11 @@ export class Builder {
    */
   private initializeActions(): void {
     this.actions = [
-      new FullProjectGenerator(this.ui), // index 0
-      new DatabaseScriptGenerator(this.ui), // index 1
-      new BackendGenerator(this.ui), // index 2
-      new FrontendGenerator(this.ui), // index 3
-      new TestGenerator(this.ui), // index 4
+      new FullProjectGenerator(this.ui, this.configManager), // index 0
+      new DatabaseScriptGenerator(this.ui, this.configManager), // index 1
+      new BackendGenerator(this.ui, this.configManager), // index 2
+      new FrontendGenerator(this.ui, this.configManager), // index 3
+      new TestGenerator(this.ui, this.configManager), // index 4
     ];
   }
 

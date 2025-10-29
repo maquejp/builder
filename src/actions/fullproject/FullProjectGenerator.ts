@@ -6,14 +6,15 @@
 
 import { BaseAction } from "../BaseAction";
 import { BuilderUI } from "../../ui/BuilderUI";
+import { ProjectConfigurationManager } from "../../config";
 
 /**
  * Full Project Generator Action
  * Handles the generation of a complete project with frontend, backend, and database
  */
 export class FullProjectGenerator extends BaseAction {
-  constructor(ui: BuilderUI) {
-    super(ui);
+  constructor(ui: BuilderUI, configManager: ProjectConfigurationManager) {
+    super(ui, configManager);
   }
 
   /**

@@ -5,15 +5,18 @@
  */
 
 import { BuilderUI } from "../ui/BuilderUI";
+import { ProjectConfigurationManager } from "../config";
 
 /**
  * Abstract base class for all builder actions
  */
 export abstract class BaseAction {
   protected ui: BuilderUI;
+  protected configManager: ProjectConfigurationManager;
 
-  constructor(ui: BuilderUI) {
+  constructor(ui: BuilderUI, configManager: ProjectConfigurationManager) {
     this.ui = ui;
+    this.configManager = configManager;
   }
 
   /**

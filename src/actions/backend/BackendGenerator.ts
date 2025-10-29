@@ -6,14 +6,15 @@
 
 import { BaseAction } from "../BaseAction";
 import { BuilderUI } from "../../ui/BuilderUI";
+import { ProjectConfigurationManager } from "../../config";
 
 /**
  * Backend Generator Action
  * Handles the generation of Express.js backend with RESTful APIs
  */
 export class BackendGenerator extends BaseAction {
-  constructor(ui: BuilderUI) {
-    super(ui);
+  constructor(ui: BuilderUI, configManager: ProjectConfigurationManager) {
+    super(ui, configManager);
   }
 
   /**
