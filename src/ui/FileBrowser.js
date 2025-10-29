@@ -17,6 +17,13 @@ var FileBrowser = /** @class */ (function () {
         this.currentPath = options.startPath || process.cwd();
         this.fileExtension = options.fileExtension || ".json";
         this.filePattern = options.filePattern || "definition.json";
+        this.excludedDirectories = options.excludedDirectories || [
+            ".git",
+            "node_modules",
+            "materials",
+            "src",
+            "dist"
+        ];
         this.onFileSelected = options.onFileSelected;
         this.onCancel = options.onCancel || (function () { return process.exit(0); });
         this.screen = blessed.screen({
@@ -267,14 +274,7 @@ var FileBrowser = /** @class */ (function () {
      * Check if a directory should be excluded from the file browser
      */
     FileBrowser.prototype.isExcludedDirectory = function (dirName) {
-        var excludedDirectories = [
-            ".git",
-            "node_modules",
-            "materials",
-            "src",
-            "dist",
-        ];
-        return excludedDirectories.includes(dirName);
+        return this.excludedDirectories.includes(dirName);
     };
     /**
      * Show the file browser

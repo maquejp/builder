@@ -13,6 +13,7 @@ export interface FileBrowserOptions {
   startPath?: string;
   fileExtension?: string;
   filePattern?: string;
+  excludedDirectories?: string[];
   onFileSelected: (filePath: string) => void;
   onCancel?: () => void;
 }
@@ -27,6 +28,7 @@ export class FileBrowser {
   private currentPath: string;
   private fileExtension: string;
   private filePattern: string;
+  private excludedDirectories: string[];
   private onFileSelected: (filePath: string) => void;
   private onCancel: () => void;
 
@@ -34,6 +36,13 @@ export class FileBrowser {
     this.currentPath = options.startPath || process.cwd();
     this.fileExtension = options.fileExtension || ".json";
     this.filePattern = options.filePattern || "definition.json";
+    this.excludedDirectories = options.excludedDirectories || [
+      ".git",
+      "node_modules",
+      "materials",
+      "src",
+      "dist"
+    ];
     this.onFileSelected = options.onFileSelected;
     this.onCancel = options.onCancel || (() => process.exit(0));
 
@@ -314,15 +323,7 @@ export class FileBrowser {
    * Check if a directory should be excluded from the file browser
    */
   private isExcludedDirectory(dirName: string): boolean {
-    const excludedDirectories = [
-      ".git",
-      "node_modules",
-      "materials",
-      "src",
-      "dist",
-    ];
-
-    return excludedDirectories.includes(dirName);
+    return this.excludedDirectories.includes(dirName);
   }
 
   /**

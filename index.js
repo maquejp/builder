@@ -100,6 +100,7 @@ function main() {
                     startPath: __dirname,
                     fileExtension: ".json",
                     filePattern: "definition.json",
+                    excludedDirectories: [".git", "node_modules", "materials", "src", "dist"],
                     onFileSelected: function (filePath) { return __awaiter(_this, void 0, void 0, function () {
                         return __generator(this, function (_a) {
                             switch (_a.label) {

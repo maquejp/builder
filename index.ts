@@ -55,6 +55,7 @@ async function main() {
       startPath: __dirname,
       fileExtension: ".json",
       filePattern: "definition.json",
+      excludedDirectories: [".git", "node_modules", "materials", "src", "dist"],
       onFileSelected: async (filePath: string) => {
         console.log(`\nSelected configuration file: ${filePath}\n`);
         await startBuilder(filePath);
