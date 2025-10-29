@@ -12,16 +12,23 @@ import { BuilderUI } from "./ui/BuilderUI";
 export class Builder {
   private ui!: BuilderUI;
 
-  constructor() {
-    const appTitle: string = "Builder v0.0.0";
-    const appSubTitle: string = "Welcome to the Project Builder!";
-    const appDescription: string = "Create amazing projects with ease";
+  constructor({
+    appTitle,
+    appSubTitle,
+    appDescription,
+    menuOptions,
+  }: {
+    appTitle: string;
+    appSubTitle: string;
+    appDescription: string;
+    menuOptions: string[];
+  }) {
     const welcomeContent = `{center}{bold}${appTitle}{/bold}\n{green-fg}${appSubTitle}{/green-fg}\n{yellow-fg}${appDescription}{/yellow-fg}{/center}`;
 
     this.ui = new BuilderUI({
       builder: this,
-      title: "Project Builder",
       welcomeContent: welcomeContent,
+      menuOptions: menuOptions,
     });
   }
 

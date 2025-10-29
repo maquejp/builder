@@ -16,18 +16,23 @@ export class BuilderUI {
   private menuBox!: blessed.Widgets.ListElement;
   private builder: Builder;
   private welcomeContent: string;
+  private menuOptions: string[];
+  private currentSelection: number = 0;
 
   constructor({
     builder,
     title = "Project Builder",
     welcomeContent = "{center}{bold}Builder v0.0.0{/bold}\n{green-fg}Ready to create amazing projects!{/green-fg}{/center}",
+    menuOptions = [],
   }: {
     builder: Builder;
     title?: string;
     welcomeContent?: string;
+    menuOptions?: string[];
   }) {
     this.builder = builder;
     this.welcomeContent = welcomeContent;
+    this.menuOptions = [...menuOptions, "Exit"];
     this.screen = blessed.screen({
       smartCSR: true,
       title: title,
@@ -93,7 +98,7 @@ export class BuilderUI {
           fg: "white",
         },
       },
-      items: ["Generate Full project", "Exit"],
+      items: this.menuOptions,
     });
 
     // Instructions box
@@ -134,15 +139,19 @@ export class BuilderUI {
       this.exit();
     });
 
-    // Handle menu selection
-    this.menuBox.key(["enter", "space"], () => {
-      const selected = this.menuBox.getScroll();
-      this.handleMenuSelection(selected);
+    // Track selection changes
+    this.menuBox.on("select", (item, index) => {
+      this.currentSelection = index;
     });
 
-    // Handle mouse clicks
-    this.menuBox.on("select", (item, index) => {
-      this.handleMenuSelection(index);
+    // Handle menu selection
+    this.menuBox.key(["enter", "space"], () => {
+      this.handleMenuSelection(this.currentSelection);
+    });
+
+    // Handle mouse clicks - this also triggers selection
+    this.menuBox.on("action", () => {
+      this.handleMenuSelection(this.currentSelection);
     });
   }
 
@@ -150,10 +159,8 @@ export class BuilderUI {
    * Handle menu selection
    */
   private handleMenuSelection(index: number): void {
-    const options = ["Generate Full project", "Exit"];
-
-    if (index === 1) {
-      // Exit option
+    if (index === this.menuOptions.length - 1) {
+      // Exit option (always the last item)
       this.exit();
       return;
     }
@@ -166,10 +173,9 @@ export class BuilderUI {
 
     // Show a confirmation dialog for other options
     this.showMessage(
-      `You selected:\n\n{bold}{green-fg}${options[index]}{/green-fg}{/bold}\n\nThis feature will be implemented soon!\n\nPress any key to continue...`
+      `You selected:\n\n{bold}{green-fg}${this.menuOptions[index]}{/green-fg}{/bold}\n\nThis feature will be implemented soon!\n\nPress any key to continue...`
     );
   }
-
   /**
    * Show a message dialog
    */
