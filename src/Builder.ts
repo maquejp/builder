@@ -11,6 +11,7 @@ import { BuilderUI } from "./ui/BuilderUI";
  */
 export class Builder {
   private ui!: BuilderUI;
+  private menuOptions: string[];
 
   constructor({
     appTitle,
@@ -23,6 +24,7 @@ export class Builder {
     appDescription: string;
     menuOptions: string[];
   }) {
+    this.menuOptions = menuOptions;
     const welcomeContent = `{center}{bold}${appTitle}{/bold}\n{green-fg}${appSubTitle}{/green-fg}\n{yellow-fg}${appDescription}{/yellow-fg}{/center}`;
 
     this.ui = new BuilderUI({
@@ -35,16 +37,22 @@ export class Builder {
   /**
    * Generate a full project with frontend, backend, and database
    */
-  public generateFullProject(): void {
-    this.ui.showMessage(
-      "{bold}{green-fg}Generating Full Project...{/green-fg}{/bold}\n\n" +
-        "This will create:\n" +
-        "• Angular Frontend\n" +
-        "• Express.js Backend\n" +
-        "• Database Schema\n\n" +
-        "Feature coming soon!\n\n" +
-        "Press any key to continue..."
-    );
+  public action(index: number): void {
+    if (index === 0) {
+      this.ui.showMessage(
+        "{bold}{green-fg}Generating Full Project...{/green-fg}{/bold}\n\n" +
+          "This will create:\n" +
+          "• Angular Frontend\n" +
+          "• Express.js Backend\n" +
+          "• Database Schema\n\n" +
+          "Feature coming soon!\n\n" +
+          "Press any key to continue..."
+      );
+    } else {
+      this.ui.showMessage(
+        `You selected:\n\n{bold}{green-fg}${this.menuOptions[index]}{/green-fg}{/bold}\n\nThis feature will be implemented soon!\n\nPress any key to continue...`
+      );
+    }
   }
 
   /**

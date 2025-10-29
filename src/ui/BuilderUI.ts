@@ -165,16 +165,8 @@ export class BuilderUI {
       return;
     }
 
-    if (index === 0) {
-      // Generate Full project
-      this.builder.generateFullProject();
-      return;
-    }
-
-    // Show a confirmation dialog for other options
-    this.showMessage(
-      `You selected:\n\n{bold}{green-fg}${this.menuOptions[index]}{/green-fg}{/bold}\n\nThis feature will be implemented soon!\n\nPress any key to continue...`
-    );
+    // Delegate action to Builder
+    this.builder.action(index);
   }
   /**
    * Show a message dialog
