@@ -4,12 +4,19 @@
  * License: EUPL-1.2
  */
 
+import chalk from "chalk";
+
 class Builder {
   /**
    * Welcome method that displays the initial message
    */
   private welcome(): void {
-    console.log("Builder v0.0.0 - Ready to create amazing projects!");
+    console.log(
+      chalk.blue.bold("Builder") +
+        chalk.gray(" v0.0.0") +
+        " - " +
+        chalk.green("Ready to create amazing projects!")
+    );
   }
 
   /**
