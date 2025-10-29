@@ -75,7 +75,7 @@ export class Builder {
       top: 3,
       bottom: 3,
       width: "100%",
-      height: "100%-6",
+      height: "100%",
       content: "Main content area",
       style: {
         fg: "white",
