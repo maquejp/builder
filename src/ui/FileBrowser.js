@@ -4,42 +4,64 @@
  * Author: Jean-Philippe Maquestiaux
  * License: EUPL-1.2
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FileBrowser = void 0;
 var blessed = require("blessed");
 var fs = require("fs");
 var path = require("path");
+var BaseUI_1 = require("./BaseUI");
 /**
  * TUI File Browser component using Blessed
  */
-var FileBrowser = /** @class */ (function () {
+var FileBrowser = /** @class */ (function (_super) {
+    __extends(FileBrowser, _super);
     function FileBrowser(options) {
-        this.currentPath = options.startPath || process.cwd();
-        this.fileExtension = options.fileExtension || ".json";
-        this.filePattern = options.filePattern || "definition.json";
-        this.excludedDirectories = options.excludedDirectories || [
+        var _this = this;
+        var headerContent = options.headerContent ||
+            "{center}{bold}File Browser{/bold}\n{green-fg}Select a project configuration file{/green-fg}{/center}";
+        _this = _super.call(this, {
+            title: options.title || "File Browser",
+            headerContent: headerContent,
+        }) || this;
+        _this.currentPath = options.startPath || process.cwd();
+        _this.fileExtension = options.fileExtension || ".json";
+        _this.filePattern = options.filePattern || "definition.json";
+        _this.excludedDirectories = options.excludedDirectories || [
             ".git",
             "node_modules",
             "materials",
             "src",
             "dist",
         ];
-        this.onFileSelected = options.onFileSelected;
-        this.onCancel = options.onCancel || (function () { return process.exit(0); });
-        this.screen = blessed.screen({
-            smartCSR: true,
-            title: options.title || "File Browser",
-        });
-        this.setupUI();
-        this.setupEventHandlers();
-        this.refreshFileList();
+        _this.onFileSelected = options.onFileSelected;
+        _this.onCancel = options.onCancel || (function () { return process.exit(0); });
+        _this.initialize();
+        _this.refreshFileList();
+        return _this;
     }
     /**
-     * Setup the UI components
+     * Setup the specific UI components for the file browser
      */
-    FileBrowser.prototype.setupUI = function () {
-        // Header with current path
+    FileBrowser.prototype.setupSpecificUI = function () {
+        var contentArea = this.getContentArea();
+        // Current path display
         this.pathBox = blessed.box({
+            parent: contentArea,
             top: 0,
             left: 0,
             width: "100%",
@@ -59,12 +81,13 @@ var FileBrowser = /** @class */ (function () {
         });
         // File list
         this.fileList = blessed.list({
+            parent: contentArea,
             label: " {bold}{white-fg}Select a project definition file (*".concat(this.filePattern, "){/white-fg}{/bold} "),
             tags: true,
-            top: 4,
+            top: 3,
             left: 0,
             width: "100%",
-            height: "80%",
+            height: "100%-6",
             keys: true,
             vi: true,
             mouse: true,
@@ -91,7 +114,8 @@ var FileBrowser = /** @class */ (function () {
             },
         });
         // Instructions box
-        var instructionsBox = blessed.box({
+        this.instructionsBox = blessed.box({
+            parent: contentArea,
             bottom: 0,
             left: 0,
             width: "100%",
@@ -108,23 +132,14 @@ var FileBrowser = /** @class */ (function () {
                 },
             },
         });
-        // Add all elements to screen
-        this.screen.append(this.pathBox);
-        this.screen.append(this.fileList);
-        this.screen.append(instructionsBox);
         // Focus on the file list
         this.fileList.focus();
     };
     /**
-     * Setup event handlers
+     * Setup specific event handlers for the file browser
      */
-    FileBrowser.prototype.setupEventHandlers = function () {
+    FileBrowser.prototype.setupSpecificEventHandlers = function () {
         var _this = this;
-        // Quit on Escape, q, or Control-C
-        this.screen.key(["escape", "q", "C-c"], function () {
-            _this.screen.destroy();
-            _this.onCancel();
-        });
         // Go up directory on backspace
         this.screen.key(["backspace"], function () {
             _this.goUpDirectory();
@@ -147,6 +162,13 @@ var FileBrowser = /** @class */ (function () {
                 _this.handleSelection(selectedItem);
             }
         });
+    };
+    /**
+     * Override the base exit handler to use our custom cancel handler
+     */
+    FileBrowser.prototype.handleExit = function () {
+        this.screen.destroy();
+        this.onCancel();
     };
     /**
      * Handle file/directory selection
@@ -221,7 +243,7 @@ var FileBrowser = /** @class */ (function () {
             fileItems.push.apply(fileItems, files_1.sort());
             this.fileList.setItems(fileItems);
             this.updatePathDisplay();
-            this.screen.render();
+            this.render();
         }
         catch (error) {
             this.showError("Error reading directory ".concat(this.currentPath, ": ").concat(error));
@@ -259,7 +281,7 @@ var FileBrowser = /** @class */ (function () {
         });
         errorBox.display(message, 0, function () {
             _this.fileList.focus();
-            _this.screen.render();
+            _this.render();
         });
     };
     /**
@@ -278,12 +300,6 @@ var FileBrowser = /** @class */ (function () {
     FileBrowser.prototype.isExcludedDirectory = function (dirName) {
         return this.excludedDirectories.includes(dirName);
     };
-    /**
-     * Show the file browser
-     */
-    FileBrowser.prototype.show = function () {
-        this.screen.render();
-    };
     return FileBrowser;
-}());
+}(BaseUI_1.BaseUI));
 exports.FileBrowser = FileBrowser;

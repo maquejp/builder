@@ -28,6 +28,7 @@ var Builder = /** @class */ (function () {
         this.actions = [];
         this.menuOptions = menuOptions;
         this.configManager = configManager;
+        this.screenManager = new ui_1.ScreenManager();
         var headerContent = "{center}{bold}".concat(appTitle, "{/bold}\n{green-fg}").concat(appSubTitle, "{/green-fg}\n{yellow-fg}").concat(appDescription, "{/yellow-fg}{/center}");
         this.ui = new ui_1.BuilderUI({
             builder: this,
@@ -42,7 +43,7 @@ var Builder = /** @class */ (function () {
      */
     Builder.prototype.initializeActions = function () {
         this.actions = [
-            new actions_1.FullProjectGenerator(this.ui, this.configManager), // index 0
+            new actions_1.FullProjectGenerator(this.ui, this.configManager, this.screenManager), // index 0
             new actions_1.DatabaseScriptGenerator(this.ui, this.configManager), // index 1
             new actions_1.BackendGenerator(this.ui, this.configManager), // index 2
             new actions_1.FrontendGenerator(this.ui, this.configManager), // index 3
@@ -60,6 +61,12 @@ var Builder = /** @class */ (function () {
             // Handle unknown actions
             this.ui.showMessage("You selected:\n\n{bold}{green-fg}".concat(this.menuOptions[index], "{/green-fg}{/bold}\n\nThis feature will be implemented soon!\n\nPress any key to continue..."));
         }
+    };
+    /**
+     * Get the screen manager
+     */
+    Builder.prototype.getScreenManager = function () {
+        return this.screenManager;
     };
     /**
      * Get project information for display in the UI
@@ -142,6 +149,8 @@ var Builder = /** @class */ (function () {
      * Default method that will be executed when running the builder
      */
     Builder.prototype.default = function () {
+        // Show the main UI as the first screen in the screen manager
+        this.screenManager.showScreen(this.ui, false);
         this.welcome();
     };
     return Builder;

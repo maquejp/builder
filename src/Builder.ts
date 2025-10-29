@@ -4,7 +4,7 @@
  * License: EUPL-1.2
  */
 
-import { BuilderUI } from "./ui";
+import { BuilderUI, ScreenManager } from "./ui";
 import {
   BaseAction,
   FullProjectGenerator,
@@ -20,6 +20,7 @@ import { ProjectConfigurationManager } from "./config";
  */
 export class Builder {
   private ui!: BuilderUI;
+  private screenManager: ScreenManager;
   private menuOptions: string[];
   private actions: BaseAction[] = [];
   private configManager: ProjectConfigurationManager;
@@ -39,6 +40,7 @@ export class Builder {
   }) {
     this.menuOptions = menuOptions;
     this.configManager = configManager;
+    this.screenManager = new ScreenManager();
 
     const headerContent = `{center}{bold}${appTitle}{/bold}\n{green-fg}${appSubTitle}{/green-fg}\n{yellow-fg}${appDescription}{/yellow-fg}{/center}`;
 
@@ -57,7 +59,7 @@ export class Builder {
    */
   private initializeActions(): void {
     this.actions = [
-      new FullProjectGenerator(this.ui, this.configManager), // index 0
+      new FullProjectGenerator(this.ui, this.configManager, this.screenManager), // index 0
       new DatabaseScriptGenerator(this.ui, this.configManager), // index 1
       new BackendGenerator(this.ui, this.configManager), // index 2
       new FrontendGenerator(this.ui, this.configManager), // index 3
@@ -77,6 +79,13 @@ export class Builder {
         `You selected:\n\n{bold}{green-fg}${this.menuOptions[index]}{/green-fg}{/bold}\n\nThis feature will be implemented soon!\n\nPress any key to continue...`
       );
     }
+  }
+
+  /**
+   * Get the screen manager
+   */
+  public getScreenManager(): ScreenManager {
+    return this.screenManager;
   }
 
   /**
@@ -167,6 +176,8 @@ export class Builder {
    * Default method that will be executed when running the builder
    */
   public default(): void {
+    // Show the main UI as the first screen in the screen manager
+    this.screenManager.showScreen(this.ui, false);
     this.welcome();
   }
 }

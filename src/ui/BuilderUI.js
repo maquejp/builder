@@ -4,6 +4,21 @@
  * Author: Jean-Philippe Maquestiaux
  * License: EUPL-1.2
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -16,54 +31,35 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BuilderUI = void 0;
 var blessed = require("blessed");
+var BaseUI_1 = require("./BaseUI");
 /**
  * UI handler for the Builder application using Blessed
  */
-var BuilderUI = /** @class */ (function () {
+var BuilderUI = /** @class */ (function (_super) {
+    __extends(BuilderUI, _super);
     function BuilderUI(_a) {
         var builder = _a.builder, _b = _a.title, title = _b === void 0 ? "Project Builder" : _b, _c = _a.headerContent, headerContent = _c === void 0 ? "{center}{bold}Builder v0.0.0{/bold}\n{green-fg}Ready to create amazing projects!{/green-fg}{/center}" : _c, _d = _a.menuOptions, menuOptions = _d === void 0 ? [] : _d;
-        this.currentSelection = 0;
-        this.builder = builder;
-        this.headerContent = headerContent;
-        this.menuOptions = __spreadArray(__spreadArray([], menuOptions, true), ["Exit"], false);
-        this.screen = blessed.screen({
-            smartCSR: true,
-            title: title,
-        });
-        this.setupUI();
-        this.setupEventHandlers();
+        var _this = _super.call(this, { title: title, headerContent: headerContent }) || this;
+        _this.currentSelection = 0;
+        _this.builder = builder;
+        _this.menuOptions = __spreadArray(__spreadArray([], menuOptions, true), ["Exit"], false);
+        _this.initialize();
+        return _this;
     }
     /**
-     * Setup the main UI components
+     * Setup the specific UI components for the main menu
      */
-    BuilderUI.prototype.setupUI = function () {
-        // Header Box
-        this.headerBox = blessed.box({
+    BuilderUI.prototype.setupSpecificUI = function () {
+        var contentArea = this.getContentArea();
+        // Main Menu
+        this.menuBox = blessed.list({
+            parent: contentArea,
+            label: " {bold}{white-fg}Project Types{/white-fg}{/bold} ",
+            tags: true,
             top: 0,
             left: "center",
             width: "100%",
-            height: "70%",
-            content: this.headerContent,
-            tags: true,
-            border: {
-                type: "line",
-            },
-            style: {
-                fg: "white",
-                bg: "blue",
-                border: {
-                    fg: "#eb1212ff",
-                },
-            },
-        });
-        // Main Menu
-        this.menuBox = blessed.list({
-            label: " {bold}{white-fg}Project Types{/white-fg}{/bold} ",
-            tags: true,
-            top: 6,
-            left: "center",
-            width: "100%",
-            height: "100%",
+            height: "100%-3",
             keys: true,
             vi: true,
             mouse: true,
@@ -92,6 +88,7 @@ var BuilderUI = /** @class */ (function () {
         });
         // Instructions box
         this.instructionsBox = blessed.box({
+            parent: contentArea,
             bottom: 0,
             left: "center",
             width: "100%",
@@ -108,22 +105,14 @@ var BuilderUI = /** @class */ (function () {
                 },
             },
         });
-        // Add all elements to screen
-        this.screen.append(this.headerBox);
-        this.screen.append(this.menuBox);
-        this.screen.append(this.instructionsBox);
         // Focus on the menu
         this.menuBox.focus();
     };
     /**
-     * Setup event handlers for user interaction
+     * Setup specific event handlers for the main menu
      */
-    BuilderUI.prototype.setupEventHandlers = function () {
+    BuilderUI.prototype.setupSpecificEventHandlers = function () {
         var _this = this;
-        // Quit on Escape, q, or Control-C
-        this.screen.key(["escape", "q", "C-c"], function () {
-            _this.exit();
-        });
         // Show project info on 'i' key
         this.screen.key(["i"], function () {
             _this.showProjectInfo();
@@ -140,6 +129,12 @@ var BuilderUI = /** @class */ (function () {
         this.menuBox.on("action", function () {
             _this.handleMenuSelection(_this.currentSelection);
         });
+    };
+    /**
+     * Override the base exit handler to use our custom exit method
+     */
+    BuilderUI.prototype.handleExit = function () {
+        this.exit();
     };
     /**
      * Handle menu selection
@@ -248,13 +243,13 @@ var BuilderUI = /** @class */ (function () {
         // Hide background elements temporarily (but keep headerBox visible)
         this.menuBox.hide();
         this.instructionsBox.hide();
-        // Create a full-screen overlay that completely covers everything
+        // Create a full-screen overlay that covers the content area
         var infoOverlay = blessed.box({
             parent: this.screen,
-            top: 0,
+            top: 6, // Start below the header
             left: 0,
             width: "100%",
-            height: "70%",
+            height: "100%-6", // Fill the remaining space
             content: infoContent,
             label: " {green-fg}Project Information{/green-fg} ",
             tags: true,
@@ -292,18 +287,10 @@ var BuilderUI = /** @class */ (function () {
         this.screen.render();
     };
     /**
-     * Render the UI
-     */
-    BuilderUI.prototype.render = function () {
-        this.screen.render();
-    };
-    /**
      * Update the welcome box content
      */
     BuilderUI.prototype.updateWelcomeContent = function (content) {
-        this.headerContent = content;
-        this.headerBox.setContent(content);
-        this.screen.render();
+        this.updateHeaderContent(content);
     };
     /**
      * Exit the application gracefully
@@ -313,5 +300,5 @@ var BuilderUI = /** @class */ (function () {
         process.exit(0);
     };
     return BuilderUI;
-}());
+}(BaseUI_1.BaseUI));
 exports.BuilderUI = BuilderUI;

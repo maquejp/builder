@@ -6,17 +6,15 @@
 
 import * as blessed from "blessed";
 import { Builder } from "../Builder";
+import { BaseUI } from "./BaseUI";
 
 /**
  * UI handler for the Builder application using Blessed
  */
-export class BuilderUI {
-  private screen: blessed.Widgets.Screen;
-  private headerBox!: blessed.Widgets.BoxElement;
+export class BuilderUI extends BaseUI {
   private menuBox!: blessed.Widgets.ListElement;
   private instructionsBox!: blessed.Widgets.BoxElement;
   private builder: Builder;
-  private headerContent: string;
   private menuOptions: string[];
   private currentSelection: number = 0;
 
@@ -31,50 +29,28 @@ export class BuilderUI {
     headerContent?: string;
     menuOptions?: string[];
   }) {
+    super({ title, headerContent });
     this.builder = builder;
-    this.headerContent = headerContent;
     this.menuOptions = [...menuOptions, "Exit"];
-    this.screen = blessed.screen({
-      smartCSR: true,
-      title: title,
-    });
 
-    this.setupUI();
-    this.setupEventHandlers();
+    this.initialize();
   }
 
   /**
-   * Setup the main UI components
+   * Setup the specific UI components for the main menu
    */
-  private setupUI(): void {
-    // Header Box
-    this.headerBox = blessed.box({
-      top: 0,
-      left: "center",
-      width: "100%",
-      height: "70%",
-      content: this.headerContent,
-      tags: true,
-      border: {
-        type: "line",
-      },
-      style: {
-        fg: "white",
-        bg: "blue",
-        border: {
-          fg: "#eb1212ff",
-        },
-      },
-    });
+  protected setupSpecificUI(): void {
+    const contentArea = this.getContentArea();
 
     // Main Menu
     this.menuBox = blessed.list({
+      parent: contentArea,
       label: " {bold}{white-fg}Project Types{/white-fg}{/bold} ",
       tags: true,
-      top: 6,
+      top: 0,
       left: "center",
       width: "100%",
-      height: "100%",
+      height: "100%-3",
       keys: true,
       vi: true,
       mouse: true,
@@ -104,6 +80,7 @@ export class BuilderUI {
 
     // Instructions box
     this.instructionsBox = blessed.box({
+      parent: contentArea,
       bottom: 0,
       left: "center",
       width: "100%",
@@ -122,24 +99,14 @@ export class BuilderUI {
       },
     });
 
-    // Add all elements to screen
-    this.screen.append(this.headerBox);
-    this.screen.append(this.menuBox);
-    this.screen.append(this.instructionsBox);
-
     // Focus on the menu
     this.menuBox.focus();
   }
 
   /**
-   * Setup event handlers for user interaction
+   * Setup specific event handlers for the main menu
    */
-  private setupEventHandlers(): void {
-    // Quit on Escape, q, or Control-C
-    this.screen.key(["escape", "q", "C-c"], () => {
-      this.exit();
-    });
-
+  protected setupSpecificEventHandlers(): void {
     // Show project info on 'i' key
     this.screen.key(["i"], () => {
       this.showProjectInfo();
@@ -159,6 +126,13 @@ export class BuilderUI {
     this.menuBox.on("action", () => {
       this.handleMenuSelection(this.currentSelection);
     });
+  }
+
+  /**
+   * Override the base exit handler to use our custom exit method
+   */
+  protected handleExit(): void {
+    this.exit();
   }
 
   /**
@@ -282,13 +256,13 @@ export class BuilderUI {
     this.menuBox.hide();
     this.instructionsBox.hide();
 
-    // Create a full-screen overlay that completely covers everything
+    // Create a full-screen overlay that covers the content area
     const infoOverlay = blessed.box({
       parent: this.screen,
-      top: 0,
+      top: 6, // Start below the header
       left: 0,
       width: "100%",
-      height: "70%",
+      height: "100%-6", // Fill the remaining space
       content: infoContent,
       label: " {green-fg}Project Information{/green-fg} ",
       tags: true,
@@ -331,20 +305,12 @@ export class BuilderUI {
     infoOverlay.focus();
     this.screen.render();
   }
-  /**
-   * Render the UI
-   */
-  public render(): void {
-    this.screen.render();
-  }
 
   /**
    * Update the welcome box content
    */
   public updateWelcomeContent(content: string): void {
-    this.headerContent = content;
-    this.headerBox.setContent(content);
-    this.screen.render();
+    this.updateHeaderContent(content);
   }
 
   /**
