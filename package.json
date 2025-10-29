@@ -2,10 +2,10 @@
   "name": "builder",
   "version": "0.0.0",
   "description": "A tool that will build a new project: folder structure, set a base eUI frontend, a base ExpressJs Backend, generate SQL for the database ",
-  "main": "builder.ts",
+  "main": "index.ts",
   "scripts": {
-    "start": "npx ts-node builder.ts",
-    "build": "npx tsc builder.ts"
+    "start": "npx ts-node index.ts",
+    "build": "npx tsc index.ts"
   },
   "repository": {
     "type": "git",
@@ -30,11 +30,13 @@
   },
   "homepage": "https://github.com/maquejp/builder#readme",
   "devDependencies": {
+    "@types/blessed": "^0.1.25",
     "@types/chalk": "^0.4.31",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "blessed": "^0.1.81",
     "chalk": "^5.6.2"
   }
 }
