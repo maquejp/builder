@@ -16,23 +16,23 @@ export class BuilderUI {
   private menuBox!: blessed.Widgets.ListElement;
   private instructionsBox!: blessed.Widgets.BoxElement;
   private builder: Builder;
-  private welcomeContent: string;
+  private headerContent: string;
   private menuOptions: string[];
   private currentSelection: number = 0;
 
   constructor({
     builder,
     title = "Project Builder",
-    welcomeContent = "{center}{bold}Builder v0.0.0{/bold}\n{green-fg}Ready to create amazing projects!{/green-fg}{/center}",
+    headerContent = "{center}{bold}Builder v0.0.0{/bold}\n{green-fg}Ready to create amazing projects!{/green-fg}{/center}",
     menuOptions = [],
   }: {
     builder: Builder;
     title?: string;
-    welcomeContent?: string;
+    headerContent?: string;
     menuOptions?: string[];
   }) {
     this.builder = builder;
-    this.welcomeContent = welcomeContent;
+    this.headerContent = headerContent;
     this.menuOptions = [...menuOptions, "Exit"];
     this.screen = blessed.screen({
       smartCSR: true,
@@ -53,7 +53,7 @@ export class BuilderUI {
       left: "center",
       width: "100%",
       height: "70%",
-      content: this.welcomeContent,
+      content: this.headerContent,
       tags: true,
       border: {
         type: "line",
@@ -342,7 +342,7 @@ export class BuilderUI {
    * Update the welcome box content
    */
   public updateWelcomeContent(content: string): void {
-    this.welcomeContent = content;
+    this.headerContent = content;
     this.headerBox.setContent(content);
     this.screen.render();
   }

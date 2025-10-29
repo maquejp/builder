@@ -40,11 +40,11 @@ export class Builder {
     this.menuOptions = menuOptions;
     this.configManager = configManager;
 
-    const welcomeContent = `{center}{bold}${appTitle}{/bold}\n{green-fg}${appSubTitle}{/green-fg}\n{yellow-fg}${appDescription}{/yellow-fg}{/center}`;
+    const headerContent = `{center}{bold}${appTitle}{/bold}\n{green-fg}${appSubTitle}{/green-fg}\n{yellow-fg}${appDescription}{/yellow-fg}{/center}`;
 
     this.ui = new BuilderUI({
       builder: this,
-      welcomeContent: welcomeContent,
+      headerContent: headerContent,
       menuOptions: menuOptions,
     });
 
