@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "start": "npx ts-node index.ts",
-    "build": "npx tsc index.ts"
+    "build": "npx tsc"
   },
   "repository": {
     "type": "git",
@@ -31,12 +31,10 @@
   "homepage": "https://github.com/maquejp/builder#readme",
   "devDependencies": {
     "@types/blessed": "^0.1.25",
-    "@types/chalk": "^0.4.31",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "blessed": "^0.1.81",
-    "chalk": "^5.6.2"
+    "blessed": "^0.1.81"
   }
 }

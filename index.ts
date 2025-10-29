@@ -27,7 +27,6 @@ async function createScreen(configPath: string) {
       "Generate Database Scripts",
       "Generate Backend (API)",
       "Generate Frontend",
-      "Generate Backend Tests",
     ],
     configManager: configManager,
   });
