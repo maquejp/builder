@@ -38,20 +38,55 @@ export class Builder {
    * Generate a full project with frontend, backend, and database
    */
   public action(index: number): void {
-    if (index === 0) {
-      this.ui.showMessage(
-        "{bold}{green-fg}Generating Full Project...{/green-fg}{/bold}\n\n" +
-          "This will create:\n" +
-          "• Angular Frontend\n" +
-          "• Express.js Backend\n" +
-          "• Database Schema\n\n" +
-          "Feature coming soon!\n\n" +
-          "Press any key to continue..."
-      );
-    } else {
-      this.ui.showMessage(
-        `You selected:\n\n{bold}{green-fg}${this.menuOptions[index]}{/green-fg}{/bold}\n\nThis feature will be implemented soon!\n\nPress any key to continue...`
-      );
+    switch (index) {
+      case 0:
+        this.ui.showMessage(
+          "{bold}{green-fg}Generating Full Project...{/green-fg}{/bold}\n\n" +
+            "This will create:\n" +
+            "• Angular Frontend\n" +
+            "• Express.js Backend\n" +
+            "• Database Schema\n\n" +
+            "Feature coming soon!\n\n" +
+            "Press any key to continue..."
+        );
+        break;
+      case 1:
+        this.ui.showMessage(
+          "{bold}{green-fg}Generating Database Scripts...{/green-fg}{/bold}\n\n" +
+            "This will create database schema and migration scripts.\n\n" +
+            "Feature coming soon!\n\n" +
+            "Press any key to continue..."
+        );
+        break;
+      case 2:
+        this.ui.showMessage(
+          "{bold}{green-fg}Generating Backend (API)...{/green-fg}{/bold}\n\n" +
+            "This will create an Express.js backend with RESTful APIs.\n\n" +
+            "Feature coming soon!\n\n" +
+            "Press any key to continue..."
+        );
+        break;
+      case 3:
+        this.ui.showMessage(
+          "{bold}{green-fg}Generating Frontend...{/green-fg}{/bold}\n\n" +
+            "This will create an Angular frontend application.\n\n" +
+            "Feature coming soon!\n\n" +
+            "Press any key to continue..."
+        );
+        break;
+      case 4:
+        this.ui.showMessage(
+          "{bold}{green-fg}Generating Backend Tests...{/green-fg}{/bold}\n\n" +
+            "This will create unit and integration tests for the backend.\n\n" +
+            "Feature coming soon!\n\n" +
+            "Press any key to continue..."
+        );
+        break;
+      default:
+        this.ui.showMessage(
+          `You selected:\n\n{bold}{green-fg}${this.menuOptions[index]}{/green-fg}{/bold}\n\nThis feature will be implemented soon!\n\nPress any key to continue...`
+        );
+        break;
     }
   }
 
