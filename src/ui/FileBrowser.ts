@@ -41,7 +41,7 @@ export class FileBrowser {
       "node_modules",
       "materials",
       "src",
-      "dist"
+      "dist",
     ];
     this.onFileSelected = options.onFileSelected;
     this.onCancel = options.onCancel || (() => process.exit(0));
