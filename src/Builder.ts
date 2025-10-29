@@ -2,30 +2,31 @@ import blessed from "blessed";
 import { ProjectConfigurationManager } from "./config";
 
 export class Builder {
+  private fileName: string = "./my-sample-project-definition.json";
   private configManager: ProjectConfigurationManager;
   private menuOptions: string[];
   private appTitle: string;
   private appSubTitle: string;
   private appDescription: string;
   private screen: blessed.Widgets.Screen = null!;
-  constructor({
-    appTitle,
-    appSubTitle,
-    appDescription,
-    menuOptions,
-    configManager,
-  }: {
-    appTitle: string;
-    appSubTitle: string;
-    appDescription: string;
-    menuOptions: string[];
-    configManager: ProjectConfigurationManager;
-  }) {
-    this.configManager = configManager;
-    this.menuOptions = menuOptions;
-    this.appTitle = appTitle;
-    this.appSubTitle = appSubTitle;
-    this.appDescription = appDescription;
+  constructor() {
+    this.configManager = new ProjectConfigurationManager();
+    this.configManager.loadFromFile(this.fileName);
+
+    // Get project metadata for the UI
+    const projectMetadata = this.configManager.getProjectMetadata();
+
+    this.appTitle = `Builder v0.0.0 - ${projectMetadata.name}`;
+    this.appSubTitle = `Version: ${projectMetadata.version} | Author: ${projectMetadata.author}`;
+    this.appDescription =
+      projectMetadata.description || "No description provided.";
+
+    this.menuOptions = [
+      "Generate Database Scripts",
+      "Generate Backend (API)",
+      "Generate Frontend",
+      "Exit",
+    ];
 
     this.initScreen();
   }
@@ -66,6 +67,19 @@ export class Builder {
       style: {
         fg: "white",
         bg: "blue",
+      },
+    });
+
+    const contentBox = blessed.box({
+      parent: layout,
+      top: 3,
+      bottom: 3,
+      width: "100%",
+      height: "100%-6",
+      content: "Main content area",
+      style: {
+        fg: "white",
+        bg: "black",
       },
     });
 
