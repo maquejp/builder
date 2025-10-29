@@ -4,7 +4,7 @@
  * License: EUPL-1.2
  */
 
-import { BuilderUI } from "./ui/BuilderUI";
+import { BuilderUI } from "./ui";
 import {
   BaseAction,
   FullProjectGenerator,

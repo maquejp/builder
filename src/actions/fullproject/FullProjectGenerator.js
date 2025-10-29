@@ -28,8 +28,8 @@ var BaseAction_1 = require("../BaseAction");
  */
 var FullProjectGenerator = /** @class */ (function (_super) {
     __extends(FullProjectGenerator, _super);
-    function FullProjectGenerator(ui) {
-        return _super.call(this, ui) || this;
+    function FullProjectGenerator(ui, configManager) {
+        return _super.call(this, ui, configManager) || this;
     }
     /**
      * Execute the full project generation

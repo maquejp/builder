@@ -28,8 +28,8 @@ var BaseAction_1 = require("../BaseAction");
  */
 var FrontendGenerator = /** @class */ (function (_super) {
     __extends(FrontendGenerator, _super);
-    function FrontendGenerator(ui) {
-        return _super.call(this, ui) || this;
+    function FrontendGenerator(ui, configManager) {
+        return _super.call(this, ui, configManager) || this;
     }
     /**
      * Execute the frontend generation

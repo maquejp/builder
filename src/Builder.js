@@ -6,18 +6,19 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Builder = void 0;
-var BuilderUI_1 = require("./ui/BuilderUI");
+var ui_1 = require("./ui");
 var actions_1 = require("./actions");
 /**
  * Main Builder class focused on business logic
  */
 var Builder = /** @class */ (function () {
     function Builder(_a) {
-        var appTitle = _a.appTitle, appSubTitle = _a.appSubTitle, appDescription = _a.appDescription, menuOptions = _a.menuOptions;
+        var appTitle = _a.appTitle, appSubTitle = _a.appSubTitle, appDescription = _a.appDescription, menuOptions = _a.menuOptions, configManager = _a.configManager;
         this.actions = [];
         this.menuOptions = menuOptions;
+        this.configManager = configManager;
         var welcomeContent = "{center}{bold}".concat(appTitle, "{/bold}\n{green-fg}").concat(appSubTitle, "{/green-fg}\n{yellow-fg}").concat(appDescription, "{/yellow-fg}{/center}");
-        this.ui = new BuilderUI_1.BuilderUI({
+        this.ui = new ui_1.BuilderUI({
             builder: this,
             welcomeContent: welcomeContent,
             menuOptions: menuOptions,
@@ -30,11 +31,11 @@ var Builder = /** @class */ (function () {
      */
     Builder.prototype.initializeActions = function () {
         this.actions = [
-            new actions_1.FullProjectGenerator(this.ui), // index 0
-            new actions_1.DatabaseScriptGenerator(this.ui), // index 1
-            new actions_1.BackendGenerator(this.ui), // index 2
-            new actions_1.FrontendGenerator(this.ui), // index 3
-            new actions_1.TestGenerator(this.ui), // index 4
+            new actions_1.FullProjectGenerator(this.ui, this.configManager), // index 0
+            new actions_1.DatabaseScriptGenerator(this.ui, this.configManager), // index 1
+            new actions_1.BackendGenerator(this.ui, this.configManager), // index 2
+            new actions_1.FrontendGenerator(this.ui, this.configManager), // index 3
+            new actions_1.TestGenerator(this.ui, this.configManager), // index 4
         ];
     };
     /**

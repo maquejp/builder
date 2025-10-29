@@ -10,8 +10,9 @@ exports.BaseAction = void 0;
  * Abstract base class for all builder actions
  */
 var BaseAction = /** @class */ (function () {
-    function BaseAction(ui) {
+    function BaseAction(ui, configManager) {
         this.ui = ui;
+        this.configManager = configManager;
     }
     /**
      * Show a message using the UI

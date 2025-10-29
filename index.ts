@@ -6,15 +6,15 @@
 
 import { Builder } from "./src/Builder";
 import { ProjectConfigurationManager } from "./src/config";
+import { FileBrowser } from "./src/ui";
 import * as path from "path";
 
-async function main() {
+async function startBuilder(configPath: string) {
   try {
     // Initialize configuration manager
     const configManager = new ProjectConfigurationManager();
 
-    // Load configuration from the sample project JSON file
-    const configPath = path.join(__dirname, "my-sample-project.json");
+    // Load configuration from the selected JSON file
     await configManager.loadFromFile(configPath);
 
     // Get project metadata for the UI
@@ -38,6 +38,36 @@ async function main() {
     builder.default();
   } catch (error) {
     console.error("Failed to start Builder application:");
+    if (error instanceof Error) {
+      console.error(error.message);
+    } else {
+      console.error("Unknown error occurred");
+    }
+    process.exit(1);
+  }
+}
+
+async function main() {
+  try {
+    // Show file browser to select a JSON configuration file
+    const fileBrowser = new FileBrowser({
+      title: "Builder - Select Configuration File",
+      startPath: __dirname,
+      fileExtension: ".json",
+      filePattern: "definition.json",
+      onFileSelected: async (filePath: string) => {
+        console.log(`\nSelected configuration file: ${filePath}\n`);
+        await startBuilder(filePath);
+      },
+      onCancel: () => {
+        console.log("\nOperation cancelled. Goodbye!");
+        process.exit(0);
+      },
+    });
+
+    fileBrowser.show();
+  } catch (error) {
+    console.error("Failed to start file browser:");
     if (error instanceof Error) {
       console.error(error.message);
     } else {

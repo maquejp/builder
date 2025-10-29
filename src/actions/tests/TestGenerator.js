@@ -28,8 +28,8 @@ var BaseAction_1 = require("../BaseAction");
  */
 var TestGenerator = /** @class */ (function (_super) {
     __extends(TestGenerator, _super);
-    function TestGenerator(ui) {
-        return _super.call(this, ui) || this;
+    function TestGenerator(ui, configManager) {
+        return _super.call(this, ui, configManager) || this;
     }
     /**
      * Execute the test generation

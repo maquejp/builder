@@ -28,8 +28,8 @@ var BaseAction_1 = require("../BaseAction");
  */
 var BackendGenerator = /** @class */ (function (_super) {
     __extends(BackendGenerator, _super);
-    function BackendGenerator(ui) {
-        return _super.call(this, ui) || this;
+    function BackendGenerator(ui, configManager) {
+        return _super.call(this, ui, configManager) || this;
     }
     /**
      * Execute the backend generation
