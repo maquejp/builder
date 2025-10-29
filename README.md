@@ -1,6 +1,15 @@
 # Builder
 
-Builder is a tool that will build a new project with a complete structure including folder organization, a base eUI frontend, a base ExpressJS backend, and generate SQL for the database.
+<p align="center">
+  <img src="materials/cli-logo.png" alt="Builder CLI Logo">
+</p>
+
+Builder is a tool that will build a new project with a complete structure including:
+
+- folder organization
+- a base eUI frontend
+- a base ExpressJS backend
+- and generate SQL for the database.
 
 ## Features
 
