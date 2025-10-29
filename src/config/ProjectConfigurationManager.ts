@@ -83,7 +83,7 @@ export class ProjectConfigurationManager {
 
     // Log warnings if any
     if (validation.warnings.length > 0) {
-      console.warn("Configuration warnings:", validation.warnings.join("\n"));
+      console.warn("Configuration warnings:\n", validation.warnings.join("\n"));
     }
   }
 
