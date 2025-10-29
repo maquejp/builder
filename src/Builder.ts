@@ -55,61 +55,15 @@ export class Builder {
       },
     });
 
-    const headerBox = blessed.box({
-      parent: layout,
-      top: 0,
-      align: "center",
-      valign: "middle",
-      width: "100%",
-      height: 3,
-      content: `{center}{bold}${this.appTitle}{/bold}\n${this.appSubTitle}\n${this.appDescription}{/center}`,
-      tags: true,
-      style: {
-        fg: "white",
-        bg: "blue",
-      },
-    });
+    const headerBox = this.getHeaderBox(layout);
 
-    const welcomeBox = blessed.box({
-      parent: layout,
-      top: 3,
-      bottom: 3,
-      width: "100%",
-      height: "100%",
-      content: "Main content area - Welcome Box (Press 'W' to toggle)",
-      style: {
-        fg: "white",
-        bg: "black",
-      },
-    });
+    const welcomeBox = this.getWelcomeBox(layout);
     welcomeBox.show();
 
-    const fileLoadBox = blessed.box({
-      parent: layout,
-      top: 3,
-      bottom: 3,
-      width: "100%",
-      height: "100%",
-      content: "File Loading Area (Press 'F' to toggle)",
-      style: {
-        fg: "white",
-        bg: "black",
-      },
-    });
+    const fileLoadBox = this.getFileLoadBox(layout);
     fileLoadBox.hide();
 
-    const actionsBox = blessed.box({
-      parent: layout,
-      top: 3,
-      bottom: 3,
-      width: "100%",
-      height: "100%",
-      content: "Actions Area (Press 'A' to toggle)",
-      style: {
-        fg: "white",
-        bg: "black",
-      },
-    });
+    const actionsBox = this.getActionsBox(layout);
     actionsBox.hide();
 
     // Add keyboard controls for toggling boxes
@@ -149,8 +103,36 @@ export class Builder {
       this.screen.render();
     });
 
-    const footerBox = blessed.box({
-      parent: layout,
+    const footerBox = this.getFooterBox(layout);
+
+    // Render the screen.
+    this.screen.render();
+  }
+
+  private getHeaderBox(
+    parent: blessed.Widgets.BoxElement
+  ): blessed.Widgets.BoxElement {
+    return blessed.box({
+      parent: parent,
+      top: 0,
+      align: "center",
+      valign: "middle",
+      width: "100%",
+      height: 3,
+      content: `{center}{bold}${this.appTitle}{/bold}\n${this.appSubTitle}\n${this.appDescription}{/center}`,
+      tags: true,
+      style: {
+        fg: "white",
+        bg: "blue",
+      },
+    });
+  }
+
+  private getFooterBox(
+    parent: blessed.Widgets.BoxElement
+  ): blessed.Widgets.BoxElement {
+    return blessed.box({
+      parent: parent,
       bottom: 0,
       align: "center",
       valign: "middle",
@@ -164,8 +146,56 @@ export class Builder {
         bg: "blue",
       },
     });
+  }
 
-    // Render the screen.
-    this.screen.render();
+  private getWelcomeBox(
+    parent: blessed.Widgets.BoxElement
+  ): blessed.Widgets.BoxElement {
+    return blessed.box({
+      parent: parent,
+      top: 3,
+      bottom: 3,
+      width: "100%",
+      height: "100%",
+      content: "Main content area - Welcome Box (Press 'W' to toggle)",
+      style: {
+        fg: "white",
+        bg: "black",
+      },
+    });
+  }
+
+  private getFileLoadBox(
+    parent: blessed.Widgets.BoxElement
+  ): blessed.Widgets.BoxElement {
+    return blessed.box({
+      parent: parent,
+      top: 3,
+      bottom: 3,
+      width: "100%",
+      height: "100%",
+      content: "File Loading Area (Press 'F' to toggle)",
+      style: {
+        fg: "white",
+        bg: "black",
+      },
+    });
+  }
+
+  private getActionsBox(
+    parent: blessed.Widgets.BoxElement
+  ): blessed.Widgets.BoxElement {
+    return blessed.box({
+      parent: parent,
+      top: 3,
+      bottom: 3,
+      width: "100%",
+      height: "100%",
+      content: "Actions Area (Press 'A' to toggle)",
+      style: {
+        fg: "white",
+        bg: "black",
+      },
+    });
   }
 }
