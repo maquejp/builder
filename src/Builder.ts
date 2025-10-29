@@ -70,17 +70,83 @@ export class Builder {
       },
     });
 
-    const contentBox = blessed.box({
+    const welcomeBox = blessed.box({
       parent: layout,
       top: 3,
       bottom: 3,
       width: "100%",
       height: "100%",
-      content: "Main content area",
+      content: "Main content area - Welcome Box (Press 'W' to toggle)",
       style: {
         fg: "white",
         bg: "black",
       },
+    });
+    welcomeBox.show();
+
+    const fileLoadBox = blessed.box({
+      parent: layout,
+      top: 3,
+      bottom: 3,
+      width: "100%",
+      height: "100%",
+      content: "File Loading Area (Press 'F' to toggle)",
+      style: {
+        fg: "white",
+        bg: "black",
+      },
+    });
+    fileLoadBox.hide();
+
+    const actionsBox = blessed.box({
+      parent: layout,
+      top: 3,
+      bottom: 3,
+      width: "100%",
+      height: "100%",
+      content: "Actions Area (Press 'A' to toggle)",
+      style: {
+        fg: "white",
+        bg: "black",
+      },
+    });
+    actionsBox.hide();
+
+    // Add keyboard controls for toggling boxes
+    this.screen.key(["w", "W"], () => {
+      if (welcomeBox.visible) {
+        welcomeBox.hide();
+      } else {
+        // Hide other boxes and show welcome box
+        fileLoadBox.hide();
+        actionsBox.hide();
+        welcomeBox.show();
+      }
+      this.screen.render();
+    });
+
+    this.screen.key(["f", "F"], () => {
+      if (fileLoadBox.visible) {
+        fileLoadBox.hide();
+      } else {
+        // Hide other boxes and show file load box
+        welcomeBox.hide();
+        actionsBox.hide();
+        fileLoadBox.show();
+      }
+      this.screen.render();
+    });
+
+    this.screen.key(["a", "A"], () => {
+      if (actionsBox.visible) {
+        actionsBox.hide();
+      } else {
+        // Hide other boxes and show actions box
+        welcomeBox.hide();
+        fileLoadBox.hide();
+        actionsBox.show();
+      }
+      this.screen.render();
     });
 
     const footerBox = blessed.box({
@@ -90,7 +156,8 @@ export class Builder {
       valign: "middle",
       width: "100%",
       height: 3,
-      content: "{center}{bold}Press 'q' or 'Esc' to quit.{/bold}{/center}",
+      content:
+        "{center}{bold}Controls: W=Welcome | F=File Load | A=Actions | Q/Esc=Quit{/bold}{/center}",
       tags: true,
       style: {
         fg: "white",
