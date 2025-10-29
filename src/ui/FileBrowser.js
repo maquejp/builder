@@ -22,7 +22,7 @@ var FileBrowser = /** @class */ (function () {
             "node_modules",
             "materials",
             "src",
-            "dist"
+            "dist",
         ];
         this.onFileSelected = options.onFileSelected;
         this.onCancel = options.onCancel || (function () { return process.exit(0); });
@@ -154,6 +154,8 @@ var FileBrowser = /** @class */ (function () {
     FileBrowser.prototype.handleSelection = function (selectedItem) {
         // Remove any blessed formatting tags
         var cleanItem = selectedItem.replace(/{[^}]*}/g, "");
+        // Remove icon prefixes (*, +, ↑)
+        cleanItem = cleanItem.replace(/^[*+↑]\s*/, "").trim();
         if (cleanItem === "..") {
             this.goUpDirectory();
             return;

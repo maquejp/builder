@@ -186,7 +186,10 @@ export class FileBrowser {
    */
   private handleSelection(selectedItem: string): void {
     // Remove any blessed formatting tags
-    const cleanItem = selectedItem.replace(/{[^}]*}/g, "");
+    let cleanItem = selectedItem.replace(/{[^}]*}/g, "");
+
+    // Remove icon prefixes (*, +, ↑)
+    cleanItem = cleanItem.replace(/^[*+↑]\s*/, "").trim();
 
     if (cleanItem === "..") {
       this.goUpDirectory();
