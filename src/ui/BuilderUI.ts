@@ -98,7 +98,7 @@ export class BuilderUI {
           fg: "white",
         },
       },
-      items: this.menuOptions,
+      items: [...this.menuOptions],
     });
 
     // Instructions box
