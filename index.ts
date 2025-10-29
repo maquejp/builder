@@ -7,7 +7,6 @@
 import { Builder } from "./src/Builder";
 import { ProjectConfigurationManager } from "./src/config";
 import { FileBrowser } from "./src/ui";
-import * as path from "path";
 
 async function startBuilder(configPath: string) {
   try {
