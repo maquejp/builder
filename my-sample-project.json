@@ -5,9 +5,6 @@
     "author": "Your Name",
     "license": "EUPL-1.2",
     "projectFolder": "my-sample-project",
-    "generateDatabase": true,
-    "generateBackend": false,
-    "generateFrontend": false,
     "database": {
         "type": "Oracle",
         "tables": [
