@@ -22,8 +22,8 @@ export class Screen {
   }
 
   private setupKeyHandlers(): void {
-    // Quit on Escape, q, or Control-C.
-    this.screen.key(["escape", "q", "C-c"], () => {
+    // Quit on q or Control-C only (ESC is reserved for dialog closing)
+    this.screen.key(["q", "C-c"], () => {
       return process.exit(0);
     });
   }

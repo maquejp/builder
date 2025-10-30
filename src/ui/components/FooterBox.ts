@@ -18,7 +18,7 @@ export class FooterBox {
       valign: "middle",
       width: "100%",
       height: 3,
-      content: `{center}{bold}Controls: Q/Esc=Quit{/bold}{/center}`,
+      content: `{center}{bold}Controls: Q=Quit | I=Info{/bold}{/center}`,
       tags: true,
       style: {
         fg: "#efbc03",
@@ -39,7 +39,7 @@ export class FooterBox {
     const startOverControl = hasProjectLoaded ? " | S=Start Over" : "";
     const fileInfo = hasProjectLoaded ? ` | File: ${definitionFileName}` : "";
     this.footerBox.setContent(
-      `{center}{bold}Controls: Q/Esc=Quit${startOverControl}${fileInfo}{/bold}{/center}`
+      `{center}{bold}Controls: Q=Quit | I=Info${startOverControl}${fileInfo}{/bold}{/center}`
     );
   }
 

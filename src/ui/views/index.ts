@@ -7,3 +7,4 @@
 export * from "./WelcomeView";
 export * from "./ProjectMetadataView";
 export * from "./ErrorView";
+export * from "./InformationView";

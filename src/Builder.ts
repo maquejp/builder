@@ -1,5 +1,10 @@
 import { Screen, HeaderBox, FooterBox, ContentBox } from "./ui";
-import { WelcomeView, ProjectMetadataView, ErrorView } from "./ui";
+import {
+  WelcomeView,
+  ProjectMetadataView,
+  ErrorView,
+  InformationView,
+} from "./ui";
 import { ApplicationState, ProjectService } from "./core";
 
 export class Builder {
@@ -49,6 +54,10 @@ export class Builder {
         this.startOver();
       }
     });
+
+    this.screen.getScreen().key(["i", "I"], () => {
+      this.showInformation();
+    });
   }
 
   private startOver(): void {
@@ -70,6 +79,13 @@ export class Builder {
 
     this.updateContentBox();
     this.screen.render();
+  }
+
+  private showInformation(): void {
+    InformationView.create(this.screen.getScreen(), () => {
+      // Re-render the screen when information dialog is closed
+      this.screen.render();
+    });
   }
 
   private updateContentBox(): void {
