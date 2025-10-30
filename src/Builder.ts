@@ -6,8 +6,6 @@ export class Builder {
   private definitionFileName: string = "my-sample-project-definition.json";
   private projectMetadata: ProjectConfig | null = null;
 
-  private menuOptions: string[] = [];
-
   private appTitle: string;
   private appSubTitle: string;
   private appDescription: string;
@@ -21,13 +19,6 @@ export class Builder {
     this.appTitle = 'Builder v0.0.0 - "Untitled Project"';
     this.appSubTitle = 'Version: "Unknown" | Author: "Unknown"';
     this.appDescription = "No description provided.";
-
-    this.menuOptions = [
-      "Generate Database Scripts",
-      "Generate Backend (API)",
-      "Generate Frontend",
-      "Exit",
-    ];
 
     this.initScreen();
   }
@@ -157,7 +148,6 @@ export class Builder {
       parent: this.contentBox,
       top: 8,
       left: 2,
-      width: 30,
       height: 3,
       content: "Load Project Definition",
       align: "center",
@@ -193,7 +183,27 @@ export class Builder {
       `Author: ${this.projectMetadata.author}\n` +
       `Description: ${this.projectMetadata.description}\n` +
       `License: ${this.projectMetadata.license}\n` +
-      `Project Folder: ${this.projectMetadata.projectFolder}\n\n` +
+      `Project Folder: ${this.projectMetadata.projectFolder}\n` +
+      `\n- Stack:\n` +
+      `  - Database: ${
+        this.projectMetadata.stack?.database || "Not specified"
+      }\n` +
+      `  - Backend: ${
+        this.projectMetadata.stack?.backend
+          ? `${this.projectMetadata.stack.backend.type} (${
+              this.projectMetadata.stack.backend.framework ||
+              "No framework specified"
+            })`
+          : "Not specified"
+      }\n` +
+      `  - Frontend: ${
+        this.projectMetadata.stack?.frontend
+          ? `${this.projectMetadata.stack.frontend.type} (${
+              this.projectMetadata.stack.frontend.framework ||
+              "No framework specified"
+            })`
+          : "Not specified"
+      }\n` +
       `Configuration Details:\n` +
       `- Database: ${
         this.projectMetadata.database ? "Configured" : "Not configured"
@@ -203,10 +213,7 @@ export class Builder {
       }\n` +
       `- Backend: ${
         this.projectMetadata.backend ? "Configured" : "Not configured"
-      }\n` +
-      `- Testing: ${
-        this.projectMetadata.testing ? "Configured" : "Not configured"
-      }`;
+      }\n`;
 
     const metadataDisplay = blessed.text({
       parent: this.contentBox,

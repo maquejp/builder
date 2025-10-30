@@ -12,8 +12,8 @@ import {
   DatabaseTable,
   FrontendConfig,
   BackendConfig,
-  TestingConfig,
   ValidationResult,
+  StackConfig,
 } from "./types";
 
 /**
@@ -145,11 +145,11 @@ export class ProjectConfigurationManager {
   }
 
   /**
-   * Get testing configuration
+   * Get stack configuration
    */
-  public getTestingConfig(): TestingConfig | null {
+  public getStackConfig(): StackConfig | null {
     this.ensureConfigLoaded();
-    return this.config!.testing || null;
+    return this.config!.stack || null;
   }
 
   /**

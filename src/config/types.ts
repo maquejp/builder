@@ -68,13 +68,18 @@ export interface BackendConfig {
 }
 
 /**
- * Testing configuration
+ * Stack configuration
  */
-export interface TestingConfig {
-  framework?: string;
-  coverage?: boolean;
-  e2e?: boolean;
-  unit?: boolean;
+export interface StackConfig {
+  database?: string;
+  backend?: {
+    type: string;
+    framework?: string;
+  };
+  frontend?: {
+    type: string;
+    framework?: string;
+  };
 }
 
 /**
@@ -87,10 +92,10 @@ export interface ProjectConfig {
   author: string;
   license: string;
   projectFolder: string;
+  stack?: StackConfig;
   database?: DatabaseConfig;
   frontend?: FrontendConfig;
   backend?: BackendConfig;
-  testing?: TestingConfig;
 }
 
 /**

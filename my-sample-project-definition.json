@@ -5,6 +5,16 @@
     "author": "Your Name",
     "license": "EUPL-1.2",
     "projectFolder": "my-sample-project",
+    "stack": {
+        "database": "Oracle",
+        "backend": {
+            "type": "Node.js",
+            "framework": "Express"
+        },
+        "frontend": {
+            "type": "eUI (Angular-based)"
+        }
+    },
     "database": {
         "type": "Oracle",
         "tables": [
