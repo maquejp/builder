@@ -39,7 +39,7 @@ export class WelcomeView {
       left: 2,
       width: "100%-4",
       height: 1,
-      content: "Project definition file:",
+      content: "Project definition file (click to edit, Enter to load):",
       style: {
         fg: "#000000",
         bg: "#8cc5f2",
@@ -47,15 +47,19 @@ export class WelcomeView {
       },
     });
 
-    const fileInput = blessed.textbox({
+    // Create a simple text display that shows current value
+    let currentFileName = definitionFileName;
+
+    const fileInput = blessed.box({
       parent: contentBox,
       top: 8,
       left: 2,
       width: "100%-4",
       height: 3,
-      inputOnFocus: true,
+      content: currentFileName,
+      clickable: true,
       keys: true,
-      value: definitionFileName,
+      input: true,
       style: {
         fg: "#000000",
         bg: "white",
@@ -67,6 +71,21 @@ export class WelcomeView {
       border: {
         type: "line",
       },
+    });
+
+    // Handle key input manually
+    fileInput.on("keypress", (ch: string, key: any) => {
+      if (key.name === "backspace") {
+        currentFileName = currentFileName.slice(0, -1);
+      } else if (key.name === "enter") {
+        callbacks.onLoadClick(currentFileName);
+        return;
+      } else if (ch && ch.charCodeAt(0) >= 32) {
+        // printable characters
+        currentFileName += ch;
+      }
+      fileInput.setContent(currentFileName);
+      contentBox.screen.render();
     });
 
     // Error message text (only displayed if errorMessage is provided)
@@ -107,13 +126,17 @@ export class WelcomeView {
     });
 
     loadButton.on("press", () => {
-      const fileName = fileInput.getValue();
-      callbacks.onLoadClick(fileName);
+      callbacks.onLoadClick(currentFileName);
     });
 
-    fileInput.on("submit", () => {
-      const fileName = fileInput.getValue();
-      callbacks.onLoadClick(fileName);
+    // Add click handler to focus the input
+    fileInput.on("click", () => {
+      fileInput.focus();
+    });
+
+    // Focus the input by default
+    process.nextTick(() => {
+      fileInput.focus();
     });
   }
 }
