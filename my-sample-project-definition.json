@@ -12,7 +12,8 @@
             "framework": "Express"
         },
         "frontend": {
-            "type": "eUI (Angular-based)"
+            "type": "eUI",
+            "framework": "Angular"
         }
     },
     "database": {
