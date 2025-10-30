@@ -45,11 +45,11 @@ export class ProjectMetadataView {
       `- Database: ${
         projectMetadata.database ? "Configured" : "Not configured"
       }\n` +
-      `- Frontend: ${
-        projectMetadata.frontend ? "Configured" : "Not configured"
-      }\n` +
       `- Backend: ${
         projectMetadata.backend ? "Configured" : "Not configured"
+      }\n` +
+      `- Frontend: ${
+        projectMetadata.frontend ? "Configured" : "Not configured"
       }\n`;
 
     const metadataDisplay = blessed.text({
