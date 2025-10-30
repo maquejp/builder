@@ -15,7 +15,6 @@ export class ContentBox {
       top: 3,
       bottom: 3,
       width: "100%",
-      height: "100%",
       style: {
         fg: "#000000",
         bg: "#8cc5f2",
@@ -35,6 +34,16 @@ export class ContentBox {
   }
 
   public clearContent(): void {
-    this.contentBox.children.forEach((child) => child.destroy());
+    // Make a copy of children array to avoid modification during iteration
+    const children = [...this.contentBox.children];
+    children.forEach((child) => {
+      if (child && typeof child.destroy === "function") {
+        child.destroy();
+      }
+    });
+    // Force screen update
+    if (this.contentBox.screen) {
+      this.contentBox.screen.render();
+    }
   }
 }

@@ -12,8 +12,13 @@ export class ProjectMetadataView {
     contentBox: blessed.Widgets.BoxElement,
     projectMetadata: ProjectConfig
   ): void {
-    // Clear any existing children
-    contentBox.children.forEach((child) => child.destroy());
+    // Clear any existing children safely
+    const children = [...contentBox.children];
+    children.forEach((child) => {
+      if (child && typeof child.destroy === "function") {
+        child.destroy();
+      }
+    });
 
     const metadataText =
       `Project Loaded Successfully!\n\n` +

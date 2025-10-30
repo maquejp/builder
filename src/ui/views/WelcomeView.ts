@@ -17,8 +17,13 @@ export class WelcomeView {
     callbacks: WelcomeViewCallbacks,
     errorMessage?: string
   ): void {
-    // Clear any existing children
-    contentBox.children.forEach((child) => child.destroy());
+    // Clear any existing children safely
+    const children = [...contentBox.children];
+    children.forEach((child) => {
+      if (child && typeof child.destroy === "function") {
+        child.destroy();
+      }
+    });
 
     const welcomeText = blessed.text({
       parent: contentBox,
@@ -75,17 +80,22 @@ export class WelcomeView {
 
     // Handle key input manually
     fileInput.on("keypress", (ch: string, key: any) => {
+      if (!key) return;
+
       if (key.name === "backspace") {
         currentFileName = currentFileName.slice(0, -1);
       } else if (key.name === "enter") {
         callbacks.onLoadClick(currentFileName);
         return;
-      } else if (ch && ch.charCodeAt(0) >= 32) {
-        // printable characters
+      } else if (ch && ch.charCodeAt(0) >= 32 && ch.charCodeAt(0) <= 126) {
+        // printable ASCII characters only
         currentFileName += ch;
       }
+
       fileInput.setContent(currentFileName);
-      contentBox.screen.render();
+      if (contentBox.screen) {
+        contentBox.screen.render();
+      }
     });
 
     // Error message text (only displayed if errorMessage is provided)
@@ -134,9 +144,16 @@ export class WelcomeView {
       fileInput.focus();
     });
 
-    // Focus the input by default
-    process.nextTick(() => {
-      fileInput.focus();
+    // Focus the input by default with proper timing
+    setImmediate(() => {
+      try {
+        fileInput.focus();
+        if (contentBox.screen) {
+          contentBox.screen.render();
+        }
+      } catch (error) {
+        // Input might have been destroyed, ignore the error
+      }
     });
   }
 }

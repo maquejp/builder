@@ -72,8 +72,8 @@ export class Builder {
       metadata.description
     );
 
+    // Update content with proper sequencing
     this.updateContentBox();
-    this.screen.render();
   }
 
   private showInformation(): void {
@@ -84,12 +84,19 @@ export class Builder {
   }
 
   private updateContentBox(): void {
+    // Clear content before showing new view
+    this.contentBox.clearContent();
+
     if (!this.appState.hasProjectLoaded()) {
       this.showWelcomeScreen();
     } else {
       this.showProjectMetadata();
     }
-    this.screen.render();
+
+    // Ensure proper rendering timing
+    setImmediate(() => {
+      this.screen.render();
+    });
   }
 
   private showWelcomeScreen(errorMessage?: string): void {
@@ -129,13 +136,12 @@ export class Builder {
         this.appState.getDefinitionFileName()
       );
       this.appState.setProjectMetadata(projectMetadata);
-      this.updateContentBox();
 
       // Update footer to show "Start Over" control
       this.footerBox.updateContent(this.appState.getDefinitionFileName(), true);
 
-      // Ensure screen is rendered after footer update
-      this.screen.render();
+      // Update content box after footer update
+      this.updateContentBox();
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
