@@ -32,7 +32,10 @@ export class ProjectConfigurationManager {
    * Load configuration from a JSON file
    * @param filePath Path to the configuration JSON file
    */
-  public async loadFromFile(filePath: string): Promise<void> {
+  public async loadFromFile(
+    filePath: string,
+    showWarnings: boolean = false
+  ): Promise<void> {
     try {
       const absolutePath = path.resolve(filePath);
 
@@ -55,7 +58,7 @@ export class ProjectConfigurationManager {
       this.configFilePath = absolutePath;
 
       // Log warnings if any
-      if (validation.warnings.length > 0) {
+      if (showWarnings && validation.warnings.length > 0) {
         console.warn("Configuration warnings:", validation.warnings.join("\n"));
       }
     } catch (error) {
@@ -70,7 +73,10 @@ export class ProjectConfigurationManager {
    * Load configuration from a JSON object
    * @param configObject Configuration object
    */
-  public loadFromObject(configObject: ProjectConfig): void {
+  public loadFromObject(
+    configObject: ProjectConfig,
+    showWarnings: boolean = false
+  ): void {
     const validation = this.validateConfiguration(configObject);
     if (!validation.isValid) {
       throw new Error(
@@ -82,7 +88,7 @@ export class ProjectConfigurationManager {
     this.configFilePath = null;
 
     // Log warnings if any
-    if (validation.warnings.length > 0) {
+    if (showWarnings && validation.warnings.length > 0) {
       console.warn("Configuration warnings:\n", validation.warnings.join("\n"));
     }
   }
