@@ -92,6 +92,11 @@ export class WelcomeView {
       callbacks.onLoadClick(fileName);
     });
 
+    fileInput.on("submit", () => {
+      const fileName = fileInput.getValue();
+      callbacks.onLoadClick(fileName);
+    });
+
     fileInput.focus();
   }
 }
