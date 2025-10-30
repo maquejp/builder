@@ -8,9 +8,9 @@ import blessed from "blessed";
 
 export class FooterBox {
   private footerBox: blessed.Widgets.BoxElement;
+  private hasProjectLoaded: boolean = false;
 
   constructor(parent: blessed.Widgets.BoxElement, definitionFileName?: string) {
-    const fileInfo = definitionFileName ? ` | File: ${definitionFileName}` : "";
     this.footerBox = blessed.box({
       parent: parent,
       bottom: 0,
@@ -18,7 +18,7 @@ export class FooterBox {
       valign: "middle",
       width: "100%",
       height: 3,
-      content: `{center}{bold}Controls: Q/Esc=Quit${fileInfo}{/bold}{/center}`,
+      content: `{center}{bold}Controls: Q/Esc=Quit{/bold}{/center}`,
       tags: true,
       style: {
         fg: "#efbc03",
@@ -31,9 +31,15 @@ export class FooterBox {
     return this.footerBox;
   }
 
-  public updateContent(definitionFileName: string): void {
+  public updateContent(
+    definitionFileName: string,
+    hasProjectLoaded: boolean = false
+  ): void {
+    this.hasProjectLoaded = hasProjectLoaded;
+    const startOverControl = hasProjectLoaded ? " | S=Start Over" : "";
+    const fileInfo = hasProjectLoaded ? ` | File: ${definitionFileName}` : "";
     this.footerBox.setContent(
-      `{center}{bold}Controls: Q/Esc=Quit | File: ${definitionFileName}{/bold}{/center}`
+      `{center}{bold}Controls: Q/Esc=Quit${startOverControl}${fileInfo}{/bold}{/center}`
     );
   }
 

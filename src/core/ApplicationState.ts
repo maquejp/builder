@@ -50,6 +50,11 @@ export class ApplicationState {
     return this.projectMetadata !== null;
   }
 
+  public clearProject(): void {
+    this.projectMetadata = null;
+    this.resetAppMetadata();
+  }
+
   private updateAppMetadata(): void {
     if (this.projectMetadata) {
       this.appMetadata = {
@@ -58,5 +63,13 @@ export class ApplicationState {
         description: this.projectMetadata.description,
       };
     }
+  }
+
+  private resetAppMetadata(): void {
+    this.appMetadata = {
+      title: 'Builder v0.0.0 - "Untitled Project"',
+      subtitle: 'Version: "Unknown" | Author: "Unknown"',
+      description: "No description provided.",
+    };
   }
 }
