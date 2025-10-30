@@ -97,6 +97,6 @@ export class WelcomeView {
       callbacks.onLoadClick(fileName);
     });
 
-    fileInput.focus();
+    loadButton.focus();
   }
 }
