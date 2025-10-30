@@ -37,6 +37,7 @@ export class InformationView {
       left: "center",
       width: "80%",
       height: "70%",
+      padding: 1,
       border: {
         type: "line",
       },
