@@ -6,11 +6,15 @@
 
 import blessed from "blessed";
 
+export interface WelcomeViewCallbacks {
+  onLoadClick: (fileName: string) => void;
+}
+
 export class WelcomeView {
   public static create(
     contentBox: blessed.Widgets.BoxElement,
     definitionFileName: string,
-    onLoadClick: () => void
+    callbacks: WelcomeViewCallbacks
   ): void {
     // Clear any existing children
     contentBox.children.forEach((child) => child.destroy());
@@ -20,19 +24,55 @@ export class WelcomeView {
       top: 2,
       left: 2,
       width: "100%-4",
-      height: 5,
-      content: `Welcome to Builder!\n\nNo project definition file loaded.\nPlease load the project definition file: ${definitionFileName}`,
+      height: 3,
+      content: `Welcome to Builder!\n\nNo project definition file loaded.`,
       style: {
         fg: "#000000",
         bg: "#8cc5f2",
       },
     });
 
-    const loadButton = blessed.button({
+    const fileLabel = blessed.text({
+      parent: contentBox,
+      top: 6,
+      left: 2,
+      width: "100%-4",
+      height: 1,
+      content: "Project definition file:",
+      style: {
+        fg: "#000000",
+        bg: "#8cc5f2",
+        bold: true,
+      },
+    });
+
+    const fileInput = blessed.textbox({
       parent: contentBox,
       top: 8,
       left: 2,
+      width: "100%-4",
       height: 3,
+      inputOnFocus: true,
+      value: definitionFileName,
+      style: {
+        fg: "#000000",
+        bg: "white",
+        focus: {
+          fg: "#000000",
+          bg: "#ffff99",
+        },
+      },
+      border: {
+        type: "line",
+      },
+    });
+
+    const loadButton = blessed.button({
+      parent: contentBox,
+      top: 12,
+      left: 2,
+      height: 3,
+      width: 25,
       content: "Load Project Definition",
       align: "center",
       valign: "middle",
@@ -47,7 +87,11 @@ export class WelcomeView {
       mouse: true,
     });
 
-    loadButton.on("press", onLoadClick);
-    loadButton.focus();
+    loadButton.on("press", () => {
+      const fileName = fileInput.getValue();
+      callbacks.onLoadClick(fileName);
+    });
+
+    fileInput.focus();
   }
 }

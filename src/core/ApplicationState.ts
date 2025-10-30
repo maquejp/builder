@@ -29,6 +29,10 @@ export class ApplicationState {
     return this.definitionFileName;
   }
 
+  public setDefinitionFileName(fileName: string): void {
+    this.definitionFileName = fileName;
+  }
+
   public getProjectMetadata(): ProjectConfig | null {
     return this.projectMetadata;
   }

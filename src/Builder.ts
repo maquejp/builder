@@ -36,7 +36,10 @@ export class Builder {
     this.contentBox.show();
     this.updateContentBox();
 
-    this.footerBox = new FooterBox(layout);
+    this.footerBox = new FooterBox(
+      layout,
+      this.appState.getDefinitionFileName()
+    );
     this.footerBox.show();
 
     this.screen.render();
@@ -55,7 +58,9 @@ export class Builder {
     WelcomeView.create(
       this.contentBox.getBox(),
       this.appState.getDefinitionFileName(),
-      () => this.loadProjectDefinition()
+      {
+        onLoadClick: (fileName: string) => this.loadProjectDefinition(fileName),
+      }
     );
   }
 
@@ -74,8 +79,14 @@ export class Builder {
     );
   }
 
-  private async loadProjectDefinition(): Promise<void> {
+  private async loadProjectDefinition(fileName?: string): Promise<void> {
     try {
+      // Update the filename if provided
+      if (fileName) {
+        this.appState.setDefinitionFileName(fileName);
+        this.footerBox.updateContent(fileName);
+      }
+
       const projectMetadata = await this.projectService.loadProjectDefinition(
         this.appState.getDefinitionFileName()
       );
@@ -87,7 +98,10 @@ export class Builder {
         this.screen.getScreen(),
         this.appState.getDefinitionFileName(),
         error,
-        () => this.loadProjectDefinition()
+        {
+          onRetryClick: (fileName: string) =>
+            this.loadProjectDefinition(fileName),
+        }
       );
     }
   }
