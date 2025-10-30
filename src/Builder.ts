@@ -1,10 +1,5 @@
 import { Screen, HeaderBox, FooterBox, ContentBox } from "./ui";
-import {
-  WelcomeView,
-  ProjectMetadataView,
-  ErrorView,
-  InformationView,
-} from "./ui";
+import { WelcomeView, ProjectMetadataView, InformationView } from "./ui";
 import { ApplicationState, ProjectService } from "./core";
 
 export class Builder {
@@ -97,13 +92,14 @@ export class Builder {
     this.screen.render();
   }
 
-  private showWelcomeScreen(): void {
+  private showWelcomeScreen(errorMessage?: string): void {
     WelcomeView.create(
       this.contentBox.getBox(),
       this.appState.getDefinitionFileName(),
       {
         onLoadClick: (fileName: string) => this.loadProjectDefinition(fileName),
-      }
+      },
+      errorMessage
     );
   }
 
@@ -141,16 +137,9 @@ export class Builder {
       // Ensure screen is rendered after footer update
       this.screen.render();
     } catch (error) {
-      ErrorView.create(
-        this.contentBox.getBox(),
-        this.screen.getScreen(),
-        this.appState.getDefinitionFileName(),
-        error,
-        {
-          onRetryClick: (fileName: string) =>
-            this.loadProjectDefinition(fileName),
-        }
-      );
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      this.showWelcomeScreen(errorMessage);
     }
   }
 }

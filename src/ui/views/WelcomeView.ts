@@ -14,7 +14,8 @@ export class WelcomeView {
   public static create(
     contentBox: blessed.Widgets.BoxElement,
     definitionFileName: string,
-    callbacks: WelcomeViewCallbacks
+    callbacks: WelcomeViewCallbacks,
+    errorMessage?: string
   ): void {
     // Clear any existing children
     contentBox.children.forEach((child) => child.destroy());
@@ -53,6 +54,7 @@ export class WelcomeView {
       width: "100%-4",
       height: 3,
       inputOnFocus: true,
+      keys: true,
       value: definitionFileName,
       style: {
         fg: "#000000",
@@ -67,9 +69,26 @@ export class WelcomeView {
       },
     });
 
+    // Error message text (only displayed if errorMessage is provided)
+    let errorText: blessed.Widgets.TextElement | null = null;
+    if (errorMessage) {
+      errorText = blessed.text({
+        parent: contentBox,
+        top: 12,
+        left: 2,
+        width: "100%-4",
+        height: 3,
+        content: `Error: ${errorMessage}`,
+        style: {
+          fg: "red",
+          bg: "#8cc5f2",
+        },
+      });
+    }
+
     const loadButton = blessed.button({
       parent: contentBox,
-      top: 12,
+      top: errorMessage ? 16 : 12,
       left: 2,
       height: 3,
       width: 25,
@@ -96,7 +115,5 @@ export class WelcomeView {
       const fileName = fileInput.getValue();
       callbacks.onLoadClick(fileName);
     });
-
-    loadButton.focus();
   }
 }
