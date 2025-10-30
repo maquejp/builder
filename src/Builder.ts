@@ -122,7 +122,7 @@ export class Builder {
       content: `{center}{bold}${this.appTitle}{/bold}\n${this.appSubTitle}\n${this.appDescription}{/center}`,
       tags: true,
       style: {
-        fg: "white",
+        fg: "#efbc03",
         bg: "blue",
       },
     });
@@ -142,7 +142,7 @@ export class Builder {
         "{center}{bold}Controls: W=Welcome | F=File Load | A=Actions | Q/Esc=Quit{/bold}{/center}",
       tags: true,
       style: {
-        fg: "white",
+        fg: "#efbc03",
         bg: "blue",
       },
     });
@@ -159,9 +159,10 @@ export class Builder {
       height: "100%",
       content: "Main content area - Welcome Box (Press 'W' to toggle)",
       style: {
-        fg: "white",
-        bg: "black",
+        fg: "#000000",
+        bg: "#8cc5f2",
       },
+      padding: 1,
     });
   }
 
@@ -176,9 +177,10 @@ export class Builder {
       height: "100%",
       content: "File Loading Area (Press 'F' to toggle)",
       style: {
-        fg: "white",
-        bg: "black",
+        fg: "#000000",
+        bg: "#8cc5f2",
       },
+      padding: 1,
     });
   }
 
@@ -193,9 +195,10 @@ export class Builder {
       height: "100%",
       content: "Actions Area (Press 'A' to toggle)",
       style: {
-        fg: "white",
-        bg: "black",
+        fg: "#000000",
+        bg: "#8cc5f2",
       },
+      padding: 1,
     });
   }
 }
