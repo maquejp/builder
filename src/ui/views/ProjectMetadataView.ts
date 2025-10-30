@@ -20,17 +20,33 @@ export class ProjectMetadataView {
       }
     });
 
-    const metadataText =
-      `Project Loaded Successfully!\n\n` +
+    // First column - Basic project information
+    const basicInfoText =
       `Name: ${projectMetadata.name}\n` +
       `Version: ${projectMetadata.version}\n` +
       `Author: ${projectMetadata.author}\n` +
       `Description: ${projectMetadata.description}\n` +
       `License: ${projectMetadata.license}\n` +
-      `Project Folder: ${projectMetadata.projectFolder}\n` +
-      `\n- Stack:\n` +
-      `  - Database: ${projectMetadata.stack?.database || "Not specified"}\n` +
-      `  - Backend: ${
+      `Project Folder: ${projectMetadata.projectFolder}\n`;
+
+    const basicInfoDisplay = blessed.text({
+      parent: contentBox,
+      top: 1,
+      left: 2,
+      width: "50%-2",
+      height: "25%-2",
+      content: basicInfoText,
+      style: {
+        fg: "#000000",
+        bg: "#8cc5f2",
+      },
+    });
+
+    // Second column - Stack and configuration information
+    const stackInfoText =
+      `Stack:\n\n` +
+      `Database: ${projectMetadata.stack?.database || "Not specified"}\n` +
+      `Backend: ${
         projectMetadata.stack?.backend
           ? `${projectMetadata.stack.backend.type} (${
               projectMetadata.stack.backend.framework ||
@@ -38,32 +54,32 @@ export class ProjectMetadataView {
             })`
           : "Not specified"
       }\n` +
-      `  - Frontend: ${
+      `Frontend: ${
         projectMetadata.stack?.frontend
           ? `${projectMetadata.stack.frontend.type} (${
               projectMetadata.stack.frontend.framework ||
               "No framework specified"
             })`
           : "Not specified"
-      }\n` +
-      `Configuration Details:\n` +
-      `- Database: ${
+      }\n\n` +
+      `Configuration Details:\n\n` +
+      `Database: ${
         projectMetadata.database ? "Configured" : "Not configured"
       }\n` +
-      `- Backend: ${
+      `Backend: ${
         projectMetadata.backend ? "Configured" : "Not configured"
       }\n` +
-      `- Frontend: ${
+      `Frontend: ${
         projectMetadata.frontend ? "Configured" : "Not configured"
       }\n`;
 
-    const metadataDisplay = blessed.text({
+    const stackInfoDisplay = blessed.text({
       parent: contentBox,
       top: 1,
-      left: 2,
-      width: "100%-4",
-      height: "50%-2",
-      content: metadataText,
+      left: "50%",
+      width: "50%-2",
+      height: "25%-2",
+      content: stackInfoText,
       style: {
         fg: "#000000",
         bg: "#8cc5f2",
@@ -102,7 +118,7 @@ export class ProjectMetadataView {
     if (menuOptions.length > 0) {
       const menu = blessed.list({
         parent: contentBox,
-        top: "30%",
+        top: "20%",
         left: 2,
         width: "50%-2",
         height: "25%-1",
@@ -133,7 +149,7 @@ export class ProjectMetadataView {
       // Create action display textbox
       const actionDisplay = blessed.text({
         parent: contentBox,
-        top: "30%",
+        top: "20%",
         left: "50%",
         width: "50%-2",
         height: "25%-1",
