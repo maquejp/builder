@@ -11,6 +11,8 @@ export class Builder {
   private appState: ApplicationState;
   private projectService: ProjectService;
 
+  private defaultDefinitionFileName: string = "my-sample-project-definition.json";
+
   constructor() {
     this.appState = new ApplicationState();
     this.projectService = new ProjectService();
@@ -59,7 +61,7 @@ export class Builder {
     this.appState.clearProject();
 
     // Reset filename to default
-    this.appState.setDefinitionFileName("my-sample-project-definition.json");
+    this.appState.setDefinitionFileName(this.defaultDefinitionFileName);
 
     // Update footer to remove "Start Over" control and hide filename
     this.footerBox.updateContent("", false);
