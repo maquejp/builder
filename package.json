@@ -1,6 +1,6 @@
 {
   "name": "@maquestiaux-foundry/stackcraft",
-  "version": "0.0.0-beta.0.0.1",
+  "version": "0.0.0-beta.0.0.2",
   "description": "A CLI tool to scaffold full-stack projects: folder structure, eUI frontend, ExpressJS backend, and SQL database setup.",
   "main": "index.ts",
   "bin": {
