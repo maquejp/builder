@@ -1,10 +1,10 @@
-# Builder
+# Stackcraft
 
 <p align="center">
-  <img src="materials/cli-logo.png" alt="Builder CLI Logo">
+  <img src="materials/cli-logo.png" alt="Stackcraft CLI Logo">
 </p>
 
-Builder is a tool that will build a new project with a complete structure including:
+Stackcraft is a tool that will build a new project with a complete structure including:
 
 - folder organization
 - a base eUI frontend
@@ -21,11 +21,11 @@ Builder is a tool that will build a new project with a complete structure includ
 
 ## Getting Started
 
-To get started with Builder, simply clone the repository and install the dependencies:
+To get started with Stackcraft, simply clone the repository and install the dependencies:
 
 ```bash
-git clone https://github.com/maquejp/builder.git
-cd builder
+git clone https://github.com/maquejp/stackcraft.git
+cd stackcraft
 npm install
 ```
 

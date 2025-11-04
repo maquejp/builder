@@ -31,7 +31,7 @@ export class WelcomeView {
       left: 2,
       width: "100%-4",
       height: 3,
-      content: `Welcome to Builder!\n\nNo project definition file loaded.`,
+      content: `Welcome to Stackcraft!\n\nNo project definition file loaded.`,
       style: {
         fg: "#000000",
         bg: "#8cc5f2",

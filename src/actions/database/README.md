@@ -1,6 +1,6 @@
 # Database Actions
 
-This directory contains action classes related to database operations within the project builder application. Each action class is responsible for generating specific components or scripts based on user input and project configuration.
+This directory contains action classes related to database operations within the project scaffolding application. Each action class is responsible for generating specific components or scripts based on user input and project configuration.
 
 Note: The database action currently supports Oracle databases.
 

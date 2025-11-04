@@ -19,7 +19,7 @@ export class ApplicationState {
 
   constructor() {
     this.appMetadata = {
-      title: 'Builder v0.0.0 - "Untitled Project"',
+      title: 'Stackcraft v0.0.0 - "Untitled Project"',
       subtitle: 'Version: "Unknown" | Author: "Unknown"',
       description: "No description provided.",
     };
@@ -58,7 +58,7 @@ export class ApplicationState {
   private updateAppMetadata(): void {
     if (this.projectMetadata) {
       this.appMetadata = {
-        title: `Builder v0.0.0 - "${this.projectMetadata.name}"`,
+        title: `Stackcraft v0.0.0 - "${this.projectMetadata.name}"`,
         subtitle: `Version: "${this.projectMetadata.version}" | Author: "${this.projectMetadata.author}"`,
         description: this.projectMetadata.description,
       };
@@ -67,7 +67,7 @@ export class ApplicationState {
 
   private resetAppMetadata(): void {
     this.appMetadata = {
-      title: 'Builder v0.0.0 - "Untitled Project"',
+      title: 'Stackcraft v0.0.0 - "Untitled Project"',
       subtitle: 'Version: "Unknown" | Author: "Unknown"',
       description: "No description provided.",
     };

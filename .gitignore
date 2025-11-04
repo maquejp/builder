@@ -61,7 +61,7 @@ coverage/
 Thumbs.db
 
 # ───────────────────────────────
-# Databases (in case your builder generates SQL or SQLite)
+# Databases (in case your stackcraft generates SQL or SQLite)
 # ───────────────────────────────
 *.db
 *.sqlite

@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
 /**
- * Main entry point for the Builder application
+ * Main entry point for the Stackcraft application
  * Author: Jean-Philippe Maquestiaux
  * License: EUPL-1.2
  */
 
-import { Builder } from "./src/Builder";
+import { Stackcraft } from "./src/Stackcraft";
 
 async function createScreen() {
   // Create an instance and execute the default method
-  const builder = new Builder();
+  const stackcraft = new Stackcraft();
 }
 
 async function main() {

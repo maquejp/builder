@@ -98,7 +98,7 @@ export class InformationView {
     } catch (error) {
       // Return default info if package.json can't be read
       return {
-        name: "builder",
+        name: "stackcraft",
         version: "unknown",
         description: "Package information unavailable",
         author: "Jean-Philippe Maquestiaux",
@@ -138,7 +138,7 @@ ${keywords}
 - typescript (TypeScript compiler)
 
 {bold}About:{/bold}
-This is a project builder tool that helps create structured applications 
+This is a project scaffolding tool that helps create structured applications 
 with frontend, backend, and database components. It supports generating 
 project scaffolding for Angular frontends, Node.js/Express backends, 
 and SQL database schemas.

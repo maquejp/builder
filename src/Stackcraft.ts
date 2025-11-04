@@ -2,7 +2,7 @@ import { Screen, HeaderBox, FooterBox, ContentBox } from "./ui";
 import { WelcomeView, ProjectMetadataView, InformationView } from "./ui";
 import { ApplicationState, ProjectService } from "./core";
 
-export class Builder {
+export class Stackcraft {
   private screen!: Screen;
   private headerBox!: HeaderBox;
   private footerBox!: FooterBox;
@@ -11,7 +11,8 @@ export class Builder {
   private appState: ApplicationState;
   private projectService: ProjectService;
 
-  private defaultDefinitionFileName: string = "my-sample-project-definition.json";
+  private defaultDefinitionFileName: string =
+    "my-sample-project-definition.json";
 
   constructor() {
     this.appState = new ApplicationState();

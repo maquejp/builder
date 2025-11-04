@@ -1,5 +1,5 @@
 /**
- * Configuration types for the Builder application
+ * Configuration types for the Stackcraft application
  * Author: Jean-Philippe Maquestiaux
  * License: EUPL-1.2
  */
