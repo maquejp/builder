@@ -13,7 +13,7 @@ export interface AppMetadata {
 }
 
 export class ApplicationState {
-  private definitionFileName: string = "my-sample-project-definition.json";
+  private definitionFileName: string = "project-definition.json";
   private projectMetadata: ProjectConfig | null = null;
   private appMetadata: AppMetadata;
 
