@@ -1,7 +1,7 @@
 # Stackcraft
 
 <p align="center">
-  <img src="materials/cli-logo.png" alt="Stackcraft CLI Logo">
+  <img src="materials/stackcraft_logo_200x200.png" alt="Stackcraft CLI Logo">
 </p>
 
 Stackcraft is a tool that will build a new project with a complete structure including:
