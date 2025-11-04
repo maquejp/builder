@@ -11,9 +11,6 @@ export class Stackcraft {
   private appState: ApplicationState;
   private projectService: ProjectService;
 
-  private defaultDefinitionFileName: string =
-    "my-sample-project-definition.json";
-
   constructor() {
     this.appState = new ApplicationState();
     this.projectService = new ProjectService();
@@ -21,7 +18,7 @@ export class Stackcraft {
     this.initScreen();
   }
 
-  private initScreen() {
+  private async initScreen() {
     const metadata = this.appState.getAppMetadata();
 
     this.screen = new Screen(metadata.title);
@@ -37,7 +34,7 @@ export class Stackcraft {
 
     this.contentBox = new ContentBox(layout);
     this.contentBox.show();
-    this.updateContentBox();
+    await this.updateContentBox();
 
     this.footerBox = new FooterBox(layout);
     this.footerBox.show();
@@ -47,9 +44,9 @@ export class Stackcraft {
   }
 
   private setupKeyHandling(): void {
-    this.screen.getScreen().key(["s", "S"], () => {
+    this.screen.getScreen().key(["s", "S"], async () => {
       if (this.appState.hasProjectLoaded()) {
-        this.startOver();
+        await this.startOver();
       }
     });
 
@@ -58,11 +55,17 @@ export class Stackcraft {
     });
   }
 
-  private startOver(): void {
+  private async startOver(): Promise<void> {
     this.appState.clearProject();
 
-    // Reset filename to default
-    this.appState.setDefinitionFileName(this.defaultDefinitionFileName);
+    // Discover available files and set intelligent default
+    const availableFiles = await this.projectService.discoverDefinitionFiles();
+    const intelligentDefault =
+      availableFiles.length > 0
+        ? availableFiles[0] // Use first discovered file
+        : "project-definition.json"; // Generic fallback
+
+    this.appState.setDefinitionFileName(intelligentDefault);
 
     // Update footer to remove "Start Over" control and hide filename
     this.footerBox.updateContent("", false);
@@ -76,7 +79,7 @@ export class Stackcraft {
     );
 
     // Update content with proper sequencing
-    this.updateContentBox();
+    await this.updateContentBox();
   }
 
   private showInformation(): void {
@@ -86,12 +89,12 @@ export class Stackcraft {
     });
   }
 
-  private updateContentBox(): void {
+  private async updateContentBox(): Promise<void> {
     // Clear content before showing new view
     this.contentBox.clearContent();
 
     if (!this.appState.hasProjectLoaded()) {
-      this.showWelcomeScreen();
+      await this.showWelcomeScreen();
     } else {
       this.showProjectMetadata();
     }
@@ -102,14 +105,18 @@ export class Stackcraft {
     });
   }
 
-  private showWelcomeScreen(errorMessage?: string): void {
+  private async showWelcomeScreen(errorMessage?: string): Promise<void> {
+    // Discover available definition files
+    const availableFiles = await this.projectService.discoverDefinitionFiles();
+
     WelcomeView.create(
       this.contentBox.getBox(),
       this.appState.getDefinitionFileName(),
       {
         onLoadClick: (fileName: string) => this.loadProjectDefinition(fileName),
       },
-      errorMessage
+      errorMessage,
+      availableFiles
     );
   }
 
@@ -144,11 +151,11 @@ export class Stackcraft {
       this.footerBox.updateContent(this.appState.getDefinitionFileName(), true);
 
       // Update content box after footer update
-      this.updateContentBox();
+      await this.updateContentBox();
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
-      this.showWelcomeScreen(errorMessage);
+      await this.showWelcomeScreen(errorMessage);
     }
   }
 }
