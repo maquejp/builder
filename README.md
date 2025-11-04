@@ -29,10 +29,12 @@ cd stackcraft
 npm install
 ```
 
-Then, you can run the application locally:
+## Documentation
+
+## 🚀 Installation
 
 ```bash
-node index.js
+npm install @maquestiaux-foundry/stackcraft -g
 ```
 
 ---
