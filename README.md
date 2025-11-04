@@ -35,6 +35,16 @@ Then, you can run the application locally:
 node index.js
 ```
 
+## Usage
+
+You can also add badges for visibility:
+
+```markdown
+![npm version](https://img.shields.io/npm/v/@maquestiaux-foundry/stackcraft)
+![npm downloads](https://img.shields.io/npm/dw/@maquestiaux-foundry/stackcraft)
+
+---
+
 ## Contributing
 
 We welcome contributions from the community! If you'd like to contribute, please fork the repository and create a pull request with your changes. Make sure to follow the coding standards and include tests for any new features.
@@ -42,3 +52,4 @@ We welcome contributions from the community! If you'd like to contribute, please
 ## License
 
 This project is licensed under the EUPL-1.2 License. See the [LICENSE](LICENSE) file for details.
+```
