@@ -36,9 +36,8 @@ else
     echo "📌 Keeping as beta only (latest is $LATEST_VERSION)"
 fi
 
-# Create git tag
-echo "🏷️  Creating git tag..."
-git tag "v$NEW_VERSION"
+# Push git tag (npm version already created it)
+echo "🏷️  Pushing git tag..."
 git push origin "v$NEW_VERSION"
 
 echo "✅ Beta release complete!"
