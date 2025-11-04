@@ -1,19 +1,23 @@
 {
-  "name": "builder",
+  "name": "@maquestiaux-foundry/stackcraft",
   "version": "0.0.0",
-  "description": "A tool that will build a new project: folder structure, set a base eUI frontend, a base ExpressJs Backend, generate SQL for the database ",
+  "description": "A CLI tool to scaffold full-stack projects: folder structure, eUI frontend, ExpressJS backend, and SQL database setup.",
   "main": "index.ts",
+  "bin": {
+    "stackcraft": "./index.ts"
+  },
   "scripts": {
     "start": "npx ts-node index.ts",
     "build": "npx tsc"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/maquejp/builder.git"
+    "url": "git+https://github.com/maquejp/stackcraft.git"
   },
   "keywords": [
-    "builder",
-    "structured",
+    "stackcraft",
+    "scaffold",
+    "project-builder",
     "frontend",
     "backend",
     "eUI",
@@ -21,14 +25,15 @@
     "NodeJs",
     "ExpressJs",
     "SQL",
-    "Database"
+    "Database",
+    "CLI"
   ],
   "author": "Jean-Philippe Maquestiaux",
   "license": "EUPL-1.2",
   "bugs": {
-    "url": "https://github.com/maquejp/builder/issues"
+    "url": "https://github.com/maquejp/stackcraft/issues"
   },
-  "homepage": "https://github.com/maquejp/builder#readme",
+  "homepage": "https://github.com/maquejp/stackcraft#readme",
   "devDependencies": {
     "@types/blessed": "^0.1.25",
     "ts-node": "^10.9.2",
@@ -36,5 +41,8 @@
   },
   "dependencies": {
     "blessed": "^0.1.81"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

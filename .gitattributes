@@ -1,0 +1,18 @@
+# ───────────────────────────────
+# Enforce consistent line endings across all OSes
+# ───────────────────────────────
+* text=auto eol=lf
+
+# ───────────────────────────────
+# Common source files (force LF line endings)
+# ───────────────────────────────
+*.ts text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# ───────────────────────────────
+# Lockfile consistency
+# ───────────────────────────────
+package-lock.json text eol=lf

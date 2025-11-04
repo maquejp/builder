@@ -1,4 +1,6 @@
+# ───────────────────────────────
 # Node.js
+# ───────────────────────────────
 node_modules/
 npm-debug.log*
 yarn-debug.log*
@@ -7,50 +9,73 @@ pnpm-debug.log*
 .pnpm-debug.log*
 *.log
 
+# ───────────────────────────────
 # Environment variables
+# ───────────────────────────────
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
+# ───────────────────────────────
 # Build outputs
+# ───────────────────────────────
 dist/
 build/
 tmp/
 coverage/
 
+# ───────────────────────────────
 # TypeScript
+# ───────────────────────────────
 *.tsbuildinfo
 
+# ───────────────────────────────
 # Cache directories
-.npm
-.yarn
-.pnpm
-.bun
+# ───────────────────────────────
+.npm/
+.yarn/
+.pnpm/
+.bun/
 .eslintcache
 
+# ───────────────────────────────
 # IDE and editor files
+# ───────────────────────────────
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
 .idea/
 *.swp
 *.swo
 *~
 
+# ───────────────────────────────
 # OS generated files
+# ───────────────────────────────
 .DS_Store
 Thumbs.db
 
-# Database files
+# ───────────────────────────────
+# Databases (in case your builder generates SQL or SQLite)
+# ───────────────────────────────
 *.db
 *.sqlite
 *.sqlite3
 *.db-journal
 
-# Temporary files
+# ───────────────────────────────
+# Temporary / Generated Files
+# ───────────────────────────────
 *.tmp
 *.temp
+
+# ───────────────────────────────
+# Optional: ignore lockfile temporarily during cross-platform tweaking
+# (remove this line once your setup stabilizes)
+# ───────────────────────────────
+# package-lock.json
