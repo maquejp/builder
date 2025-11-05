@@ -119,6 +119,20 @@ jobs:
           if [[ "${{ steps.check_version.outputs.version_type }}" == "beta" ]]; then
             npm publish --tag beta
             echo "📦 Published beta version: $NEW_VERSION"
+            
+            # Check if this beta should also be latest
+            LATEST_VERSION=$(npm view @maquestiaux-foundry/stackcraft version 2>/dev/null || echo "0.0.0")
+            echo "Current latest version: $LATEST_VERSION"
+            echo "New beta version: $NEW_VERSION"
+            
+            # Simple version comparison - if new version is "greater", make it latest too
+            if [[ "$NEW_VERSION" > "$LATEST_VERSION" ]] || [[ "$LATEST_VERSION" == "0.0.0" ]]; then
+              echo "🏷️ Promoting beta to latest tag..."
+              npm dist-tag add @maquestiaux-foundry/stackcraft@$NEW_VERSION latest
+              echo "✅ Tagged as both beta and latest"
+            else
+              echo "📌 Keeping as beta only (latest is $LATEST_VERSION)"
+            fi
           else
             npm publish --tag latest
             echo "📦 Published stable version: $NEW_VERSION"
