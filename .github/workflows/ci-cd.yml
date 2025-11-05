@@ -1,0 +1,154 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test & Build
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build project
+        run: npm run build
+
+      - name: Check build artifacts
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "❌ Build failed - dist directory not found"
+            exit 1
+          fi
+          echo "✅ Build successful - dist directory created"
+
+  release:
+    name: Release & Publish
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "npm"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "maquejp@gmail.com"
+          git config --local user.name "Jean-Philippe Maquestiaux"
+
+      - name: Check if version bump needed
+        id: check_version
+        run: |
+          # Get current version from package.json
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+
+          # Check if this is a beta version
+          if [[ "$CURRENT_VERSION" == *"beta"* ]]; then
+            echo "version_type=beta" >> $GITHUB_OUTPUT
+            echo "should_release=true" >> $GITHUB_OUTPUT
+          else
+            # For stable versions, check if we need to bump
+            # This is a simple approach - you might want more sophisticated logic
+            echo "version_type=stable" >> $GITHUB_OUTPUT
+            echo "should_release=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Bump version and create tag
+        if: steps.check_version.outputs.should_release == 'true'
+        run: |
+          if [[ "${{ steps.check_version.outputs.version_type }}" == "beta" ]]; then
+            # Bump beta version
+            npm version prerelease --preid=beta --no-git-tag-version
+          else
+            # Bump patch version for stable
+            npm version patch --no-git-tag-version
+          fi
+
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+          # Create and push tag
+          git add package.json
+          git commit -m "chore: bump version to $NEW_VERSION [skip ci]"
+          git tag "v$NEW_VERSION"
+          git push origin main
+          git push origin "v$NEW_VERSION"
+
+      - name: Publish to npm
+        if: steps.check_version.outputs.should_release == 'true'
+        run: |
+          if [[ "${{ steps.check_version.outputs.version_type }}" == "beta" ]]; then
+            npm publish --tag beta
+            echo "📦 Published beta version: $NEW_VERSION"
+          else
+            npm publish --tag latest
+            echo "📦 Published stable version: $NEW_VERSION"
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release
+        if: steps.check_version.outputs.should_release == 'true' && steps.check_version.outputs.version_type == 'stable'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ env.NEW_VERSION }}
+          release_name: Release v${{ env.NEW_VERSION }}
+          body: |
+            ## Changes
+
+            Automated release v${{ env.NEW_VERSION }}
+
+            ## Installation
+
+            ```bash
+            npm install @maquestiaux-foundry/stackcraft@latest
+            ```
+
+            ## Usage
+
+            ```bash
+            npx @maquestiaux-foundry/stackcraft
+            ```
+          draft: false
+          prerelease: false

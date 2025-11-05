@@ -9,8 +9,9 @@
   "scripts": {
     "start": "npx ts-node index.ts",
     "build": "npx tsc",
-    "release:beta": "./scripts/release-beta.sh",
-    "release:stable": "./scripts/release-stable.sh",
+    "build:clean": "rm -rf dist && npm run build",
+    "test": "echo \"Warning: no test specified\" && exit 0",
+    "version:check": "node -p \"require('./package.json').version\"",
     "status": "./scripts/check-status.sh"
   },
   "repository": {
