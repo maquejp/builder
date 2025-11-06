@@ -121,8 +121,8 @@ export class ProjectMetadataView {
         parent: contentBox,
         top: "20%",
         left: 2,
-        width: "50%-2",
-        height: "25%-1",
+        width: "100%-4",
+        height: "15%",
         label: " Actions ",
         items: menuOptions,
         keys: true,
@@ -150,10 +150,10 @@ export class ProjectMetadataView {
       // Create action display textbox
       const actionDisplay = blessed.text({
         parent: contentBox,
-        top: "20%",
-        left: "50%",
-        width: "50%-2",
-        height: "25%-1",
+        top: "37%",
+        left: 2,
+        width: "100%-4",
+        height: "35%",
         label: " Selected Action ",
         content: "Select an action from the menu",
         border: {
