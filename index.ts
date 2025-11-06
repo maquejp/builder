@@ -1,23 +1,19 @@
 #!/usr/bin/env node
 
 /**
- * Main entry point for the Stackcraft application
+ * Main CLI entry point for Stackcraft
  * Author: Jean-Philippe Maquestiaux
  * License: EUPL-1.2
  */
 
-import { Stackcraft } from "./src/Stackcraft";
-
-async function createScreen() {
-  // Create an instance and execute the default method
-  const stackcraft = new Stackcraft();
-}
+import { Welcome } from "./src/components";
 
 async function main() {
   try {
-    await createScreen();
+    const welcome = new Welcome();
+    welcome.display();
   } catch (error) {
-    console.error("Failed to start file browser:");
+    console.error("Failed to start Stackcraft:");
     if (error instanceof Error) {
       console.error(error.message);
     } else {
