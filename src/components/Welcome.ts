@@ -6,7 +6,7 @@
 
 import boxen from "boxen";
 import chalk from "chalk";
-import { readPackageInfo, PackageInfo } from "../services/PackageService";
+import { readPackageInfo, PackageInfo } from "../services";
 
 export class Welcome {
   private packageInfo: PackageInfo;
