@@ -217,7 +217,9 @@ export class ProjectMetadataView {
           screen,
           actionDisplay
         ).catch((error) => {
-          actionDisplay.setContent(`❌ Unexpected error:\n\n${error.message}`);
+          actionDisplay.setContent(
+            `[ERROR] Unexpected error:\n\n${error.message}`
+          );
           screen.render();
         });
         break;
@@ -260,7 +262,7 @@ export class ProjectMetadataView {
   ): Promise<void> {
     // Update action display to show processing
     actionDisplay.setContent(
-      "🔄 Processing database script generation...\n\nValidating configuration..."
+      "[*] Processing database script generation...\n\nValidating configuration..."
     );
     screen.render();
 
@@ -270,7 +272,7 @@ export class ProjectMetadataView {
 
     if (!validation.isValid) {
       actionDisplay.setContent(
-        `❌ Validation failed:\n\n${validation.errors[0]}\n\n${
+        `[ERROR] Validation failed:\n\n${validation.errors[0]}\n\n${
           validation.errors.length > 1
             ? `(+${validation.errors.length - 1} more issues)`
             : ""
@@ -282,7 +284,7 @@ export class ProjectMetadataView {
 
     if (validation.warnings.length > 0) {
       actionDisplay.setContent(
-        `⚠️  Warning: ${validation.warnings[0]}\n\nContinuing with generation...`
+        `[WARNING] ${validation.warnings[0]}\n\nContinuing with generation...`
       );
       screen.render();
 
@@ -291,7 +293,7 @@ export class ProjectMetadataView {
     }
 
     actionDisplay.setContent(
-      "🔄 Generating database script file...\n\nCreating SQL script..."
+      "[*] Generating database script file...\n\nCreating SQL script..."
     );
     screen.render();
 
@@ -303,33 +305,33 @@ export class ProjectMetadataView {
 
       // Display result in the action display area
       if (result.success) {
-        let content = `✅ SUCCESS: Database script generated!\n\n`;
+        let content = `[SUCCESS] Database script generated!\n\n`;
 
         if (result.details) {
-          content += `📊 ${result.details.tablesProcessed} tables processed:\n`;
+          content += `Tables: ${result.details.tablesProcessed} tables processed:\n`;
           content += `${result.details.tableNames.join(", ")}\n\n`;
         }
 
         if (result.filePath) {
           // Show just the relative path for readability
           const relativePath = result.filePath.replace(process.cwd() + "/", "");
-          content += `📁 Script saved to:\n${relativePath}\n\n`;
+          content += `File: Script saved to:\n${relativePath}\n\n`;
         }
 
-        content += `💡 Complete Oracle SQL script ready!\n`;
+        content += `Status: Complete Oracle SQL script ready!\n`;
         content += `Execute the script in your database to create the tables.`;
 
         actionDisplay.setContent(content);
       } else {
-        let content = `❌ ERROR: ${result.message}\n\n`;
+        let content = `[ERROR] ${result.message}\n\n`;
 
         if (result.error) {
           // Show only the first line of error details to keep it concise
           const errorLine = result.error.split("\n")[0];
-          content += `� ${errorLine}\n\n`;
+          content += `Details: ${errorLine}\n\n`;
         }
 
-        content += `💡 Check your project definition file\nand database configuration.`;
+        content += `Fix: Check your project definition file\nand database configuration.`;
 
         actionDisplay.setContent(content);
       }
@@ -337,9 +339,9 @@ export class ProjectMetadataView {
       screen.render();
     } catch (error) {
       actionDisplay.setContent(
-        `❌ Unexpected error occurred:\n\n${
+        `[ERROR] Unexpected error occurred:\n\n${
           error instanceof Error ? error.message : "Unknown error"
-        }\n\n💡 Please try again or check the console for more details.`
+        }\n\nFix: Please try again or check the console for more details.`
       );
       screen.render();
     }
