@@ -4,3 +4,4 @@
  * License: EUPL-1.2
  */
 export * from "./PackageService";
+export * from "./GeneratorService";

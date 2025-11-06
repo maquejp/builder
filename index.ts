@@ -6,12 +6,38 @@
  * License: EUPL-1.2
  */
 
-import { Welcome } from "./src/components";
+import { Command } from "commander";
+import { Welcome, Generator } from "./src/components";
+import { readPackageInfo } from "./src/services";
 
 async function main() {
   try {
-    const welcome = new Welcome();
-    welcome.display();
+    const packageInfo = readPackageInfo();
+    const program = new Command();
+
+    // Configure the CLI program
+    program
+      .name("stackcraft")
+      .description(packageInfo.description)
+      .version(packageInfo.version);
+
+    // Default command - show welcome screen
+    program.action(() => {
+      const welcome = new Welcome();
+      welcome.display();
+    });
+
+    // Generate command
+    program
+      .command("generate")
+      .description("Generate project from configuration file")
+      .action(async () => {
+        const generator = new Generator();
+        await generator.execute();
+      });
+
+    // Parse command line arguments
+    await program.parseAsync(process.argv);
   } catch (error) {
     console.error("Failed to start Stackcraft:");
     if (error instanceof Error) {

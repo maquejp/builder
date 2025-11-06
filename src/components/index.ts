@@ -5,3 +5,4 @@
  */
 
 export * from "./Welcome";
+export * from "./Generator";

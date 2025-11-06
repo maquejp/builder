@@ -17,12 +17,16 @@ export class Welcome {
 
   /**
    * Display the welcome screen
+   * @param headerOnly If true, displays only the header box
    */
-  public display(): void {
+  public display(headerOnly: boolean = false): void {
     this.displayHeader();
-    this.displayDescription();
-    this.displayUsage();
-    this.displayLinks();
+
+    if (!headerOnly) {
+      this.displayDescription();
+      this.displayUsage();
+      this.displayLinks();
+    }
   }
 
   /**
