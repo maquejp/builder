@@ -6,7 +6,7 @@ Successfully implemented a comprehensive Oracle Package Generator for the StackC
 
 ## Files Added/Modified
 
-### New Files Created:
+### New Files Created
 
 1. **`OraclePackageGenerator.ts`** - Main generator class
 
@@ -30,7 +30,7 @@ Successfully implemented a comprehensive Oracle Package Generator for the StackC
    - Complete example of generated Oracle package
    - Shows table creation, constraints, and CRUD package
 
-### Modified Files:
+### Modified Files
 
 1. **`index.ts`** - Added export for OraclePackageGenerator
 2. **`types.ts`** - Added PackageGenerationOptions interface

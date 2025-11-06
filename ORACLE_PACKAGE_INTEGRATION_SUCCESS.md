@@ -58,7 +58,7 @@ The generated package file includes:
 
 ### ✅ Successful Generation
 
-```
+```text
 ✅ Generation completed!
 Success: true
 Message: Database scripts and packages generated successfully
@@ -69,7 +69,7 @@ Message: Database scripts and packages generated successfully
 
 ### 📁 Files Created
 
-```
+```text
 generated/my-sample-project/database/
 ├── my_sample_project_oracle_schema.sql    (Table creation scripts)
 ├── my_sample_project_oracle_packages.sql  (CRUD packages) ⭐ NEW!
