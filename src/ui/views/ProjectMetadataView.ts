@@ -6,6 +6,7 @@
 
 import blessed from "blessed";
 import { ProjectConfig } from "../../config";
+import { DatabaseScriptService } from "../../core/DatabaseScriptService";
 
 export class ProjectMetadataView {
   public static create(
@@ -120,8 +121,8 @@ export class ProjectMetadataView {
         parent: contentBox,
         top: "20%",
         left: 2,
-        width: "50%-2",
-        height: "25%-1",
+        width: "100%-4",
+        height: "15%",
         label: " Actions ",
         items: menuOptions,
         keys: true,
@@ -149,10 +150,10 @@ export class ProjectMetadataView {
       // Create action display textbox
       const actionDisplay = blessed.text({
         parent: contentBox,
-        top: "20%",
-        left: "50%",
-        width: "50%-2",
-        height: "25%-1",
+        top: "37%",
+        left: 2,
+        width: "100%-4",
+        height: "35%",
         label: " Selected Action ",
         content: "Select an action from the menu",
         border: {
@@ -170,9 +171,12 @@ export class ProjectMetadataView {
       // Handle menu selection
       menu.on("select", (item, index) => {
         const selectedAction = menuActions[index];
-        const actionText = `Action: ${selectedAction}\n\nSelected: ${item.content}\n\nThis action will be implemented in a future update.`;
-        actionDisplay.setContent(actionText);
-        contentBox.screen.render();
+        this.handleActionSelection(
+          selectedAction,
+          projectMetadata,
+          contentBox.screen,
+          actionDisplay
+        );
       });
 
       menu.focus();
@@ -194,6 +198,152 @@ export class ProjectMetadataView {
           type: "line",
         },
       });
+    }
+  }
+
+  /**
+   * Handle action selection from the menu
+   */
+  private static handleActionSelection(
+    action: string,
+    projectMetadata: ProjectConfig,
+    screen: blessed.Widgets.Screen,
+    actionDisplay: blessed.Widgets.TextElement
+  ): void {
+    switch (action) {
+      case "create-database":
+        this.handleDatabaseScriptGeneration(
+          projectMetadata,
+          screen,
+          actionDisplay
+        ).catch((error) => {
+          actionDisplay.setContent(
+            `[ERROR] Unexpected error:\n\n${error.message}`
+          );
+          screen.render();
+        });
+        break;
+
+      case "create-backend":
+        actionDisplay.setContent(
+          "Backend generation is not yet implemented.\n\nThis feature will be available in a future update."
+        );
+        screen.render();
+        break;
+
+      case "create-frontend":
+        actionDisplay.setContent(
+          "Frontend generation is not yet implemented.\n\nThis feature will be available in a future update."
+        );
+        screen.render();
+        break;
+
+      case "create-all":
+        actionDisplay.setContent(
+          "Full stack generation is not yet implemented.\n\nThis feature will be available in a future update."
+        );
+        screen.render();
+        break;
+
+      default:
+        actionDisplay.setContent(`Unknown action: ${action}`);
+        screen.render();
+        break;
+    }
+  }
+
+  /**
+   * Handle database script generation
+   */
+  private static async handleDatabaseScriptGeneration(
+    projectMetadata: ProjectConfig,
+    screen: blessed.Widgets.Screen,
+    actionDisplay: blessed.Widgets.TextElement
+  ): Promise<void> {
+    // Update action display to show processing
+    actionDisplay.setContent(
+      "[*] Processing database script generation...\n\nValidating configuration..."
+    );
+    screen.render();
+
+    // Validate project for script generation
+    const validation =
+      DatabaseScriptService.validateProjectForScriptGeneration(projectMetadata);
+
+    if (!validation.isValid) {
+      actionDisplay.setContent(
+        `[ERROR] Validation failed:\n\n${validation.errors[0]}\n\n${
+          validation.errors.length > 1
+            ? `(+${validation.errors.length - 1} more issues)`
+            : ""
+        }\n\nPlease fix these issues and try again.`
+      );
+      screen.render();
+      return;
+    }
+
+    if (validation.warnings.length > 0) {
+      actionDisplay.setContent(
+        `[WARNING] ${validation.warnings[0]}\n\nContinuing with generation...`
+      );
+      screen.render();
+
+      // Brief pause to show warnings
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+    }
+
+    actionDisplay.setContent(
+      "[*] Generating database script file...\n\nCreating SQL script..."
+    );
+    screen.render();
+
+    // Generate and save the script file directly
+    try {
+      const result = await DatabaseScriptService.generateScripts(
+        projectMetadata
+      );
+
+      // Display result in the action display area
+      if (result.success) {
+        let content = `[SUCCESS] Database script generated!\n\n`;
+
+        if (result.details) {
+          content += `Tables: ${result.details.tablesProcessed} tables processed:\n`;
+          content += `${result.details.tableNames.join(", ")}\n\n`;
+        }
+
+        if (result.filePath) {
+          // Show just the relative path for readability
+          const relativePath = result.filePath.replace(process.cwd() + "/", "");
+          content += `File: Script saved to:\n${relativePath}\n\n`;
+        }
+
+        content += `Status: Complete Oracle SQL script ready!\n`;
+        content += `Execute the script in your database to create the tables.`;
+
+        actionDisplay.setContent(content);
+      } else {
+        let content = `[ERROR] ${result.message}\n\n`;
+
+        if (result.error) {
+          // Show only the first line of error details to keep it concise
+          const errorLine = result.error.split("\n")[0];
+          content += `Details: ${errorLine}\n\n`;
+        }
+
+        content += `Fix: Check your project definition file\nand database configuration.`;
+
+        actionDisplay.setContent(content);
+      }
+
+      screen.render();
+    } catch (error) {
+      actionDisplay.setContent(
+        `[ERROR] Unexpected error occurred:\n\n${
+          error instanceof Error ? error.message : "Unknown error"
+        }\n\nFix: Please try again or check the console for more details.`
+      );
+      screen.render();
     }
   }
 }

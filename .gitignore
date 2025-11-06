@@ -75,6 +75,11 @@ Thumbs.db
 *.temp
 
 # ───────────────────────────────
+# Stackcraft generated output
+# ───────────────────────────────
+generated/
+
+# ───────────────────────────────
 # Optional: ignore lockfile temporarily during cross-platform tweaking
 # (remove this line once your setup stabilizes)
 # ───────────────────────────────

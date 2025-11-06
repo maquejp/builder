@@ -6,3 +6,4 @@
 
 export * from "./ApplicationState";
 export * from "./ProjectService";
+export * from "./DatabaseScriptService";

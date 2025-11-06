@@ -17,7 +17,7 @@
         }
     },
     "database": {
-        "type": "PostgreSQL",
+        "type": "Oracle",
         "tables": [
             {
                 "name": "table1",
@@ -27,20 +27,20 @@
                 "fields": [
                     {
                         "name": "pk",
-                        "type": "number",
+                        "type": "serial",
                         "nullable": false,
                         "isPrimaryKey": true,
                         "comment": "Primary key"
                     },
                     {
                         "name": "description",
-                        "type": "varchar2(255 char)",
+                        "type": "varchar(255)",
                         "nullable": false,
                         "comment": "Description of the entity"
                     },
                     {
                         "name": "table2_fk",
-                        "type": "number",
+                        "type": "integer",
                         "nullable": true,
                         "isForeignKey": true,
                         "foreignKey": {
@@ -52,13 +52,13 @@
                     {
                         "name": "created_on",
                         "type": "timestamp(6)",
-                        "default": "systimestamp",
+                        "default": "current_timestamp",
                         "comment": "Creation timestamp"
                     },
                     {
                         "name": "modified_on",
                         "type": "timestamp(6)",
-                        "default": "systimestamp",
+                        "default": "current_timestamp",
                         "comment": "Last update timestamp"
                     }
                 ]
@@ -71,27 +71,27 @@
                 "fields": [
                     {
                         "name": "pk",
-                        "type": "number",
+                        "type": "serial",
                         "nullable": false,
                         "isPrimaryKey": true,
                         "comment": "Primary key"
                     },
                     {
                         "name": "description",
-                        "type": "varchar2(255 char)",
+                        "type": "varchar(255)",
                         "nullable": false,
                         "comment": "Description of the entity"
                     },
                     {
                         "name": "created_on",
                         "type": "timestamp(6)",
-                        "default": "systimestamp",
+                        "default": "current_timestamp",
                         "comment": "Creation timestamp"
                     },
                     {
                         "name": "modified_on",
                         "type": "timestamp(6)",
-                        "default": "systimestamp",
+                        "default": "current_timestamp",
                         "comment": "Last update timestamp"
                     }
                 ]
