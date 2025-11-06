@@ -1,5 +1,8 @@
 # Stackcraft
 
+![npm version](https://img.shields.io/npm/v/@maquestiaux-foundry/stackcraft)
+![npm downloads](https://img.shields.io/npm/dw/@maquestiaux-foundry/stackcraft)
+
 <p align="center">
   <img src="materials/stackcraft_logo_200x200.png" alt="Stackcraft CLI Logo">
 </p>
@@ -46,10 +49,3 @@ We welcome contributions from the community! If you'd like to contribute, please
 ## License
 
 This project is licensed under the EUPL-1.2 License. See the [LICENSE](LICENSE) file for details.
-
-## Usage
-
-You can also add badges for visibility:
-
-![npm version](https://img.shields.io/npm/v/@maquestiaux-foundry/stackcraft)
-![npm downloads](https://img.shields.io/npm/dw/@maquestiaux-foundry/stackcraft)
