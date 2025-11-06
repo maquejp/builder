@@ -62,12 +62,7 @@ You can find samples of table definitions and CRUD packages in the `samples` dir
 
 - [Sample Table Definition and CRUD Package (Oracle)](samples/oracle_table_and_crud_example.sql)
 - [Sample Table Definition and CRUD Package (PostgreSQL)](samples/postgresql_table_and_crud_example.sql)
-- [Oracle Package Generator Sample](samples/oracle_package_generator_sample.sql)
 
-### Testing
+An extra file is in the samples files for a supporting packages
 
-Run the test file to see the generator in action:
-
-```typescript
-import "./test-oracle-package-generator";
-```
+- [Sample Supporting Package (Oracle)](samples/p_utilities_template.sql)
