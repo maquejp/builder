@@ -6,6 +6,8 @@
 
 import blessed from "blessed";
 import { ProjectConfig } from "../../config";
+import { DatabaseScriptService } from "../../core/DatabaseScriptService";
+import { DatabaseScriptResultView } from "./DatabaseScriptResultView";
 
 export class ProjectMetadataView {
   public static create(
@@ -170,9 +172,12 @@ export class ProjectMetadataView {
       // Handle menu selection
       menu.on("select", (item, index) => {
         const selectedAction = menuActions[index];
-        const actionText = `Action: ${selectedAction}\n\nSelected: ${item.content}\n\nThis action will be implemented in a future update.`;
-        actionDisplay.setContent(actionText);
-        contentBox.screen.render();
+        this.handleActionSelection(
+          selectedAction,
+          projectMetadata,
+          contentBox.screen,
+          actionDisplay
+        );
       });
 
       menu.focus();
@@ -193,6 +198,123 @@ export class ProjectMetadataView {
         border: {
           type: "line",
         },
+      });
+    }
+  }
+
+  /**
+   * Handle action selection from the menu
+   */
+  private static handleActionSelection(
+    action: string,
+    projectMetadata: ProjectConfig,
+    screen: blessed.Widgets.Screen,
+    actionDisplay: blessed.Widgets.TextElement
+  ): void {
+    switch (action) {
+      case "create-database":
+        this.handleDatabaseScriptGeneration(
+          projectMetadata,
+          screen,
+          actionDisplay
+        ).catch((error) => {
+          actionDisplay.setContent(`❌ Unexpected error:\n\n${error.message}`);
+          screen.render();
+        });
+        break;
+
+      case "create-backend":
+        actionDisplay.setContent(
+          "Backend generation is not yet implemented.\n\nThis feature will be available in a future update."
+        );
+        screen.render();
+        break;
+
+      case "create-frontend":
+        actionDisplay.setContent(
+          "Frontend generation is not yet implemented.\n\nThis feature will be available in a future update."
+        );
+        screen.render();
+        break;
+
+      case "create-all":
+        actionDisplay.setContent(
+          "Full stack generation is not yet implemented.\n\nThis feature will be available in a future update."
+        );
+        screen.render();
+        break;
+
+      default:
+        actionDisplay.setContent(`Unknown action: ${action}`);
+        screen.render();
+        break;
+    }
+  }
+
+  /**
+   * Handle database script generation
+   */
+  private static async handleDatabaseScriptGeneration(
+    projectMetadata: ProjectConfig,
+    screen: blessed.Widgets.Screen,
+    actionDisplay: blessed.Widgets.TextElement
+  ): Promise<void> {
+    // Update action display to show processing
+    actionDisplay.setContent(
+      "🔄 Processing database script generation...\n\nValidating configuration..."
+    );
+    screen.render();
+
+    // Validate project for script generation
+    const validation =
+      DatabaseScriptService.validateProjectForScriptGeneration(projectMetadata);
+
+    if (!validation.isValid) {
+      actionDisplay.setContent(
+        `❌ Validation failed:\n\n${validation.errors.join(
+          "\n"
+        )}\n\nPlease fix these issues and try again.`
+      );
+      screen.render();
+      return;
+    }
+
+    if (validation.warnings.length > 0) {
+      actionDisplay.setContent(
+        `⚠️  Warnings:\n\n${validation.warnings.join(
+          "\n"
+        )}\n\nContinuing with generation...`
+      );
+      screen.render();
+
+      // Brief pause to show warnings
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+    }
+
+    actionDisplay.setContent(
+      "🔄 Generating database script file...\n\nCreating SQL script..."
+    );
+    screen.render();
+
+    // Generate and save the script file directly
+    try {
+      const result = await DatabaseScriptService.generateScripts(
+        projectMetadata
+      );
+
+      // Show result dialog
+      DatabaseScriptResultView.create(screen, result, () => {
+        screen.render();
+      });
+    } catch (error) {
+      const errorResult = {
+        success: false,
+        message: "Failed to generate script file",
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+
+      DatabaseScriptResultView.create(screen, errorResult, () => {
+        screen.render();
       });
     }
   }
