@@ -1,0 +1,57 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://stackcraft.dev/schemas/project-definition.json",
+    "title": "Stackcraft Project Definition",
+    "description": "Schema for Stackcraft project definition files",
+    "type": "object",
+    "required": [
+        "name",
+        "version",
+        "description",
+        "author",
+        "license",
+        "projectFolder",
+        "stack",
+        "database"
+    ],
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "The name of the project",
+            "minLength": 1
+        },
+        "version": {
+            "type": "string",
+            "description": "The version of the project (semantic versioning)",
+            "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9\\-\\.]+)?(\\+[a-zA-Z0-9\\-\\.]+)?$"
+        },
+        "description": {
+            "type": "string",
+            "description": "A brief description of the project",
+            "minLength": 1
+        },
+        "author": {
+            "type": "string",
+            "description": "The author of the project",
+            "minLength": 1
+        },
+        "license": {
+            "type": "string",
+            "description": "The license under which the project is released",
+            "minLength": 1
+        },
+        "projectFolder": {
+            "type": "string",
+            "description": "The folder name where the project will be generated",
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_]+$"
+        },
+        "stack": {
+            "$ref": "stack.schema.json"
+        },
+        "database": {
+            "$ref": "database.schema.json"
+        }
+    },
+    "additionalProperties": false
+}

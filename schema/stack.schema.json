@@ -1,0 +1,82 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://stackcraft.dev/schemas/stack.json",
+    "title": "Technology Stack Definition",
+    "description": "Schema for technology stack configuration",
+    "type": "object",
+    "required": [
+        "database",
+        "backend",
+        "frontend"
+    ],
+    "properties": {
+        "database": {
+            "type": "string",
+            "description": "The database technology",
+            "enum": [
+                "Oracle",
+                "PostgreSQL",
+                "MySQL",
+                "SQLite",
+                "MongoDB"
+            ]
+        },
+        "backend": {
+            "type": "object",
+            "description": "Backend technology configuration",
+            "required": [
+                "type",
+                "framework"
+            ],
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "description": "The backend runtime/language",
+                    "enum": [
+                        "Node.js",
+                        "Python",
+                        "Java",
+                        ".NET",
+                        "Go",
+                        "Rust"
+                    ]
+                },
+                "framework": {
+                    "type": "string",
+                    "description": "The backend framework",
+                    "minLength": 1
+                }
+            },
+            "additionalProperties": false
+        },
+        "frontend": {
+            "type": "object",
+            "description": "Frontend technology configuration",
+            "required": [
+                "type",
+                "framework"
+            ],
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "description": "The frontend technology type",
+                    "enum": [
+                        "eUI",
+                        "React",
+                        "Vue",
+                        "Angular",
+                        "Svelte",
+                        "Vanilla"
+                    ]
+                },
+                "framework": {
+                    "type": "string",
+                    "description": "The frontend framework",
+                    "minLength": 1
+                }
+            },
+            "additionalProperties": false
+        }
+    },
+    "additionalProperties": false
+}

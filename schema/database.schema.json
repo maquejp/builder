@@ -1,0 +1,33 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://stackcraft.dev/schemas/database.json",
+    "title": "Database Schema Definition",
+    "description": "Schema for database configuration and table definitions",
+    "type": "object",
+    "required": [
+        "type",
+        "tables"
+    ],
+    "properties": {
+        "type": {
+            "type": "string",
+            "description": "The database type",
+            "enum": [
+                "Oracle",
+                "PostgreSQL",
+                "MySQL",
+                "SQLite",
+                "MongoDB"
+            ]
+        },
+        "tables": {
+            "type": "array",
+            "description": "Array of table definitions",
+            "minItems": 1,
+            "items": {
+                "$ref": "table.schema.json"
+            }
+        }
+    },
+    "additionalProperties": false
+}

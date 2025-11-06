@@ -1,0 +1,81 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://stackcraft.dev/schemas/field.json",
+    "title": "Database Field Definition",
+    "description": "Schema for database field definitions",
+    "type": "object",
+    "required": [
+        "name",
+        "type"
+    ],
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "The field name",
+            "minLength": 1,
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$"
+        },
+        "type": {
+            "type": "string",
+            "description": "The field data type",
+            "minLength": 1
+        },
+        "nullable": {
+            "type": "boolean",
+            "description": "Whether the field can be null",
+            "default": true
+        },
+        "isPrimaryKey": {
+            "type": "boolean",
+            "description": "Whether this field is a primary key",
+            "default": false
+        },
+        "isForeignKey": {
+            "type": "boolean",
+            "description": "Whether this field is a foreign key",
+            "default": false
+        },
+        "foreignKey": {
+            "type": "object",
+            "description": "Foreign key reference definition (required if isForeignKey is true)",
+            "required": [
+                "referencedTable",
+                "referencedColumn"
+            ],
+            "properties": {
+                "referencedTable": {
+                    "type": "string",
+                    "description": "The name of the referenced table",
+                    "minLength": 1
+                },
+                "referencedColumn": {
+                    "type": "string",
+                    "description": "The name of the referenced column",
+                    "minLength": 1
+                }
+            },
+            "additionalProperties": false
+        },
+        "default": {
+            "type": "string",
+            "description": "Default value or expression for the field"
+        },
+        "comment": {
+            "type": "string",
+            "description": "Comment or description for the field"
+        }
+    },
+    "additionalProperties": false,
+    "if": {
+        "properties": {
+            "isForeignKey": {
+                "const": true
+            }
+        }
+    },
+    "then": {
+        "required": [
+            "foreignKey"
+        ]
+    }
+}

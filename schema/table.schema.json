@@ -1,0 +1,46 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://stackcraft.dev/schemas/table.json",
+    "title": "Database Table Definition",
+    "description": "Schema for database table definitions",
+    "type": "object",
+    "required": [
+        "name",
+        "fields"
+    ],
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "The table name",
+            "minLength": 1,
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$"
+        },
+        "referencingTo": {
+            "type": "array",
+            "description": "Array of table names this table references via foreign keys",
+            "items": {
+                "type": "string",
+                "minLength": 1
+            },
+            "uniqueItems": true
+        },
+        "referencedBy": {
+            "type": "array",
+            "description": "Array of table names that reference this table via foreign keys",
+            "items": {
+                "type": "string",
+                "minLength": 1
+            },
+            "uniqueItems": true
+        },
+        "fields": {
+            "type": "array",
+            "description": "Array of field definitions for the table",
+            "minItems": 1,
+            "items": {
+                "$ref": "field.schema.json"
+            }
+        }
+    },
+    "additionalProperties": false
+}
