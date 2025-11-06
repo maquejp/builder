@@ -108,9 +108,6 @@ export class Welcome {
       `  ${chalk.cyan("stackcraft --help")}    Show available commands`
     );
     console.log(
-      `  ${chalk.cyan("stackcraft init")}      Initialize a new project`
-    );
-    console.log(
       `  ${chalk.cyan("stackcraft generate")}  Generate from configuration file`
     );
     console.log("");
