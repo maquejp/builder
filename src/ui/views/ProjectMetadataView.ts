@@ -270,9 +270,11 @@ export class ProjectMetadataView {
 
     if (!validation.isValid) {
       actionDisplay.setContent(
-        `❌ Validation failed:\n\n${validation.errors.join(
-          "\n"
-        )}\n\nPlease fix these issues and try again.`
+        `❌ Validation failed:\n\n${validation.errors[0]}\n\n${
+          validation.errors.length > 1
+            ? `(+${validation.errors.length - 1} more issues)`
+            : ""
+        }\n\nPlease fix these issues and try again.`
       );
       screen.render();
       return;
@@ -280,9 +282,7 @@ export class ProjectMetadataView {
 
     if (validation.warnings.length > 0) {
       actionDisplay.setContent(
-        `⚠️  Warnings:\n\n${validation.warnings.join(
-          "\n"
-        )}\n\nContinuing with generation...`
+        `⚠️  Warning: ${validation.warnings[0]}\n\nContinuing with generation...`
       );
       screen.render();
 
@@ -303,47 +303,33 @@ export class ProjectMetadataView {
 
       // Display result in the action display area
       if (result.success) {
-        let content = `✅ SUCCESS: ${result.message}\n\n`;
-
-        if (result.filePath) {
-          content += `📁 File saved to:\n${result.filePath}\n\n`;
-        }
+        let content = `✅ SUCCESS: Database script generated!\n\n`;
 
         if (result.details) {
-          content += `📊 Generation Details:\n`;
-          content += `   • Tables processed: ${result.details.tablesProcessed}\n`;
-          content += `   • Table names: ${result.details.tableNames.join(
-            ", "
-          )}\n`;
-          content += `   • Script length: ${result.details.scriptLength.toLocaleString()} characters\n\n`;
+          content += `📊 ${result.details.tablesProcessed} tables processed:\n`;
+          content += `${result.details.tableNames.join(", ")}\n\n`;
         }
 
-        content += `🎯 What was generated:\n`;
-        content += `   • DROP statements for cleanup\n`;
-        content += `   • CREATE TABLE statements\n`;
-        content += `   • ALTER TABLE for constraints\n`;
-        content += `   • CREATE INDEX for performance\n`;
-        content += `   • CREATE TRIGGER for audit columns\n`;
-        content += `   • COMMENT statements\n\n`;
+        if (result.filePath) {
+          // Show just the relative path for readability
+          const relativePath = result.filePath.replace(process.cwd() + "/", "");
+          content += `📁 Script saved to:\n${relativePath}\n\n`;
+        }
 
-        content += `💡 Next steps:\n`;
-        content += `   • Review the generated SQL script\n`;
-        content += `   • Execute in your Oracle database\n`;
-        content += `   • Test the table structure`;
+        content += `💡 Complete Oracle SQL script ready!\n`;
+        content += `Execute the script in your database to create the tables.`;
 
         actionDisplay.setContent(content);
       } else {
         let content = `❌ ERROR: ${result.message}\n\n`;
 
         if (result.error) {
-          content += `🔍 Error Details:\n${result.error}\n\n`;
+          // Show only the first line of error details to keep it concise
+          const errorLine = result.error.split("\n")[0];
+          content += `� ${errorLine}\n\n`;
         }
 
-        content += `💡 Troubleshooting:\n`;
-        content += `   • Check your project definition file\n`;
-        content += `   • Ensure database configuration is complete\n`;
-        content += `   • Verify table and field definitions\n`;
-        content += `   • Check for duplicate names or invalid references`;
+        content += `💡 Check your project definition file\nand database configuration.`;
 
         actionDisplay.setContent(content);
       }
