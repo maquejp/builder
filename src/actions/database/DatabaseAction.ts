@@ -6,11 +6,13 @@
 
 import { BaseDatabaseScriptGenerator } from "./BaseDatabaseScriptGenerator";
 import { OracleDatabaseScriptGenerator } from "./OracleDatabaseScriptGenerator";
+import { OraclePackageGenerator } from "./OraclePackageGenerator";
 import {
   DatabaseType,
   DatabaseSchema,
   DatabaseTable,
   ScriptGenerationOptions,
+  PackageGenerationOptions,
 } from "./types";
 
 export class DatabaseAction {
@@ -222,5 +224,65 @@ export class DatabaseAction {
    */
   public static isDatabaseTypeSupported(databaseType: DatabaseType): boolean {
     return this.getSupportedDatabaseTypes().includes(databaseType);
+  }
+
+  /**
+   * Generate Oracle package for CRUD operations
+   */
+  public static generateOraclePackage(
+    table: DatabaseTable,
+    options: PackageGenerationOptions = {}
+  ): string {
+    const generator = new OraclePackageGenerator(options);
+
+    // Validate the table
+    const validationErrors = this.validateTable(table);
+    if (validationErrors.length > 0) {
+      throw new Error(
+        `Table validation failed:\n${validationErrors.join("\n")}`
+      );
+    }
+
+    return generator.generatePackage(table);
+  }
+
+  /**
+   * Generate Oracle package specification only
+   */
+  public static generateOraclePackageSpecification(
+    table: DatabaseTable,
+    options: PackageGenerationOptions = {}
+  ): string {
+    const generator = new OraclePackageGenerator(options);
+
+    // Validate the table
+    const validationErrors = this.validateTable(table);
+    if (validationErrors.length > 0) {
+      throw new Error(
+        `Table validation failed:\n${validationErrors.join("\n")}`
+      );
+    }
+
+    return generator.generatePackageSpecification(table);
+  }
+
+  /**
+   * Generate Oracle package body only
+   */
+  public static generateOraclePackageBody(
+    table: DatabaseTable,
+    options: PackageGenerationOptions = {}
+  ): string {
+    const generator = new OraclePackageGenerator(options);
+
+    // Validate the table
+    const validationErrors = this.validateTable(table);
+    if (validationErrors.length > 0) {
+      throw new Error(
+        `Table validation failed:\n${validationErrors.join("\n")}`
+      );
+    }
+
+    return generator.generatePackageBody(table);
   }
 }

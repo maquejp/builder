@@ -10,6 +10,7 @@ export { DatabaseAction } from "./DatabaseAction";
 // Generator classes
 export { BaseDatabaseScriptGenerator } from "./BaseDatabaseScriptGenerator";
 export { OracleDatabaseScriptGenerator } from "./OracleDatabaseScriptGenerator";
+export { OraclePackageGenerator } from "./OraclePackageGenerator";
 
 // Types and interfaces
 export * from "./types";

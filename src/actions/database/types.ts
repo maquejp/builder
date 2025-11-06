@@ -146,3 +146,25 @@ export const DEFAULT_AUDIT_COLUMNS = {
   createdBy: "created_by",
   updatedBy: "updated_by",
 };
+
+/**
+ * Package generation options for Oracle
+ */
+export interface PackageGenerationOptions {
+  includeValidation?: boolean;
+  includeExceptionHandling?: boolean;
+  includeJsonSupport?: boolean;
+  includePagination?: boolean;
+  includeSearch?: boolean;
+  packagePrefix?: string;
+  utilityPackage?: string;
+}
+
+/**
+ * Generated package components
+ */
+export interface GeneratedPackageComponents {
+  specification: string;
+  body: string;
+  complete: string;
+}
