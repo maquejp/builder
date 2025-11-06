@@ -7,7 +7,6 @@
 import blessed from "blessed";
 import { ProjectConfig } from "../../config";
 import { DatabaseScriptService } from "../../core/DatabaseScriptService";
-import { DatabaseScriptResultView } from "./DatabaseScriptResultView";
 
 export class ProjectMetadataView {
   public static create(
@@ -302,20 +301,61 @@ export class ProjectMetadataView {
         projectMetadata
       );
 
-      // Show result dialog
-      DatabaseScriptResultView.create(screen, result, () => {
-        screen.render();
-      });
-    } catch (error) {
-      const errorResult = {
-        success: false,
-        message: "Failed to generate script file",
-        error: error instanceof Error ? error.message : "Unknown error",
-      };
+      // Display result in the action display area
+      if (result.success) {
+        let content = `✅ SUCCESS: ${result.message}\n\n`;
 
-      DatabaseScriptResultView.create(screen, errorResult, () => {
-        screen.render();
-      });
+        if (result.filePath) {
+          content += `📁 File saved to:\n${result.filePath}\n\n`;
+        }
+
+        if (result.details) {
+          content += `📊 Generation Details:\n`;
+          content += `   • Tables processed: ${result.details.tablesProcessed}\n`;
+          content += `   • Table names: ${result.details.tableNames.join(
+            ", "
+          )}\n`;
+          content += `   • Script length: ${result.details.scriptLength.toLocaleString()} characters\n\n`;
+        }
+
+        content += `🎯 What was generated:\n`;
+        content += `   • DROP statements for cleanup\n`;
+        content += `   • CREATE TABLE statements\n`;
+        content += `   • ALTER TABLE for constraints\n`;
+        content += `   • CREATE INDEX for performance\n`;
+        content += `   • CREATE TRIGGER for audit columns\n`;
+        content += `   • COMMENT statements\n\n`;
+
+        content += `💡 Next steps:\n`;
+        content += `   • Review the generated SQL script\n`;
+        content += `   • Execute in your Oracle database\n`;
+        content += `   • Test the table structure`;
+
+        actionDisplay.setContent(content);
+      } else {
+        let content = `❌ ERROR: ${result.message}\n\n`;
+
+        if (result.error) {
+          content += `🔍 Error Details:\n${result.error}\n\n`;
+        }
+
+        content += `💡 Troubleshooting:\n`;
+        content += `   • Check your project definition file\n`;
+        content += `   • Ensure database configuration is complete\n`;
+        content += `   • Verify table and field definitions\n`;
+        content += `   • Check for duplicate names or invalid references`;
+
+        actionDisplay.setContent(content);
+      }
+
+      screen.render();
+    } catch (error) {
+      actionDisplay.setContent(
+        `❌ Unexpected error occurred:\n\n${
+          error instanceof Error ? error.message : "Unknown error"
+        }\n\n💡 Please try again or check the console for more details.`
+      );
+      screen.render();
     }
   }
 }
