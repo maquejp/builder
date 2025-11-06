@@ -4,44 +4,15 @@
  * License: EUPL-1.2
  */
 
-import * as fs from "fs";
-import * as path from "path";
 import boxen from "boxen";
 import chalk from "chalk";
-
-export interface PackageInfo {
-  name: string;
-  version: string;
-  description: string;
-  author: string;
-  license: string;
-}
+import { readPackageInfo, PackageInfo } from "../services/PackageService";
 
 export class Welcome {
   private packageInfo: PackageInfo;
 
   constructor() {
-    this.packageInfo = this.readPackageInfo();
-  }
-
-  /**
-   * Read package.json information
-   */
-  private readPackageInfo(): PackageInfo {
-    try {
-      const packagePath = path.join(__dirname, "../../package.json");
-      const packageContent = fs.readFileSync(packagePath, "utf8");
-      return JSON.parse(packageContent);
-    } catch (error) {
-      // Fallback if package.json can't be read
-      return {
-        name: "Stackcraft",
-        version: "0.0.0-beta.0.0.7",
-        description: "A CLI tool to scaffold full-stack projects",
-        author: "Jean-Philippe Maquestiaux",
-        license: "EUPL-1.2",
-      };
-    }
+    this.packageInfo = readPackageInfo();
   }
 
   /**
