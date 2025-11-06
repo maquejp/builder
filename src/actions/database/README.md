@@ -36,47 +36,29 @@ The constraints should be defined based on the business rules and requirements.
 
 The constraints should be created outside the creation of the table.
 
-### Sample Script
+It is recommended to add a trigger to automatically update the `updated_at` column whenever a record is updated.
 
-```sql
--- Table creation script
-CREATE TABLE employees (
-    pk NUMBER,
-    name VARCHAR2(100),
-    salary NUMBER,
-    status NUMBER  DEFAULT 0,
-    email VARCHAR2(300),
-    position_pk NUMBER,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
--- Constraint creation script
-ALTER TABLE employees
-ADD CONSTRAINT employees_pk PRIMARY KEY (pk) USING INDEX ENABLE;
+## Package for CRUD Operations
 
-ALTER TABLE employees
-ADD CONSTRAINT employees_name_nn NOT NULL (name);
+This package contains procedures and functions to perform Create, Read, Update, and Delete operations on the defined tables. Each operation should handle necessary validations and business logic as required.
 
-ALTER TABLE employees
-ADD CONSTRAINT employees_position_nn NOT NULL (position);
+This package should include:
 
-ALTER TABLE employees
-ADD CONSTRAINT employees_salary_nn NOT NULL (salary);
+- `create_record`: Inserts a new record into the table.
+- `update_record`: Updates an existing record in the table.
+- `delete_record`: Deletes a record from the table.
+- `get_record`: Retrieves a single record by primary key.
+- `get_records`: Retrieves multiple records with pagination, sorting, and filtering options.
 
-ALTER TABLE employees
-ADD CONSTRAINT employees_status_nn NOT NULL (status);
+- `validate_data`: Validates data before create or update operations.
+- `handle_all_exceptions`: Centralized exception handling for all operations.
 
-ALTER TABLE employees
-ADD CONSTRAINT employees_status_chk CHECK (status IN (0, 1));
+The package should ensure data integrity and consistency throughout all operations.
+The package should also include appropriate comments and documentation for each procedure and function, explaining their purpose, parameters, and return values.
 
-ALTER TABLE employees
-ADD CONSTRAINT employees_salary_chk CHECK (salary >= 0);
+## Samples
 
-ALTER TABLE employees
-ADD CONSTRAINT employees_email_un UNIQUE (email);
+You can find a sample of a table definition and a CRUD package in the `samples` directory.
 
-CREATE INDEX employees_email_idx ON employees(email);
-
-ALTER TABLE employees
-ADD CONSTRAINT employees_position_fk FOREIGN KEY (position_pk) REFERENCES positions(pk);
-```
+- [Sample Table Definition and CRUD Package (Oracle)](samples/oracle_table_and_crud_package.sql)
+- [Sample Table Definition and CRUD Package (PostgreSQL)](samples/postgresql_table_and_crud_package.sql)
