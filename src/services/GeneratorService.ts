@@ -89,7 +89,7 @@ export class GeneratorService {
       `${chalk.gray("Target:")}  ${chalk.blue(
         projectDefinition.projectFolder
       )}\n\n` +
-      chalk.bold.yellow("STACK CONFIGURATION\n") +
+      chalk.bold.yellow("🔗 STACK CONFIGURATION\n\n") +
       `${chalk.gray("💾 Database:")} ${chalk.magenta(
         projectDefinition.stack.database.type
       )} ${chalk.dim(`(${projectDefinition.stack.database.version})`)}\n` +
