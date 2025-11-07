@@ -7,13 +7,20 @@
 export class GeneratorService {
   /**
    * Generate project based on configuration
+   * @param filePath Path to the project definition file (required)
    */
-  public async generate(): Promise<void> {
+  public async generate(filePath?: string): Promise<void> {
+    if (!filePath) {
+      throw new Error("Project definition file path is required");
+    }
+
     // For now, just simulate some work
     await this.delay(1000);
 
     // TODO: Implement actual project generation logic
-    // - Read configuration file
+    // TODO: Read and validate the specified configuration file
+    console.log(`Reading configuration from: ${filePath}`);
+
     // - Parse project definition
     // - Generate folder structure
     // - Create frontend files

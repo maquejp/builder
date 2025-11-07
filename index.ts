@@ -9,6 +9,7 @@
 import { Command } from "commander";
 import { Welcome, Generator } from "./src/components";
 import { readPackageInfo } from "./src/services";
+import chalk from "chalk";
 
 async function main() {
   try {
@@ -31,19 +32,20 @@ async function main() {
     program
       .command("generate")
       .description("Generate project from configuration file")
-      .action(async () => {
+      .option("-f, --file <path>", "Path to the project definition file")
+      .action(async (options) => {
         const generator = new Generator();
-        await generator.execute();
+        await generator.execute(options.file);
       });
 
     // Parse command line arguments
     await program.parseAsync(process.argv);
   } catch (error) {
-    console.error("Failed to start Stackcraft:");
+    console.error(chalk.red("❌ Failed to start Stackcraft:"));
     if (error instanceof Error) {
-      console.error(error.message);
+      console.error(chalk.red(`❌ ${error.message}`));
     } else {
-      console.error("Unknown error occurred");
+      console.error(chalk.red("❌ Unknown error occurred"));
     }
     process.exit(1);
   }

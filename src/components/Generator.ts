@@ -19,26 +19,34 @@ export class Generator {
 
   /**
    * Execute the generation process
+   * @param filePath Optional path to the project definition file
    */
-  public async execute(): Promise<void> {
+  public async execute(filePath?: string): Promise<void> {
     try {
       // Display header only for generate command
       this.welcome.display(true);
 
       console.log(chalk.blue.bold("🚀 Stackcraft Generator"));
-      console.log(chalk.yellow("It's generating..."));
 
-      await this.generatorService.generate();
+      if (filePath) {
+        console.log(chalk.cyan(`📁 Using definition file: ${filePath}`));
 
-      console.log(chalk.green("✅ Generation completed successfully!"));
-    } catch (error) {
-      console.error(chalk.red("❌ Generation failed:"));
-      if (error instanceof Error) {
-        console.error(chalk.red(error.message));
+        console.log(chalk.yellow("🔧 It's generating..."));
+
+        await this.generatorService.generate(filePath);
+
+        console.log(chalk.green("✅ Generation completed successfully!"));
       } else {
-        console.error(chalk.red("Unknown error occurred"));
+        throw new Error("No definition file provided.");
       }
-      process.exit(1);
+    } catch (error) {
+      let errorMessage = "Generation failed:";
+      if (error instanceof Error) {
+        errorMessage += ` ${error.message}`;
+      } else {
+        errorMessage += " Unknown error occurred";
+      }
+      throw new Error(errorMessage);
     }
   }
 }
