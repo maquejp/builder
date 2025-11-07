@@ -34,12 +34,13 @@ export class GeneratorService {
     // For now, just simulate some work
     await this.delay(1000);
 
-    // TODO: Implement actual project generation logic
     console.log(
       `📋 Project: ${projectDefinition.name} v${projectDefinition.version}`
     );
     console.log(`📁 Target folder: ${projectDefinition.projectFolder}`);
-    console.log(`💾 Database type: ${projectDefinition.database.type}`);
+    console.log(
+      `💾 Database type: ${projectDefinition.stack.database.type} (${projectDefinition.stack.database.version})`
+    );
     console.log(
       `🔧 Backend: ${projectDefinition.stack.backend.type} (${projectDefinition.stack.backend.framework})`
     );
@@ -47,11 +48,40 @@ export class GeneratorService {
       `🎨 Frontend: ${projectDefinition.stack.frontend.type} (${projectDefinition.stack.frontend.framework})`
     );
 
-    // - Parse project definition ✅
-    // - Generate folder structure
-    // - Create frontend files
-    // - Create backend files
-    // - Generate database scripts
+    // If the database node exists, simulate database setup
+    if (
+      projectDefinition.database &&
+      projectDefinition.database.type !== "none"
+    ) {
+      console.log(`🔧 Setting up database...`);
+      await this.delay(1000);
+      console.log(`✅ Database setup completed.`);
+    }
+
+    // IF the backend node exists, simulate backend setup
+    if (
+      projectDefinition.backend &&
+      projectDefinition.backend.type !== "none"
+    ) {
+      console.log(`🔧 Setting up backend...`);
+      await this.delay(1000);
+      console.log(`✅ Backend setup completed.`);
+    }
+
+    // IF the frontend node exists, simulate frontend setup
+    if (
+      projectDefinition.frontend &&
+      projectDefinition.frontend.type !== "none"
+    ) {
+      console.log(`🔧 Setting up frontend...`);
+      await this.delay(1000);
+      console.log(`✅ Frontend setup completed.`);
+    }
+
+    // Finalize generation
+    console.log(
+      `🎉 Project generation for ${projectDefinition.name} is complete!`
+    );
   }
 
   /**

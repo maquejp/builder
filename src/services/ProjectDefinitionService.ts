@@ -95,7 +95,6 @@ export class ProjectDefinitionService {
       "license",
       "projectFolder",
       "stack",
-      "database",
     ];
 
     for (const field of requiredFields) {
@@ -110,10 +109,19 @@ export class ProjectDefinitionService {
 
     // Validate stack structure
     if (projectDefinition.stack) {
+      // Validate stack.database (required)
       if (!projectDefinition.stack.database) {
         errors.push("Missing required field: stack.database");
+      } else {
+        if (!projectDefinition.stack.database.type) {
+          errors.push("Missing required field: stack.database.type");
+        }
+        if (!projectDefinition.stack.database.version) {
+          errors.push("Missing required field: stack.database.version");
+        }
       }
 
+      // Validate stack.backend (required)
       if (!projectDefinition.stack.backend) {
         errors.push("Missing required field: stack.backend");
       } else {
@@ -125,6 +133,7 @@ export class ProjectDefinitionService {
         }
       }
 
+      // Validate stack.frontend (required)
       if (!projectDefinition.stack.frontend) {
         errors.push("Missing required field: stack.frontend");
       } else {
@@ -137,7 +146,7 @@ export class ProjectDefinitionService {
       }
     }
 
-    // Validate database structure
+    // Validate database structure (optional)
     if (projectDefinition.database) {
       if (!projectDefinition.database.type) {
         errors.push("Missing required field: database.type");
@@ -151,6 +160,26 @@ export class ProjectDefinitionService {
         );
       } else if (projectDefinition.database.tables.length === 0) {
         errors.push("Database must have at least one table defined");
+      }
+    }
+
+    // Validate backend structure (optional)
+    if (projectDefinition.backend) {
+      if (!projectDefinition.backend.type) {
+        errors.push("Missing required field: backend.type");
+      }
+      if (!projectDefinition.backend.framework) {
+        errors.push("Missing required field: backend.framework");
+      }
+    }
+
+    // Validate frontend structure (optional)
+    if (projectDefinition.frontend) {
+      if (!projectDefinition.frontend.type) {
+        errors.push("Missing required field: frontend.type");
+      }
+      if (!projectDefinition.frontend.framework) {
+        errors.push("Missing required field: frontend.framework");
       }
     }
 

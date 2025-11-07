@@ -11,8 +11,7 @@
         "author",
         "license",
         "projectFolder",
-        "stack",
-        "database"
+        "stack"
     ],
     "properties": {
         "name": {
@@ -51,6 +50,12 @@
         },
         "database": {
             "$ref": "database.schema.json"
+        },
+        "backend": {
+            "$ref": "backend.schema.json"
+        },
+        "frontend": {
+            "$ref": "frontend.schema.json"
         }
     },
     "additionalProperties": false

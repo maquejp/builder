@@ -11,15 +11,30 @@
     ],
     "properties": {
         "database": {
-            "type": "string",
-            "description": "The database technology",
-            "enum": [
-                "Oracle",
-                "PostgreSQL",
-                "MySQL",
-                "SQLite",
-                "MongoDB"
-            ]
+            "type": "object",
+            "description": "Database technology configuration",
+            "required": [
+                "type"
+            ],
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "description": "The database technology",
+                    "enum": [
+                        "Oracle",
+                        "PostgreSQL",
+                        "MySQL",
+                        "SQLite",
+                        "MongoDB"
+                    ]
+                },
+                "version": {
+                    "type": "string",
+                    "description": "The database version",
+                    "minLength": 1
+                }
+            },
+            "additionalProperties": false
         },
         "backend": {
             "type": "object",

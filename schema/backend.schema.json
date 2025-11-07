@@ -1,0 +1,31 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://stackcraft.dev/schemas/backend.json",
+    "title": "Backend Configuration",
+    "description": "Schema for backend configuration",
+    "type": "object",
+    "required": [
+        "type",
+        "framework"
+    ],
+    "properties": {
+        "type": {
+            "type": "string",
+            "description": "The backend runtime/language",
+            "enum": [
+                "Node.js",
+                "Python",
+                "Java",
+                ".NET",
+                "Go",
+                "Rust"
+            ]
+        },
+        "framework": {
+            "type": "string",
+            "description": "The backend framework",
+            "minLength": 1
+        }
+    },
+    "additionalProperties": false
+}

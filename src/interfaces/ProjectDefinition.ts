@@ -29,7 +29,10 @@ export interface DatabaseTable {
 
 // Technology stack definition interface
 export interface TechnologyStack {
-  database: string;
+  database: {
+    type: string;
+    version?: string;
+  };
   backend: {
     type: string;
     framework: string;
@@ -46,6 +49,18 @@ export interface DatabaseConfiguration {
   tables: DatabaseTable[];
 }
 
+// Backend configuration interface
+export interface BackendConfiguration {
+  type: string;
+  framework: string;
+}
+
+// Frontend configuration interface
+export interface FrontendConfiguration {
+  type: string;
+  framework: string;
+}
+
 // Main project definition interface
 export interface ProjectDefinition {
   name: string;
@@ -55,5 +70,7 @@ export interface ProjectDefinition {
   license: string;
   projectFolder: string;
   stack: TechnologyStack;
-  database: DatabaseConfiguration;
+  database?: DatabaseConfiguration;
+  backend?: BackendConfiguration;
+  frontend?: FrontendConfiguration;
 }

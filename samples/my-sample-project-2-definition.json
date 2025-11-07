@@ -6,7 +6,10 @@
     "license": "EUPL-1.2",
     "projectFolder": "my-sample-project",
     "stack": {
-        "database": "Oracle",
+        "database": {
+            "type": "Oracle",
+            "version": "19c"
+        },
         "backend": {
             "type": "Node.js",
             "framework": "Express"
@@ -97,5 +100,13 @@
                 ]
             }
         ]
+    },
+    "backend": {
+        "type": "Node.js",
+        "framework": "Express"
+    },
+    "frontend": {
+        "type": "eUI",
+        "framework": "Angular"
     }
 }
