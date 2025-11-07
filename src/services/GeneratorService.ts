@@ -79,6 +79,7 @@ export class GeneratorService {
     }
 
     // Finalize generation
+    console.log("\n\n");
     console.log(
       `🎉 Project generation for ${projectDefinition.name} is complete!`
     );
