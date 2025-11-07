@@ -14,9 +14,11 @@ export class ProjectDefinitionService {
    * @param filePath Path to the project definition JSON file
    * @returns Parsed and validated project definition
    */
-  public async loadProjectDefinition(
-    filePath: string
-  ): Promise<ProjectDefinition> {
+  public async loadProjectDefinition({
+    filePath,
+  }: {
+    filePath: string;
+  }): Promise<ProjectDefinition> {
     console.log("⏳ Loading project definition...");
 
     try {

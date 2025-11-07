@@ -7,17 +7,25 @@
 export class DatabaseService {
   /**
    * Execute database setup
-   * @param stackDatabase Database configuration from stack
-   * @param database Database configuration from project definition
+   * @param stack Database configuration from stack
+   * @param config Database configuration from project definition
    */
-  public async execute(stackDatabase: any, database?: any): Promise<void> {
+  public async execute({
+    stack,
+    config,
+  }: {
+    stack: any;
+    config?: any;
+  }): Promise<void> {
     console.log(`🔧 Setting up database...`);
-    console.log(`Stack database:`, stackDatabase);
-    if (database) {
-      console.log(`Project database:`, database);
+    console.log(`Stack database:`, stack);
+    if (config) {
+      console.log(`Project database:`, config);
+      await this.delay(1000);
+      console.log(`✅ Database setup completed.`);
+    } else {
+      throw new Error("No database configuration provided.");
     }
-    await this.delay(1000);
-    console.log(`✅ Database setup completed.`);
   }
 
   /**

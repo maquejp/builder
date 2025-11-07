@@ -7,17 +7,25 @@
 export class FrontendService {
   /**
    * Execute frontend setup
-   * @param stackFrontend Frontend configuration from stack
-   * @param frontend Frontend configuration from project definition
+   * @param stack Frontend configuration from stack
+   * @param config Frontend configuration from project definition
    */
-  public async execute(stackFrontend: any, frontend?: any): Promise<void> {
+  public async execute({
+    stack,
+    config,
+  }: {
+    stack: any;
+    config?: any;
+  }): Promise<void> {
     console.log(`🔧 Setting up frontend...`);
-    console.log(`Stack frontend:`, stackFrontend);
-    if (frontend) {
-      console.log(`Project frontend:`, frontend);
+    console.log(`Stack frontend:`, stack);
+    if (config) {
+      console.log(`Project frontend:`, config);
+      await this.delay(1000);
+      console.log(`✅ Frontend setup completed.`);
+    } else {
+      throw new Error("No frontend configuration provided.");
     }
-    await this.delay(1000);
-    console.log(`✅ Frontend setup completed.`);
   }
 
   /**

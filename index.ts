@@ -35,7 +35,7 @@ async function main() {
       .option("-f, --file <path>", "Path to the project definition file")
       .action(async (options) => {
         const generator = new Generator();
-        await generator.execute(options.file);
+        await generator.execute({ filePath: options.file });
       });
 
     // Parse command line arguments

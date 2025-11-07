@@ -21,7 +21,7 @@ export class Generator {
    * Execute the generation process
    * @param filePath Optional path to the project definition file
    */
-  public async execute(filePath?: string): Promise<void> {
+  public async execute({ filePath }: { filePath?: string }): Promise<void> {
     try {
       // Display header only for generate command
       this.welcome.display(true);
@@ -33,7 +33,7 @@ export class Generator {
 
         console.log(chalk.yellow("🔧 It's generating..."));
 
-        await this.generatorService.generate(filePath);
+        await this.generatorService.generate({ filePath });
 
         console.log(chalk.green("✅ Generation completed successfully!"));
       } else {
