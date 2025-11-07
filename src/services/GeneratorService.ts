@@ -46,10 +46,7 @@ export class GeneratorService {
     this.displayProjectInfo(projectDefinition);
 
     // If the database node exists, setup database using DatabaseService
-    if (
-      projectDefinition.database &&
-      projectDefinition.database.type !== "none"
-    ) {
+    if (projectDefinition.database) {
       await this.databaseService.execute({
         stack: projectDefinition.stack.database,
         config: projectDefinition.database,
@@ -57,10 +54,7 @@ export class GeneratorService {
     }
 
     // IF the backend node exists, setup backend using BackendService
-    if (
-      projectDefinition.backend &&
-      projectDefinition.backend.type !== "none"
-    ) {
+    if (projectDefinition.backend) {
       await this.backendService.execute({
         stack: projectDefinition.stack.backend,
         config: projectDefinition.backend,
@@ -68,10 +62,7 @@ export class GeneratorService {
     }
 
     // IF the frontend node exists, setup frontend using FrontendService
-    if (
-      projectDefinition.frontend &&
-      projectDefinition.frontend.type !== "none"
-    ) {
+    if (projectDefinition.frontend) {
       await this.frontendService.execute({
         stack: projectDefinition.stack.frontend,
         config: projectDefinition.frontend,
@@ -79,7 +70,7 @@ export class GeneratorService {
     }
 
     // Finalize generation
-    console.log("\n\n");
+    console.log("\n");
     console.log(
       `🎉 Project generation for ${projectDefinition.name} is complete!`
     );

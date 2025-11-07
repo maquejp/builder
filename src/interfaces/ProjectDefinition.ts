@@ -4,6 +4,15 @@
  * License: EUPL-1.2
  */
 
+// Database type enumeration
+export enum DatabaseType {
+  ORACLE = "Oracle",
+  POSTGRESQL = "PostgreSQL",
+  MYSQL = "MySQL",
+  SQLITE = "SQLite",
+  MONGODB = "MongoDB",
+}
+
 // Database field definition interface
 export interface DatabaseField {
   name: string;
@@ -30,7 +39,7 @@ export interface DatabaseTable {
 // Technology stack definition interface
 export interface TechnologyStack {
   database: {
-    type: string;
+    type: DatabaseType;
     version?: string;
   };
   backend: {
@@ -45,7 +54,7 @@ export interface TechnologyStack {
 
 // Database configuration interface
 export interface DatabaseConfiguration {
-  type: string;
+  type: DatabaseType;
   tables: DatabaseTable[];
 }
 
