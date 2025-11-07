@@ -6,12 +6,21 @@
 
 import { ProjectDefinition } from "../interfaces";
 import { ProjectDefinitionService } from "./ProjectDefinitionService";
+import { DatabaseService } from "./DatabaseService";
+import { BackendService } from "./BackendService";
+import { FrontendService } from "./FrontendService";
 
 export class GeneratorService {
   private projectDefinitionService: ProjectDefinitionService;
+  private databaseService: DatabaseService;
+  private backendService: BackendService;
+  private frontendService: FrontendService;
 
   constructor() {
     this.projectDefinitionService = new ProjectDefinitionService();
+    this.databaseService = new DatabaseService();
+    this.backendService = new BackendService();
+    this.frontendService = new FrontendService();
   }
 
   /**
@@ -48,34 +57,37 @@ export class GeneratorService {
       `🎨 Frontend: ${projectDefinition.stack.frontend.type} (${projectDefinition.stack.frontend.framework})`
     );
 
-    // If the database node exists, simulate database setup
+    // If the database node exists, setup database using DatabaseService
     if (
       projectDefinition.database &&
       projectDefinition.database.type !== "none"
     ) {
-      console.log(`🔧 Setting up database...`);
-      await this.delay(1000);
-      console.log(`✅ Database setup completed.`);
+      await this.databaseService.execute(
+        projectDefinition.stack.database,
+        projectDefinition.database
+      );
     }
 
-    // IF the backend node exists, simulate backend setup
+    // IF the backend node exists, setup backend using BackendService
     if (
       projectDefinition.backend &&
       projectDefinition.backend.type !== "none"
     ) {
-      console.log(`🔧 Setting up backend...`);
-      await this.delay(1000);
-      console.log(`✅ Backend setup completed.`);
+      await this.backendService.execute(
+        projectDefinition.stack.backend,
+        projectDefinition.backend
+      );
     }
 
-    // IF the frontend node exists, simulate frontend setup
+    // IF the frontend node exists, setup frontend using FrontendService
     if (
       projectDefinition.frontend &&
       projectDefinition.frontend.type !== "none"
     ) {
-      console.log(`🔧 Setting up frontend...`);
-      await this.delay(1000);
-      console.log(`✅ Frontend setup completed.`);
+      await this.frontendService.execute(
+        projectDefinition.stack.frontend,
+        projectDefinition.frontend
+      );
     }
 
     // Finalize generation

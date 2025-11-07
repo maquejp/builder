@@ -6,3 +6,6 @@
 export * from "./PackageService";
 export * from "./GeneratorService";
 export * from "./ProjectDefinitionService";
+export * from "./DatabaseService";
+export * from "./BackendService";
+export * from "./FrontendService";
