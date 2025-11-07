@@ -50,8 +50,6 @@ export class GeneratorService {
       projectDefinition.database &&
       projectDefinition.database.type !== "none"
     ) {
-      console.log("\n\n");
-
       await this.databaseService.execute({
         stack: projectDefinition.stack.database,
         config: projectDefinition.database,
@@ -63,8 +61,6 @@ export class GeneratorService {
       projectDefinition.backend &&
       projectDefinition.backend.type !== "none"
     ) {
-      console.log("\n\n");
-
       await this.backendService.execute({
         stack: projectDefinition.stack.backend,
         config: projectDefinition.backend,
@@ -76,8 +72,6 @@ export class GeneratorService {
       projectDefinition.frontend &&
       projectDefinition.frontend.type !== "none"
     ) {
-      console.log("\n\n");
-
       await this.frontendService.execute({
         stack: projectDefinition.stack.frontend,
         config: projectDefinition.frontend,

@@ -17,6 +17,7 @@ export class BackendService {
     stack: any;
     config?: any;
   }): Promise<void> {
+    console.log("\n\n");
     console.log(`🔧 Setting up backend...`);
     console.log(`Stack backend:`, stack);
     if (config) {

@@ -17,6 +17,7 @@ export class DatabaseService {
     stack: any;
     config?: any;
   }): Promise<void> {
+    console.log("\n\n");
     console.log(`🔧 Setting up database...`);
     console.log(`Stack database:`, stack);
     if (config) {

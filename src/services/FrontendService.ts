@@ -17,6 +17,7 @@ export class FrontendService {
     stack: any;
     config?: any;
   }): Promise<void> {
+    console.log("\n\n");
     console.log(`🔧 Setting up frontend...`);
     console.log(`Stack frontend:`, stack);
     if (config) {
