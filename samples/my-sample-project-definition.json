@@ -245,6 +245,10 @@
                         "type": "char(1)",
                         "nullable": true,
                         "default": "'Y'",
+                        "allowedValues": [
+                            "Y",
+                            "N"
+                        ],
                         "comment": "Active flag (Y/N)"
                     },
                     {
