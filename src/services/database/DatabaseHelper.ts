@@ -10,6 +10,98 @@ import { DatabaseConfiguration } from "../../interfaces";
 
 export class DatabaseHelper {
   /**
+   * Sort tables based on dependencies using topological sort
+   * Tables that are referenced by others should be created first
+   * This method is database-agnostic and can be used with any RDBMS
+   */
+  public static sortTablesByDependencies(
+    tables: DatabaseConfiguration["tables"]
+  ): DatabaseConfiguration["tables"] {
+    const result: DatabaseConfiguration["tables"] = [];
+    const visited = new Set<string>();
+    const visiting = new Set<string>();
+    const tableMap = new Map(tables.map((table) => [table.name, table]));
+
+    const visit = (tableName: string): void => {
+      if (visited.has(tableName)) return;
+      if (visiting.has(tableName)) {
+        console.warn(
+          chalk.yellow(
+            `⚠️ Circular dependency detected involving table: ${tableName}`
+          )
+        );
+        return;
+      }
+
+      visiting.add(tableName);
+      const table = tableMap.get(tableName);
+
+      if (table) {
+        // Visit all tables that this table references (dependencies)
+        if (table.referencingTo) {
+          for (const referencedTable of table.referencingTo) {
+            if (tableMap.has(referencedTable)) {
+              visit(referencedTable);
+            }
+          }
+        }
+
+        visiting.delete(tableName);
+        visited.add(tableName);
+        result.push(table);
+      }
+    };
+
+    // Visit all tables
+    for (const table of tables) {
+      visit(table.name);
+    }
+
+    console.log(
+      chalk.blue(
+        `🔧 Database Helper: Tables sorted by dependencies: ${result
+          .map((t) => t.name)
+          .join(" → ")}`
+      )
+    );
+
+    // Add explanation of the sorting process
+    console.log(
+      boxen(
+        chalk.white("📋 ") +
+          chalk.bold.cyan("Table Creation Order Explanation") +
+          "\n\n" +
+          chalk.white(
+            "The tables have been sorted using topological sort to ensure proper creation order.\n"
+          ) +
+          chalk.white("This means:\n\n") +
+          chalk.green("✓ ") +
+          chalk.white("Tables with no dependencies are created first\n") +
+          chalk.green("✓ ") +
+          chalk.white(
+            "Referenced tables are created before tables that reference them\n"
+          ) +
+          chalk.green("✓ ") +
+          chalk.white(
+            "Foreign key constraints will work correctly during creation\n\n"
+          ) +
+          chalk.yellow("⚡ ") +
+          chalk.white("Creation order: ") +
+          chalk.bold.blue(result.map((t) => t.name).join(" → ")),
+        {
+          padding: 1,
+          margin: { top: 1, bottom: 1, left: 0, right: 0 },
+          borderStyle: "round",
+          borderColor: "cyan",
+          backgroundColor: "black",
+        }
+      )
+    );
+
+    return result;
+  }
+
+  /**
    * Display tables information in a formatted table
    */
   public static showTables(tables: DatabaseConfiguration["tables"]): void {

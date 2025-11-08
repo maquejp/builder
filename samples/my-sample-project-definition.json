@@ -25,7 +25,8 @@
             {
                 "name": "table1",
                 "referencingTo": [
-                    "table2"
+                    "table2",
+                    "table5"
                 ],
                 "fields": [
                     {
@@ -53,6 +54,17 @@
                         "comment": "Foreign key referencing table2"
                     },
                     {
+                        "name": "table5_fk",
+                        "type": "number",
+                        "nullable": true,
+                        "isForeignKey": true,
+                        "foreignKey": {
+                            "referencedTable": "table5",
+                            "referencedColumn": "pk"
+                        },
+                        "comment": "Foreign key referencing table5"
+                    },
+                    {
                         "name": "created_on",
                         "type": "timestamp(6)",
                         "default": "systimestamp",
@@ -69,7 +81,8 @@
             {
                 "name": "table2",
                 "referencedBy": [
-                    "table1"
+                    "table1",
+                    "table4"
                 ],
                 "fields": [
                     {
@@ -84,6 +97,155 @@
                         "type": "varchar2(255 char)",
                         "nullable": false,
                         "comment": "Description of the entity"
+                    },
+                    {
+                        "name": "created_on",
+                        "type": "timestamp(6)",
+                        "default": "systimestamp",
+                        "comment": "Creation timestamp"
+                    },
+                    {
+                        "name": "modified_on",
+                        "type": "timestamp(6)",
+                        "default": "systimestamp",
+                        "comment": "Last update timestamp"
+                    }
+                ]
+            },
+            {
+                "name": "table3",
+                "fields": [
+                    {
+                        "name": "pk",
+                        "type": "number",
+                        "nullable": false,
+                        "isPrimaryKey": true,
+                        "comment": "Primary key"
+                    },
+                    {
+                        "name": "name",
+                        "type": "varchar2(100 char)",
+                        "nullable": false,
+                        "comment": "Name of the entity"
+                    },
+                    {
+                        "name": "status",
+                        "type": "varchar2(20 char)",
+                        "nullable": true,
+                        "comment": "Status of the entity"
+                    },
+                    {
+                        "name": "created_on",
+                        "type": "timestamp(6)",
+                        "default": "systimestamp",
+                        "comment": "Creation timestamp"
+                    },
+                    {
+                        "name": "modified_on",
+                        "type": "timestamp(6)",
+                        "default": "systimestamp",
+                        "comment": "Last update timestamp"
+                    }
+                ]
+            },
+            {
+                "name": "table4",
+                "referencingTo": [
+                    "table2"
+                ],
+                "referencedBy": [
+                    "table5"
+                ],
+                "fields": [
+                    {
+                        "name": "pk",
+                        "type": "number",
+                        "nullable": false,
+                        "isPrimaryKey": true,
+                        "comment": "Primary key"
+                    },
+                    {
+                        "name": "title",
+                        "type": "varchar2(200 char)",
+                        "nullable": false,
+                        "comment": "Title of the entity"
+                    },
+                    {
+                        "name": "table2_fk",
+                        "type": "number",
+                        "nullable": false,
+                        "isForeignKey": true,
+                        "foreignKey": {
+                            "referencedTable": "table2",
+                            "referencedColumn": "pk"
+                        },
+                        "comment": "Foreign key referencing table2"
+                    },
+                    {
+                        "name": "priority",
+                        "type": "number",
+                        "nullable": true,
+                        "comment": "Priority level"
+                    },
+                    {
+                        "name": "created_on",
+                        "type": "timestamp(6)",
+                        "default": "systimestamp",
+                        "comment": "Creation timestamp"
+                    },
+                    {
+                        "name": "modified_on",
+                        "type": "timestamp(6)",
+                        "default": "systimestamp",
+                        "comment": "Last update timestamp"
+                    }
+                ]
+            },
+            {
+                "name": "table5",
+                "referencingTo": [
+                    "table4"
+                ],
+                "referencedBy": [
+                    "table1"
+                ],
+                "fields": [
+                    {
+                        "name": "pk",
+                        "type": "number",
+                        "nullable": false,
+                        "isPrimaryKey": true,
+                        "comment": "Primary key"
+                    },
+                    {
+                        "name": "code",
+                        "type": "varchar2(50 char)",
+                        "nullable": false,
+                        "comment": "Unique code for the entity"
+                    },
+                    {
+                        "name": "table4_fk",
+                        "type": "number",
+                        "nullable": false,
+                        "isForeignKey": true,
+                        "foreignKey": {
+                            "referencedTable": "table4",
+                            "referencedColumn": "pk"
+                        },
+                        "comment": "Foreign key referencing table4"
+                    },
+                    {
+                        "name": "quantity",
+                        "type": "number",
+                        "nullable": true,
+                        "comment": "Quantity value"
+                    },
+                    {
+                        "name": "active",
+                        "type": "char(1)",
+                        "nullable": true,
+                        "default": "'Y'",
+                        "comment": "Active flag (Y/N)"
                     },
                     {
                         "name": "created_on",
