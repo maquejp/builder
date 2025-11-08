@@ -27,9 +27,9 @@ export class OracleService {
     // Process each table
     for (const table of sortedTables) {
       await this.createTable(table);
+      await this.createRelationships(table);
       await this.populateTable(table);
       await this.createTrigger(table);
-      await this.createRelationships(table);
       await this.createView(table);
       await this.createCrudPackage(table);
     }
@@ -40,11 +40,81 @@ export class OracleService {
   }
 
   private async createTable(table: DatabaseTable): Promise<void> {
-    // TODO: Create Tables (with fields, indexes, and relationships)
+    console.log(chalk.blue(`🔧 Oracle Service: Creating table ${table.name}`));
+
+    // Generate CREATE TABLE statement
+    const tableName = table.name.toUpperCase();
+    let script = `CREATE TABLE ${tableName} (\n`;
+
+    // Process each field
+    const fieldDefinitions = table.fields.map((field, index) => {
+      const fieldName = field.name.toUpperCase();
+      const fieldType = field.type.toUpperCase();
+
+      // Build field definition
+      let fieldDef = `    ${fieldName} ${fieldType}`;
+
+      // Add nullable constraint (only for NOT NULL, as NULL is default in Oracle)
+      if (field.nullable === false) {
+        fieldDef += " NOT NULL";
+      }
+
+      // Add default value if specified
+      if (field.default) {
+        // Handle special Oracle keywords and string literals
+        const defaultValue =
+          field.default.toLowerCase() === "systimestamp"
+            ? "SYSTIMESTAMP"
+            : field.default.startsWith("'") && field.default.endsWith("'")
+            ? field.default
+            : `'${field.default}'`;
+        fieldDef += ` DEFAULT ${defaultValue}`;
+      }
+
+      return fieldDef;
+    });
+
+    // Join field definitions
+    script += fieldDefinitions.join(",\n");
+    script += "\n);";
+
+    // Add comments for table and fields
+    const comments: string[] = [];
+
+    // Add field comments
+    table.fields.forEach((field) => {
+      if (field.comment) {
+        const fieldName = field.name.toUpperCase();
+        comments.push(
+          `COMMENT ON COLUMN ${tableName}.${fieldName} IS '${field.comment}';`
+        );
+      }
+    });
+
+    if (comments.length > 0) {
+      script += "\n\n-- Field comments\n";
+      script += comments.join("\n");
+    }
+
+    // Display the generated script
+    console.log(chalk.gray("Generated SQL:"));
+    console.log(chalk.white(script));
+    console.log("");
+
+    // TODO: Execute the script against the Oracle database
+    // For now, we're just generating and displaying the script
+    await this.delay(500);
+  }
+
+  // TODO: Create relationships: foreign keys, unique constraints... (for each table)
+
+  private async createRelationships(table: DatabaseTable): Promise<void> {
     console.log(
-      chalk.blue(`🔧 Oracle Service: Processing table ${table.name}`)
+      chalk.blue(
+        `🔧 Oracle Service: Creating relationships for table ${table.name}`
+      )
     );
-    // Placeholder for table creation logic
+    // Placeholder for relationship creation logic
     await this.delay(500);
   }
 
@@ -67,18 +137,6 @@ export class OracleService {
       chalk.blue(`🔧 Oracle Service: Creating trigger for table ${table.name}`)
     );
     // Placeholder for trigger creation logic
-    await this.delay(500);
-  }
-
-  // TODO: Create relationships: foreign keys, unique constraints... (for each table)
-
-  private async createRelationships(table: DatabaseTable): Promise<void> {
-    console.log(
-      chalk.blue(
-        `🔧 Oracle Service: Creating relationships for table ${table.name}`
-      )
-    );
-    // Placeholder for relationship creation logic
     await this.delay(500);
   }
 
