@@ -21,12 +21,11 @@ export class OracleService {
     // Display tables information
     DatabaseHelper.showTables(config.tables);
 
-    // Dummy message for now
-    console.log(
-      chalk.yellow("📝 This is a dummy Oracle service implementation")
-    );
-    console.log(chalk.gray(`   - Database type: ${config.type}`));
-    console.log(chalk.gray(`   - Number of tables: ${config.tables.length}`));
+    // TODO: Create Tables (with fields, indexes, triggers and relationships)
+    // NOTE: if a table is referenced by another, ensure the referenced table is created first
+    // TODO: Insert initial data (for each table)
+    // TODO: Create Views (for each table)
+    // TODO: Create CRUD Packages (for each table)
 
     // Simulate some processing time
     await this.delay(500);
