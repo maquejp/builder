@@ -7,5 +7,5 @@ export * from "./PackageService";
 export * from "./GeneratorService";
 export * from "./ProjectDefinitionService";
 export * from "./database";
-export * from "./BackendService";
-export * from "./FrontendService";
+export * from "./backend";
+export * from "./frontend";
