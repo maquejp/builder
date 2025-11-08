@@ -7,10 +7,12 @@
 import boxen from "boxen";
 import chalk from "chalk";
 import { ProjectDefinition } from "../interfaces";
-import { ProjectDefinitionService } from "./ProjectDefinitionService";
-import { DatabaseService } from "./DatabaseService";
-import { BackendService } from "./BackendService";
-import { FrontendService } from "./FrontendService";
+import {
+  ProjectDefinitionService,
+  DatabaseService,
+  BackendService,
+  FrontendService,
+} from "./";
 
 export class GeneratorService {
   private projectDefinitionService: ProjectDefinitionService;

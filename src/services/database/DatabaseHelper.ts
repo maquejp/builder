@@ -1,49 +1,18 @@
 /**
- * Database Service for handling database setup and operations
+ * Database helper utilities for common database operations
  * Author: Jean-Philippe Maquestiaux
  * License: EUPL-1.2
  */
 
 import boxen from "boxen";
 import chalk from "chalk";
+import { DatabaseConfiguration } from "../../interfaces";
 
-import { DatabaseConfiguration, TechnologyStack } from "../interfaces";
-
-export class DatabaseService {
-  /**
-   * Execute database setup
-   * @param stack Database configuration from stack
-   * @param config Database configuration from project definition
-   */
-  public async execute({
-    stack,
-    config,
-  }: {
-    stack: TechnologyStack["database"];
-    config?: DatabaseConfiguration;
-  }): Promise<void> {
-    console.log(`🔧 Setting up database...`);
-    if (config) {
-      switch (stack.type) {
-        case "Oracle":
-          console.log(`Using Oracle database ${stack.version}`);
-          this.showTables(config.tables);
-
-          break;
-        default:
-          throw new Error(`Unsupported database type: ${stack.type}`);
-      }
-
-      console.log(`✅ Database setup completed.`);
-    } else {
-      throw new Error("No database configuration provided.");
-    }
-  }
-
+export class DatabaseHelper {
   /**
    * Display tables information in a formatted table
    */
-  private showTables(tables: DatabaseConfiguration["tables"]): void {
+  public static showTables(tables: DatabaseConfiguration["tables"]): void {
     const tableData = tables.map((table, index) => ({
       no: index + 1,
       name: table.name,
@@ -128,12 +97,5 @@ export class DatabaseService {
         borderColor: "blue",
       })
     );
-  }
-
-  /**
-   * Utility method to simulate async work
-   */
-  private async delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
