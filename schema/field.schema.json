@@ -60,6 +60,27 @@
             "type": "string",
             "description": "Default value or expression for the field"
         },
+        "unique": {
+            "type": "boolean",
+            "description": "Whether this field should have a unique constraint",
+            "default": false
+        },
+        "allowedValues": {
+            "type": "array",
+            "description": "Array of allowed values for this field (creates a check constraint)",
+            "items": {
+                "oneOf": [
+                    {
+                        "type": "string"
+                    },
+                    {
+                        "type": "number"
+                    }
+                ]
+            },
+            "minItems": 1,
+            "uniqueItems": true
+        },
         "comment": {
             "type": "string",
             "description": "Comment or description for the field"

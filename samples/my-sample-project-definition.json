@@ -221,6 +221,7 @@
                         "name": "code",
                         "type": "varchar2(50 char)",
                         "nullable": false,
+                        "unique": true,
                         "comment": "Unique code for the entity"
                     },
                     {
