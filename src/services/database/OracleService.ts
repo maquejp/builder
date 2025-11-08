@@ -46,7 +46,7 @@ export class OracleService {
         order: i + 1, // Start from 1 instead of 0
       });
 
-      await this.createRelationships(table);
+      await this.createConstrains(table);
       await this.populateTable(table);
       await this.createTrigger(table);
       await this.createView(table);
@@ -122,7 +122,7 @@ export class OracleService {
 
   // TODO: Create relationships: foreign keys, unique constraints... (for each table)
 
-  private async createRelationships(table: DatabaseTable): Promise<void> {
+  private async createConstrains(table: DatabaseTable): Promise<void> {
     console.log(
       chalk.blue(
         `🔧 Oracle Service: Creating relationships for table ${table.name}`
