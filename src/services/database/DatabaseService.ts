@@ -12,13 +12,16 @@ export class DatabaseService {
    * Execute database setup
    * @param stack Database configuration from stack
    * @param config Database configuration from project definition
+   * @param projectFolder The project folder name from the project definition
    */
   public async execute({
     stack,
     config,
+    projectFolder,
   }: {
     stack: TechnologyStack["database"];
     config?: DatabaseConfiguration;
+    projectFolder: string;
   }): Promise<void> {
     console.log(`🔧 Setting up database...`);
     if (config) {
@@ -27,7 +30,7 @@ export class DatabaseService {
           console.log(`Using Oracle database ${stack.version}`);
           // Execute Oracle specific operations
           const oracleService = new OracleService();
-          await oracleService.execute(config);
+          await oracleService.execute(config, projectFolder);
           break;
         default:
           throw new Error(`Unsupported database type: ${stack.type}`);

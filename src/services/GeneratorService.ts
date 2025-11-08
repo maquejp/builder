@@ -52,6 +52,7 @@ export class GeneratorService {
       await this.databaseService.execute({
         stack: projectDefinition.stack.database,
         config: projectDefinition.database,
+        projectFolder: projectDefinition.projectFolder,
       });
     }
 

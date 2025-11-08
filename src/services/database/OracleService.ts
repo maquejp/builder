@@ -5,6 +5,8 @@
  */
 
 import chalk from "chalk";
+import * as fs from "fs-extra";
+import * as path from "path";
 import { DatabaseConfiguration, DatabaseTable } from "../../interfaces";
 import { DatabaseHelper } from "./DatabaseHelper";
 
@@ -12,8 +14,12 @@ export class OracleService {
   /**
    * Execute Oracle database operations
    * @param config Database configuration from project definition
+   * @param projectFolder The project folder name from the project definition
    */
-  public async execute(config: DatabaseConfiguration): Promise<void> {
+  public async execute(
+    config: DatabaseConfiguration,
+    projectFolder: string
+  ): Promise<void> {
     console.log(
       chalk.blue("🔧 Oracle Service: Starting Oracle database operations...")
     );
@@ -24,9 +30,30 @@ export class OracleService {
     // Sort tables based on dependencies (referenced tables first)
     const sortedTables = DatabaseHelper.sortTablesByDependencies(config.tables);
 
+    // Create output directory structure
+    const outputDir = path.join(
+      "generated",
+      projectFolder,
+      "database",
+      "tables"
+    );
+    await fs.ensureDir(outputDir);
+
+    console.log(
+      chalk.green(`📁 Created database tables directory: ${outputDir}`)
+    );
+
     // Process each table
     for (const table of sortedTables) {
-      await this.createTable(table);
+      const tableScript = await this.createTable(table);
+
+      // Save the table script to file
+      const scriptFileName = `${table.name.toLowerCase()}.sql`;
+      const scriptFilePath = path.join(outputDir, scriptFileName);
+
+      await fs.writeFile(scriptFilePath, tableScript, "utf8");
+      console.log(chalk.green(`💾 Saved table script: ${scriptFilePath}`));
+
       await this.createRelationships(table);
       await this.populateTable(table);
       await this.createTrigger(table);
@@ -39,7 +66,7 @@ export class OracleService {
     );
   }
 
-  private async createTable(table: DatabaseTable): Promise<void> {
+  private async createTable(table: DatabaseTable): Promise<string> {
     console.log(chalk.blue(`🔧 Oracle Service: Creating table ${table.name}`));
 
     // Generate CREATE TABLE statement
@@ -101,9 +128,9 @@ export class OracleService {
     console.log(chalk.white(script));
     console.log("");
 
-    // TODO: Execute the script against the Oracle database
-    // For now, we're just generating and displaying the script
     await this.delay(500);
+
+    return script;
   }
 
   // TODO: Create relationships: foreign keys, unique constraints... (for each table)
