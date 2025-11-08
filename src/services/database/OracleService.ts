@@ -5,10 +5,9 @@
  */
 
 import chalk from "chalk";
-import * as fs from "fs-extra";
-import * as path from "path";
 import { DatabaseConfiguration, DatabaseTable } from "../../interfaces";
 import { DatabaseHelper } from "./DatabaseHelper";
+import { FileHelper } from "../../helpers";
 
 export class OracleService {
   /**
@@ -30,29 +29,22 @@ export class OracleService {
     // Sort tables based on dependencies (referenced tables first)
     const sortedTables = DatabaseHelper.sortTablesByDependencies(config.tables);
 
-    // Create output directory structure
-    const outputDir = path.join(
-      "generated",
-      projectFolder,
-      "database",
-      "tables"
-    );
-    await fs.ensureDir(outputDir);
-
-    console.log(
-      chalk.green(`📁 Created database tables directory: ${outputDir}`)
-    );
+    // Ensure the tables directory exists
+    await FileHelper.ensureDatabaseDir(projectFolder, "tables");
 
     // Process each table
-    for (const table of sortedTables) {
+    for (let i = 0; i < sortedTables.length; i++) {
+      const table = sortedTables[i];
       const tableScript = await this.createTable(table);
 
-      // Save the table script to file
-      const scriptFileName = `${table.name.toLowerCase()}.sql`;
-      const scriptFilePath = path.join(outputDir, scriptFileName);
-
-      await fs.writeFile(scriptFilePath, tableScript, "utf8");
-      console.log(chalk.green(`💾 Saved table script: ${scriptFilePath}`));
+      // Save the table script to file using FileHelper with order number
+      await FileHelper.saveDatabaseScript({
+        projectFolder,
+        scriptType: "tables",
+        fileName: table.name,
+        content: tableScript,
+        order: i + 1, // Start from 1 instead of 0
+      });
 
       await this.createRelationships(table);
       await this.populateTable(table);
@@ -122,11 +114,6 @@ export class OracleService {
       script += "\n\n-- Field comments\n";
       script += comments.join("\n");
     }
-
-    // Display the generated script
-    console.log(chalk.gray("Generated SQL:"));
-    console.log(chalk.white(script));
-    console.log("");
 
     await this.delay(500);
 
