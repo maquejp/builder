@@ -33,7 +33,7 @@ export class DatabaseService {
           throw new Error(`Unsupported database type: ${stack.type}`);
       }
 
-      console.log(`✅ Database setup completed.`);
+      console.log(`✅ Database scripts creation completed.`);
     } else {
       throw new Error("No database configuration provided.");
     }
