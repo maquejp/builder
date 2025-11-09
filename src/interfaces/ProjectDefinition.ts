@@ -25,6 +25,8 @@ export interface DatabaseField {
     referencedColumn: string;
   };
   default?: string;
+  unique?: boolean;
+  allowedValues?: (string | number)[];
   comment?: string;
 }
 
