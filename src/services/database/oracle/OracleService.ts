@@ -19,6 +19,7 @@ import {
   OracleConstraintGenerator,
   OracleTriggerGenerator,
   OracleCommentGenerator,
+  OracleViewGenerator,
 } from "./generators";
 
 export class OracleService {
@@ -85,7 +86,7 @@ export class OracleService {
         order: i + 1, // Start from 1 instead of 0
       });
 
-      await this.createView(table);
+      await this.createView(table, projectFolder, i + 1);
 
       await this.createCrudPackage(table);
 
@@ -161,12 +162,38 @@ export class OracleService {
     await this.delay(500);
   }
 
-  // TODO: Create Views (for each table)
-  private async createView(table: DatabaseTable): Promise<void> {
+  /**
+   * Create Oracle view script for the given table
+   */
+  private async createView(
+    table: DatabaseTable,
+    projectFolder: string,
+    order: number
+  ): Promise<void> {
     console.log(
       chalk.blue(`🔧 Oracle Service: Creating view for table ${table.name}`)
     );
-    // Placeholder for view creation logic
+
+    // Create a view generator instance
+    const viewGenerator = new OracleViewGenerator(
+      this.projectMetadata || undefined
+    );
+
+    // Generate the complete view script
+    const viewScript = viewGenerator.generateViewScript(table);
+
+    // Ensure the views directory exists
+    await FileHelper.ensureDatabaseDir(projectFolder, "views");
+
+    // Save the view script to file with the same order as the table
+    await FileHelper.saveDatabaseScript({
+      projectFolder,
+      scriptType: "views",
+      fileName: `${table.name.toLowerCase()}_v`,
+      content: viewScript,
+      order: order,
+    });
+
     await this.delay(500);
   }
 
