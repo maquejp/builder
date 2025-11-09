@@ -4,39 +4,9 @@
  * License: EUPL-1.2
  */
 
-// Database type enumeration
-export enum DatabaseType {
-  ORACLE = "Oracle",
-  POSTGRESQL = "PostgreSQL",
-  MYSQL = "MySQL",
-  SQLITE = "SQLite",
-  MONGODB = "MongoDB",
-}
-
-// Database field definition interface
-export interface DatabaseField {
-  name: string;
-  type: string;
-  nullable?: boolean;
-  isPrimaryKey?: boolean;
-  isForeignKey?: boolean;
-  foreignKey?: {
-    referencedTable: string;
-    referencedColumn: string;
-  };
-  default?: string;
-  unique?: boolean;
-  allowedValues?: (string | number)[];
-  comment?: string;
-}
-
-// Database table definition interface
-export interface DatabaseTable {
-  name: string;
-  referencingTo?: string[];
-  referencedBy?: string[];
-  fields: DatabaseField[];
-}
+import { DatabaseType, DatabaseConfiguration } from "./database";
+import { BackendConfiguration } from "./backend";
+import { FrontendConfiguration } from "./frontend";
 
 // Technology stack definition interface
 export interface TechnologyStack {
@@ -52,24 +22,6 @@ export interface TechnologyStack {
     type: string;
     framework: string;
   };
-}
-
-// Database configuration interface
-export interface DatabaseConfiguration {
-  type: DatabaseType;
-  tables: DatabaseTable[];
-}
-
-// Backend configuration interface
-export interface BackendConfiguration {
-  type: string;
-  framework: string;
-}
-
-// Frontend configuration interface
-export interface FrontendConfiguration {
-  type: string;
-  framework: string;
 }
 
 // Main project definition interface
