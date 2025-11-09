@@ -85,9 +85,11 @@ export class OracleService {
         order: i + 1, // Start from 1 instead of 0
       });
 
-      await this.populateTable(table);
       await this.createView(table);
+
       await this.createCrudPackage(table);
+
+      await this.populateTable(table);
     }
 
     console.log(
