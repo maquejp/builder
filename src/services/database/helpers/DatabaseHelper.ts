@@ -6,7 +6,11 @@
 
 import boxen from "boxen";
 import chalk from "chalk";
-import { DatabaseConfiguration } from "../../../interfaces";
+import {
+  DatabaseConfiguration,
+  ScriptFormatOptions,
+  ProjectMetadata,
+} from "../../../interfaces";
 
 export class DatabaseHelper {
   /**
@@ -102,6 +106,23 @@ export class DatabaseHelper {
   }
 
   /**
+   * Generate section header with consistent formatting for SQL scripts
+   * This is database-agnostic and works with any SQL database that supports -- comments
+   */
+  public static generateSectionHeader(
+    title: string,
+    description?: string
+  ): string {
+    const separator = "-- " + "=".repeat(60);
+    let header = `${separator}\n-- ${title.toUpperCase()}`;
+    if (description) {
+      header += `\n-- ${description}`;
+    }
+    header += `\n${separator}`;
+    return header;
+  }
+
+  /**
    * Display tables information in a formatted table
    */
   public static showTables(tables: DatabaseConfiguration["tables"]): void {
@@ -189,5 +210,47 @@ export class DatabaseHelper {
         borderColor: "blue",
       })
     );
+  }
+
+  /**
+   * Generate generic database script header
+   * Database-agnostic method that can be used for any database type
+   */
+  public static generateScriptHeader(
+    tableName: string,
+    databaseType: string,
+    formatOptions: ScriptFormatOptions,
+    projectMetadata?: ProjectMetadata | null
+  ): string {
+    const upperTableName = tableName.toUpperCase();
+    const upperDatabaseType = databaseType.toUpperCase();
+    const timestamp = formatOptions.includeTimestamps
+      ? new Date().toISOString().replace("T", " ").substring(0, 19)
+      : "[timestamp]";
+
+    // Use author from project metadata if available, otherwise use default
+    const author = projectMetadata?.author || "Jean-Philippe Maquestiaux";
+    const license = projectMetadata?.license || "EUPL-1.2";
+
+    return `-- ============================================================
+-- STACKCRAFT ${upperDatabaseType} DATABASE SCRIPT
+-- ============================================================
+-- Table: ${upperTableName}
+-- Generated: ${timestamp}
+-- Author: ${author}
+-- License: ${license}
+-- Description: Auto-generated table definition with constraints and triggers
+-- ============================================================`;
+  }
+
+  /**
+   * Generate generic database script footer
+   * Database-agnostic method that can be used for any database type
+   */
+  public static generateScriptFooter(tableName: string): string {
+    const upperTableName = tableName.toUpperCase();
+    return `-- ============================================================
+-- END OF SCRIPT FOR TABLE: ${upperTableName}
+-- ============================================================`;
   }
 }

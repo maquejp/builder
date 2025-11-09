@@ -103,8 +103,9 @@ export class OracleService {
    * Generate script header with metadata
    */
   private generateScriptHeader(table: DatabaseTable): string {
-    return OracleHelper.generateScriptHeader(
+    return DatabaseHelper.generateScriptHeader(
       table.name,
+      "ORACLE",
       this.formatOptions,
       this.projectMetadata
     );
@@ -115,7 +116,7 @@ export class OracleService {
    */
   private generateTableDefinition(table: DatabaseTable): string {
     const tableName = table.name.toUpperCase();
-    const sectionHeader = OracleHelper.generateSectionHeader(
+    const sectionHeader = DatabaseHelper.generateSectionHeader(
       "TABLE DEFINITION",
       `Creating table structure for ${tableName}`
     );
@@ -142,7 +143,7 @@ ${tableSQL}`;
       return null;
     }
 
-    const sectionHeader = OracleHelper.generateSectionHeader(
+    const sectionHeader = DatabaseHelper.generateSectionHeader(
       "TABLE CONSTRAINTS",
       "Primary keys, foreign keys, unique constraints, and check constraints"
     );
@@ -161,11 +162,10 @@ ${constraintsScript}`;
       return null;
     }
 
-    const sectionHeader = OracleHelper.generateSectionHeader(
+    const sectionHeader = DatabaseHelper.generateSectionHeader(
       "TABLE TRIGGERS",
-      "Auto-generated triggers for field updates"
+      "Auto-increment triggers and custom triggers"
     );
-
     return `${sectionHeader}
 
 ${triggersScript}`;
@@ -192,7 +192,7 @@ ${triggersScript}`;
       return null;
     }
 
-    const sectionHeader = OracleHelper.generateSectionHeader(
+    const sectionHeader = DatabaseHelper.generateSectionHeader(
       "DOCUMENTATION & COMMENTS",
       "Field descriptions and documentation"
     );
@@ -206,7 +206,7 @@ ${comments.join("\n")}`;
    * Generate script footer
    */
   private generateScriptFooter(table: DatabaseTable): string {
-    return OracleHelper.generateScriptFooter(table.name);
+    return DatabaseHelper.generateScriptFooter(table.name);
   }
 
   /**

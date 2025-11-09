@@ -74,60 +74,6 @@ export class OracleHelper {
   }
 
   /**
-   * Generate section header with consistent formatting for Oracle scripts
-   */
-  public static generateSectionHeader(
-    title: string,
-    description?: string
-  ): string {
-    const separator = "-- " + "=".repeat(60);
-    let header = `${separator}\n-- ${title.toUpperCase()}`;
-    if (description) {
-      header += `\n-- ${description}`;
-    }
-    header += `\n${separator}`;
-    return header;
-  }
-
-  /**
-   * Generate script header with Oracle-specific metadata
-   */
-  public static generateScriptHeader(
-    tableName: string,
-    formatOptions: ScriptFormatOptions,
-    projectMetadata?: ProjectMetadata | null
-  ): string {
-    const upperTableName = tableName.toUpperCase();
-    const timestamp = formatOptions.includeTimestamps
-      ? new Date().toISOString().replace("T", " ").substring(0, 19)
-      : "[timestamp]";
-
-    // Use author from project metadata if available, otherwise use default
-    const author = projectMetadata?.author || "Jean-Philippe Maquestiaux";
-    const license = projectMetadata?.license || "EUPL-1.2";
-
-    return `-- ============================================================
--- STACKCRAFT ORACLE DATABASE SCRIPT
--- ============================================================
--- Table: ${upperTableName}
--- Generated: ${timestamp}
--- Author: ${author}
--- License: ${license}
--- Description: Auto-generated table definition with constraints and triggers
--- ============================================================`;
-  }
-
-  /**
-   * Generate script footer for Oracle scripts
-   */
-  public static generateScriptFooter(tableName: string): string {
-    const upperTableName = tableName.toUpperCase();
-    return `-- ============================================================
--- END OF SCRIPT FOR TABLE: ${upperTableName}
--- ============================================================`;
-  }
-
-  /**
    * Validate Oracle script readability and structure
    */
   public static validateScriptReadability(script: string): void {
