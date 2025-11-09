@@ -142,7 +142,7 @@ export class OracleService {
       const pkColumns = primaryKeyFields
         .map((field) => field.name.toUpperCase())
         .join(", ");
-      const pkConstraintName = `PK_${tableName}`;
+      const pkConstraintName = `${tableName}_PK`;
       constraints.push(
         `-- Primary Key Constraint\nALTER TABLE ${tableName} ADD CONSTRAINT ${pkConstraintName} PRIMARY KEY (${pkColumns});`
       );
@@ -156,7 +156,7 @@ export class OracleService {
       const fieldName = field.name.toUpperCase();
       const referencedTable = field.foreignKey!.referencedTable.toUpperCase();
       const referencedColumn = field.foreignKey!.referencedColumn.toUpperCase();
-      const fkConstraintName = `FK_${tableName}_${fieldName}`;
+      const fkConstraintName = `${tableName}_${referencedTable}_FK`;
 
       constraints.push(
         `-- Foreign Key Constraint for ${fieldName}\nALTER TABLE ${tableName} ADD CONSTRAINT ${fkConstraintName} FOREIGN KEY (${fieldName}) REFERENCES ${referencedTable}(${referencedColumn});`
@@ -167,7 +167,7 @@ export class OracleService {
     const uniqueFields = table.fields.filter((field) => field.unique);
     for (const field of uniqueFields) {
       const fieldName = field.name.toUpperCase();
-      const uniqueConstraintName = `UK_${tableName}_${fieldName}`;
+      const uniqueConstraintName = `${tableName}_${fieldName}_UK`;
       constraints.push(
         `-- Unique Constraint for ${fieldName}\nALTER TABLE ${tableName} ADD CONSTRAINT ${uniqueConstraintName} UNIQUE (${fieldName});`
       );
@@ -179,7 +179,7 @@ export class OracleService {
     );
     for (const field of fieldsWithAllowedValues) {
       const fieldName = field.name.toUpperCase();
-      const checkConstraintName = `CK_${tableName}_${fieldName}`;
+      const checkConstraintName = `${tableName}_${fieldName}_CK`;
 
       // Build the check condition with proper quoting for string values
       const allowedValues = field
