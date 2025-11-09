@@ -20,6 +20,7 @@ import {
   OracleTriggerGenerator,
   OracleCommentGenerator,
   OracleViewGenerator,
+  OracleCrudGenerator,
 } from "./generators";
 
 export class OracleService {
@@ -88,7 +89,7 @@ export class OracleService {
 
       await this.createView(table, projectFolder, i + 1);
 
-      await this.createCrudPackage(table);
+      await this.createCrudPackage(table, projectFolder, i + 1);
 
       await this.populateTable(table);
     }
@@ -197,14 +198,48 @@ export class OracleService {
     await this.delay(500);
   }
 
-  // TODO: Create CRUD Packages (for each table)
-  private async createCrudPackage(table: DatabaseTable): Promise<void> {
+  /**
+   * Create CRUD package for the given table
+   */
+  private async createCrudPackage(
+    table: DatabaseTable,
+    projectFolder: string,
+    order: number
+  ): Promise<void> {
     console.log(
       chalk.blue(
         `🔧 Oracle Service: Creating CRUD package for table ${table.name}`
       )
     );
-    // Placeholder for CRUD package creation logic
+
+    // Create a CRUD generator instance
+    const crudGenerator = new OracleCrudGenerator(
+      this.projectMetadata || undefined
+    );
+
+    // Generate the complete CRUD package script
+    const crudScript = crudGenerator.generate(table);
+
+    if (crudScript) {
+      // Ensure the packages directory exists
+      await FileHelper.ensureDatabaseDir(projectFolder, "packages");
+
+      // Save the CRUD package script to file with the same order as the table
+      await FileHelper.saveDatabaseScript({
+        projectFolder,
+        scriptType: "packages",
+        fileName: `p_${table.name.toLowerCase()}`,
+        content: crudScript,
+        order: order,
+      });
+    } else {
+      console.log(
+        chalk.yellow(
+          `⚠️ Oracle Service: CRUD package not generated for table ${table.name} (no primary key found)`
+        )
+      );
+    }
+
     await this.delay(500);
   }
 
