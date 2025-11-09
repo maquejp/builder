@@ -24,6 +24,12 @@ export interface TechnologyStack {
   };
 }
 
+// Project metadata interface for services that need minimal project info
+export interface ProjectMetadata {
+  author: string;
+  license: string;
+}
+
 // Main project definition interface
 export interface ProjectDefinition {
   name: string;

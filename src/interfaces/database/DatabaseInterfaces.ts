@@ -55,3 +55,12 @@ export interface DatabaseConfiguration {
   type: DatabaseType;
   tables: DatabaseTable[];
 }
+
+// Script formatting options for database script generation
+export interface ScriptFormatOptions {
+  includeHeaders: boolean;
+  sectionSeparators: boolean;
+  indentSize: number;
+  includeTimestamps: boolean;
+  includeLineNumbers: boolean;
+}

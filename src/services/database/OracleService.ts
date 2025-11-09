@@ -9,50 +9,41 @@ import {
   DatabaseConfiguration,
   DatabaseTable,
   DatabaseField,
-  ProjectDefinition,
+  ProjectMetadata,
+  ScriptFormatOptions,
 } from "../../interfaces";
 import { DatabaseHelper } from "./DatabaseHelper";
+import { OracleHelper } from "./OracleHelper";
 import { FileHelper } from "../../helpers";
 
-interface ScriptFormatOptions {
-  includeHeaders: boolean;
-  sectionSeparators: boolean;
-  indentSize: number;
-  includeTimestamps: boolean;
-  includeLineNumbers: boolean;
-}
-
 export class OracleService {
-  private formatOptions: ScriptFormatOptions = {
-    includeHeaders: true,
-    sectionSeparators: true,
-    indentSize: 4,
-    includeTimestamps: true,
-    includeLineNumbers: false,
-  };
+  private formatOptions: ScriptFormatOptions;
+  private projectMetadata: ProjectMetadata | null = null;
 
-  private projectDefinition: ProjectDefinition | null = null;
+  constructor() {
+    this.formatOptions = OracleHelper.getFormatOptions();
+  }
 
   /**
    * Configure script formatting options
    */
   public setFormatOptions(options: Partial<ScriptFormatOptions>): void {
-    this.formatOptions = { ...this.formatOptions, ...options };
+    this.formatOptions = OracleHelper.getFormatOptions(options);
   }
 
   /**
    * Execute Oracle database operations
    * @param config Database configuration from project definition
    * @param projectFolder The project folder name from the project definition
-   * @param projectDefinition The full project definition (optional for backward compatibility)
+   * @param metadata Project metadata (author, license) for script generation
    */
   public async execute(
     config: DatabaseConfiguration,
     projectFolder: string,
-    projectDefinition?: ProjectDefinition
+    metadata?: ProjectMetadata
   ): Promise<void> {
-    // Store project definition for use in script generation
-    this.projectDefinition = projectDefinition || null;
+    // Store project metadata for use in script generation
+    this.projectMetadata = metadata || null;
     console.log(
       chalk.blue("🔧 Oracle Service: Starting Oracle database operations...")
     );
@@ -110,7 +101,7 @@ export class OracleService {
     const completeScript = sections.join("\n\n");
 
     // Validate script readability
-    this.validateScriptReadability(completeScript);
+    OracleHelper.validateScriptReadability(completeScript);
 
     await this.delay(500);
     return completeScript;
@@ -120,24 +111,11 @@ export class OracleService {
    * Generate script header with metadata
    */
   private generateScriptHeader(table: DatabaseTable): string {
-    const tableName = table.name.toUpperCase();
-    const timestamp = this.formatOptions.includeTimestamps
-      ? new Date().toISOString().replace("T", " ").substring(0, 19)
-      : "[timestamp]";
-
-    // Use author from project definition if available, otherwise use default
-    const author = this.projectDefinition?.author || "Joe Doe";
-    const license = this.projectDefinition?.license || "MIT";
-
-    return `-- ============================================================
--- STACKCRAFT ORACLE DATABASE SCRIPT
--- ============================================================
--- Table: ${tableName}
--- Generated: ${timestamp}
--- Author: ${author}
--- License: ${license}
--- Description: Auto-generated table definition with constraints and triggers
--- ============================================================`;
+    return OracleHelper.generateScriptHeader(
+      table.name,
+      this.formatOptions,
+      this.projectMetadata
+    );
   }
 
   /**
@@ -145,13 +123,13 @@ export class OracleService {
    */
   private generateTableDefinition(table: DatabaseTable): string {
     const tableName = table.name.toUpperCase();
-    const sectionHeader = this.generateSectionHeader(
+    const sectionHeader = OracleHelper.generateSectionHeader(
       "TABLE DEFINITION",
       `Creating table structure for ${tableName}`
     );
 
     const fieldDefinitions = table.fields.map((field) => {
-      return this.formatFieldDefinition(field);
+      return OracleHelper.formatFieldDefinition(field);
     });
 
     const tableSQL = `CREATE TABLE ${tableName} (
@@ -164,63 +142,6 @@ ${tableSQL}`;
   }
 
   /**
-   * Format individual field definition
-   */
-  private formatFieldDefinition(field: DatabaseField): string {
-    const fieldName = field.name.toUpperCase();
-    const fieldType = field.type.toUpperCase();
-
-    let fieldDef = `${fieldName.padEnd(30)} ${fieldType}`;
-
-    // Add nullable constraint
-    if (field.nullable === false) {
-      fieldDef += " NOT NULL";
-    }
-
-    // Add default value
-    if (field.default) {
-      const defaultValue = this.formatDefaultValue(field.default);
-      fieldDef += ` DEFAULT ${defaultValue}`;
-    }
-
-    return fieldDef;
-  }
-
-  /**
-   * Format default values properly for Oracle
-   */
-  private formatDefaultValue(defaultValue: string): string {
-    const lowerDefault = defaultValue.toLowerCase();
-
-    if (lowerDefault === "systimestamp") {
-      return "SYSTIMESTAMP";
-    } else if (lowerDefault === "sysdate") {
-      return "SYSDATE";
-    } else if (lowerDefault === "user") {
-      return "USER";
-    } else if (defaultValue.startsWith("'") && defaultValue.endsWith("'")) {
-      return defaultValue;
-    } else if (/^\d+(\.\d+)?$/.test(defaultValue)) {
-      return defaultValue;
-    } else {
-      return `'${defaultValue}'`;
-    }
-  }
-
-  /**
-   * Generate section header with consistent formatting
-   */
-  private generateSectionHeader(title: string, description?: string): string {
-    const separator = "-- " + "=".repeat(60);
-    let header = `${separator}\n-- ${title.toUpperCase()}`;
-    if (description) {
-      header += `\n-- ${description}`;
-    }
-    header += `\n${separator}`;
-    return header;
-  }
-
-  /**
    * Generate constraints section
    */
   private generateConstraints(table: DatabaseTable): string | null {
@@ -229,7 +150,7 @@ ${tableSQL}`;
       return null;
     }
 
-    const sectionHeader = this.generateSectionHeader(
+    const sectionHeader = OracleHelper.generateSectionHeader(
       "TABLE CONSTRAINTS",
       "Primary keys, foreign keys, unique constraints, and check constraints"
     );
@@ -248,7 +169,7 @@ ${constraintsScript}`;
       return null;
     }
 
-    const sectionHeader = this.generateSectionHeader(
+    const sectionHeader = OracleHelper.generateSectionHeader(
       "TABLE TRIGGERS",
       "Auto-generated triggers for field updates"
     );
@@ -279,7 +200,7 @@ ${triggersScript}`;
       return null;
     }
 
-    const sectionHeader = this.generateSectionHeader(
+    const sectionHeader = OracleHelper.generateSectionHeader(
       "DOCUMENTATION & COMMENTS",
       "Field descriptions and documentation"
     );
@@ -293,10 +214,7 @@ ${comments.join("\n")}`;
    * Generate script footer
    */
   private generateScriptFooter(table: DatabaseTable): string {
-    const tableName = table.name.toUpperCase();
-    return `-- ============================================================
--- END OF SCRIPT FOR TABLE: ${tableName}
--- ============================================================`;
+    return OracleHelper.generateScriptFooter(table.name);
   }
 
   /**
@@ -312,7 +230,10 @@ ${comments.join("\n")}`;
       const pkColumns = primaryKeyFields
         .map((field) => field.name.toUpperCase())
         .join(", ");
-      const pkConstraintName = `${tableName}_PK`;
+      const pkConstraintName = OracleHelper.generateConstraintName(
+        tableName,
+        "PK"
+      );
 
       constraints.push(`-- Primary Key Constraint
 ALTER TABLE ${tableName} 
@@ -328,7 +249,12 @@ ALTER TABLE ${tableName}
       const fieldName = field.name.toUpperCase();
       const referencedTable = field.foreignKey!.referencedTable.toUpperCase();
       const referencedColumn = field.foreignKey!.referencedColumn.toUpperCase();
-      const fkConstraintName = `${tableName}_${referencedTable}_FK`;
+      const fkConstraintName = OracleHelper.generateConstraintName(
+        tableName,
+        "FK",
+        fieldName,
+        referencedTable
+      );
 
       constraints.push(`-- Foreign Key Constraint for ${fieldName}
 ALTER TABLE ${tableName} 
@@ -341,7 +267,11 @@ ALTER TABLE ${tableName}
     const uniqueFields = table.fields.filter((field) => field.unique);
     for (const field of uniqueFields) {
       const fieldName = field.name.toUpperCase();
-      const uniqueConstraintName = `${tableName}_${fieldName}_UK`;
+      const uniqueConstraintName = OracleHelper.generateConstraintName(
+        tableName,
+        "UK",
+        fieldName
+      );
 
       constraints.push(`-- Unique Constraint for ${fieldName}
 ALTER TABLE ${tableName} 
@@ -355,7 +285,11 @@ ALTER TABLE ${tableName}
     );
     for (const field of fieldsWithAllowedValues) {
       const fieldName = field.name.toUpperCase();
-      const checkConstraintName = `${tableName}_${fieldName}_CK`;
+      const checkConstraintName = OracleHelper.generateConstraintName(
+        tableName,
+        "CK",
+        fieldName
+      );
 
       // Build the check condition with proper quoting for string values
       const allowedValues = field
@@ -446,13 +380,17 @@ ALTER TABLE ${tableName}
       }
 
       // Generate trigger name
-      const conditionSuffix = condition ? "_COND" : "";
-      const triggerName = `${tableName}_${triggerAbbrev}${conditionSuffix}_TRG`;
+      const triggerName = OracleHelper.generateTriggerName(
+        tableName,
+        timing as "BEFORE" | "AFTER",
+        operations,
+        condition
+      );
 
-      // Use author and license from project definition if available
+      // Use author and license from project metadata if available
       const author =
-        this.projectDefinition?.author || "Jean-Philippe Maquestiaux";
-      const license = this.projectDefinition?.license || "EUPL-1.2";
+        this.projectMetadata?.author || "Jean-Philippe Maquestiaux";
+      const license = this.projectMetadata?.license || "EUPL-1.2";
 
       let script = `-- Trigger: ${triggerName}\n`;
       script += `-- Generated by Stackcraft Oracle Service\n`;
@@ -546,46 +484,6 @@ ALTER TABLE ${tableName}
     );
     // Placeholder for CRUD package creation logic
     await this.delay(500);
-  }
-
-  /**
-   * Validate script readability and structure
-   */
-  private validateScriptReadability(script: string): void {
-    const lines = script.split("\n");
-
-    // Check for proper section headers
-    const sectionHeaders = lines.filter(
-      (line) => line.includes("=".repeat(60)) && line.startsWith("--")
-    );
-
-    if (sectionHeaders.length < 2) {
-      console.warn(
-        chalk.yellow("⚠️  Script may lack proper section organization")
-      );
-    }
-
-    // Check for consistent indentation
-    const indentedLines = lines.filter(
-      (line) => line.startsWith("    ") || line.startsWith("\t")
-    );
-
-    if (
-      indentedLines.length === 0 &&
-      lines.some((line) => line.includes("CREATE"))
-    ) {
-      console.warn(chalk.yellow("⚠️  Script may lack proper indentation"));
-    }
-
-    // Validate script structure
-    const hasHeader = script.includes("STACKCRAFT ORACLE DATABASE SCRIPT");
-    const hasFooter = script.includes("END OF SCRIPT FOR TABLE:");
-
-    if (!hasHeader || !hasFooter) {
-      console.warn(chalk.yellow("⚠️  Script may be missing header or footer"));
-    }
-
-    console.log(chalk.green("✅ Script readability validation completed"));
   }
 
   /**
