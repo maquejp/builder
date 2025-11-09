@@ -84,6 +84,43 @@
         "comment": {
             "type": "string",
             "description": "Comment or description for the field"
+        },
+        "trigger": {
+            "type": "object",
+            "description": "Trigger configuration for this field",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "description": "Whether to generate a trigger for this field",
+                    "default": false
+                },
+                "event": {
+                    "type": "string",
+                    "description": "Trigger event type",
+                    "enum": [
+                        "before_insert",
+                        "before_update",
+                        "before_insert_update",
+                        "after_insert",
+                        "after_update",
+                        "after_insert_update"
+                    ],
+                    "default": "before_update"
+                },
+                "action": {
+                    "type": "string",
+                    "description": "Action to perform in the trigger (e.g., 'systimestamp', 'user', custom PL/SQL)",
+                    "default": "systimestamp"
+                },
+                "condition": {
+                    "type": "string",
+                    "description": "Optional condition for when the trigger should fire (e.g., 'WHEN (OLD.status != NEW.status)')"
+                }
+            },
+            "required": [
+                "enabled"
+            ],
+            "additionalProperties": false
         }
     },
     "additionalProperties": false,

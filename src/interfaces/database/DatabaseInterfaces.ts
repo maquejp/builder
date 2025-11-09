@@ -28,6 +28,18 @@ export interface DatabaseField {
   unique?: boolean;
   allowedValues?: (string | number)[];
   comment?: string;
+  trigger?: {
+    enabled: boolean;
+    event?:
+      | "before_insert"
+      | "before_update"
+      | "before_insert_update"
+      | "after_insert"
+      | "after_update"
+      | "after_insert_update";
+    action?: string;
+    condition?: string;
+  };
 }
 
 // Database table definition interface
