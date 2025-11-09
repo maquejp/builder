@@ -406,12 +406,19 @@ ${nonPkFields
   .join(",\n")}
       );
 
+      -- Generate new primary key
+      select nvl(max(${primaryKeyField.name.toLowerCase()}), 0) + 1
+        into l_${primaryKeyField.name.toLowerCase()}
+        from ${tableName};
+
       -- Insert new record
       insert into ${tableName} (
+             ${primaryKeyField.name.toLowerCase()},
              ${insertFields}
       ) values (
+             l_${primaryKeyField.name.toLowerCase()},
              ${insertValues}
-      ) returning ${primaryKeyField.name.toLowerCase()} into l_${primaryKeyField.name.toLowerCase()};
+      );
 
       -- Get created record data
       l_${tableName}_data := get_record_object(l_${primaryKeyField.name.toLowerCase()});
