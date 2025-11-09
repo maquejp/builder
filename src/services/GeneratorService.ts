@@ -53,6 +53,7 @@ export class GeneratorService {
         stack: projectDefinition.stack.database,
         config: projectDefinition.database,
         projectFolder: projectDefinition.projectFolder,
+        projectDefinition: projectDefinition,
       });
     }
 

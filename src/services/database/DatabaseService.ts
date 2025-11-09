@@ -4,7 +4,11 @@
  * License: EUPL-1.2
  */
 
-import { DatabaseConfiguration, TechnologyStack } from "../../interfaces";
+import {
+  DatabaseConfiguration,
+  TechnologyStack,
+  ProjectDefinition,
+} from "../../interfaces";
 import { OracleService } from "./OracleService";
 
 export class DatabaseService {
@@ -13,15 +17,18 @@ export class DatabaseService {
    * @param stack Database configuration from stack
    * @param config Database configuration from project definition
    * @param projectFolder The project folder name from the project definition
+   * @param projectDefinition The full project definition (optional for backward compatibility)
    */
   public async execute({
     stack,
     config,
     projectFolder,
+    projectDefinition,
   }: {
     stack: TechnologyStack["database"];
     config?: DatabaseConfiguration;
     projectFolder: string;
+    projectDefinition?: ProjectDefinition;
   }): Promise<void> {
     console.log(`🔧 Setting up database...`);
     if (config) {
@@ -30,7 +37,7 @@ export class DatabaseService {
           console.log(`Using Oracle database ${stack.version}`);
           // Execute Oracle specific operations
           const oracleService = new OracleService();
-          await oracleService.execute(config, projectFolder);
+          await oracleService.execute(config, projectFolder, projectDefinition);
           break;
         default:
           throw new Error(`Unsupported database type: ${stack.type}`);

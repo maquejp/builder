@@ -2,7 +2,7 @@
     "name": "My sample project",
     "version": "1.0.0",
     "description": "A sample project to demonstrate the Stackcraft tool",
-    "author": "Your Name",
+    "author": "JOJOP <jojop@example.com>",
     "license": "EUPL-1.2",
     "projectFolder": "my-sample-project",
     "stack": {
