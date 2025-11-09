@@ -343,12 +343,15 @@ ${nonPkFields
       l_count number;
       l_record_object json_object_t;
       
+      -- Individual variables for ${tableName} fields
 ${table.fields
   .map(
     (field) =>
       `      l_${field.name.toLowerCase()} ${tableName}.${field.name.toLowerCase()}%type;`
   )
   .join("\n")}
+
+${this.generateRelatedTableVariables(table)}
    begin
       select count(*)
         into l_count
@@ -359,24 +362,15 @@ ${table.fields
          return null;
       end if;
       
-      -- Fetch ${tableName} data
-      select ${table.fields
-        .map((field) => field.name.toLowerCase())
-        .join(",\n             ")}
-        into ${table.fields
-          .map((field) => `l_${field.name.toLowerCase()}`)
-          .join(",\n             ")}
-        from ${tableName}
-       where ${primaryKeyField.name.toLowerCase()} = p_${primaryKeyField.name.toLowerCase()};
+      -- Fetch ${tableName} data with related table information
+      select ${this.generateSelectFieldsWithJoins(table, tableName)}
+        into ${this.generateIntoFieldsWithJoins(table)}
+        from ${tableName}${this.generateLeftJoins(table, tableName)}
+       where ${tableName}.${primaryKeyField.name.toLowerCase()} = p_${primaryKeyField.name.toLowerCase()};
       
-      -- Create JSON object
+      -- Create JSON object using individual variables
       l_record_object := json_object_t();
-${table.fields
-  .map((field) => {
-    const fieldName = field.name.toLowerCase();
-    return `      l_record_object.put('${fieldName}', l_${fieldName});`;
-  })
-  .join("\n")}
+${this.generateJsonObjectPuts(table)}
       
       return l_record_object;
    end get_record_object;
@@ -800,5 +794,173 @@ end ${packageName};
             raise_application_error(-20002, 'Invalid ${fieldName.toUpperCase()}: referenced record does not exist');
          end if;
       end if;`;
+  }
+
+  /**
+   * Generate variables for related table fields
+   */
+  private generateRelatedTableVariables(table: DatabaseTable): string {
+    const foreignKeyFields = table.fields.filter(
+      (field) => field.isForeignKey && field.foreignKey
+    );
+    if (foreignKeyFields.length === 0) {
+      return "";
+    }
+
+    const variables: string[] = [];
+
+    foreignKeyFields.forEach((field) => {
+      if (field.foreignKey) {
+        const refTable = field.foreignKey.referencedTable.toLowerCase();
+        const fieldName = field.name.toLowerCase();
+
+        // Add common referenced table fields - you can extend this based on your needs
+        variables.push(`      -- ${refTable.toUpperCase()} fields`);
+        variables.push(`      l_${refTable}_name ${refTable}.name%type;`);
+        variables.push(
+          `      l_${refTable}_description ${refTable}.description%type;`
+        );
+        variables.push(`      l_${refTable}_code ${refTable}.code%type;`);
+        variables.push(`      l_${refTable}_title ${refTable}.title%type;`);
+      }
+    });
+
+    return variables.length > 0 ? "\n" + variables.join("\n") : "";
+  }
+
+  /**
+   * Generate SELECT fields including JOINs
+   */
+  private generateSelectFieldsWithJoins(
+    table: DatabaseTable,
+    tableName: string
+  ): string {
+    const fields: string[] = [];
+
+    // Add main table fields
+    table.fields.forEach((field) => {
+      fields.push(`${tableName}.${field.name.toLowerCase()}`);
+    });
+
+    // Add related table fields
+    const foreignKeyFields = table.fields.filter(
+      (field) => field.isForeignKey && field.foreignKey
+    );
+    foreignKeyFields.forEach((field) => {
+      if (field.foreignKey) {
+        const refTable = field.foreignKey.referencedTable.toLowerCase();
+
+        // Add common fields from referenced tables
+        fields.push(`${refTable}.name`);
+        fields.push(`${refTable}.description`);
+        fields.push(`${refTable}.code`);
+        fields.push(`${refTable}.title`);
+      }
+    });
+
+    return fields.join(",\n             ");
+  }
+
+  /**
+   * Generate INTO clause fields including related table fields
+   */
+  private generateIntoFieldsWithJoins(table: DatabaseTable): string {
+    const fields: string[] = [];
+
+    // Add main table variables
+    table.fields.forEach((field) => {
+      fields.push(`l_${field.name.toLowerCase()}`);
+    });
+
+    // Add related table variables
+    const foreignKeyFields = table.fields.filter(
+      (field) => field.isForeignKey && field.foreignKey
+    );
+    foreignKeyFields.forEach((field) => {
+      if (field.foreignKey) {
+        const refTable = field.foreignKey.referencedTable.toLowerCase();
+
+        // Add common variables for referenced tables
+        fields.push(`l_${refTable}_name`);
+        fields.push(`l_${refTable}_description`);
+        fields.push(`l_${refTable}_code`);
+        fields.push(`l_${refTable}_title`);
+      }
+    });
+
+    return fields.join(",\n             ");
+  }
+
+  /**
+   * Generate LEFT JOIN clauses for foreign key relationships
+   */
+  private generateLeftJoins(table: DatabaseTable, tableName: string): string {
+    const foreignKeyFields = table.fields.filter(
+      (field) => field.isForeignKey && field.foreignKey
+    );
+    if (foreignKeyFields.length === 0) {
+      return "";
+    }
+
+    const joins: string[] = [];
+
+    foreignKeyFields.forEach((field) => {
+      if (field.foreignKey) {
+        const refTable = field.foreignKey.referencedTable.toLowerCase();
+        const refColumn = field.foreignKey.referencedColumn.toLowerCase();
+        const fieldName = field.name.toLowerCase();
+
+        joins.push(`\n        left join ${refTable}`);
+        joins.push(
+          `      on ${tableName}.${fieldName} = ${refTable}.${refColumn}`
+        );
+      }
+    });
+
+    return joins.join("\n");
+  }
+
+  /**
+   * Generate JSON object put statements including conditional related table data
+   */
+  private generateJsonObjectPuts(table: DatabaseTable): string {
+    const puts: string[] = [];
+
+    // Add main table fields
+    table.fields.forEach((field) => {
+      const fieldName = field.name.toLowerCase();
+      puts.push(`      l_record_object.put('${fieldName}', l_${fieldName});`);
+    });
+
+    // Add conditional puts for related table information
+    const foreignKeyFields = table.fields.filter(
+      (field) => field.isForeignKey && field.foreignKey
+    );
+    foreignKeyFields.forEach((field) => {
+      if (field.foreignKey) {
+        const refTable = field.foreignKey.referencedTable.toLowerCase();
+        const fieldName = field.name.toLowerCase();
+
+        puts.push("");
+        puts.push(`      -- Add ${refTable} information if available`);
+        puts.push(`      if l_${fieldName} is not null then`);
+
+        // Add common fields that might exist in referenced tables
+        const commonFields = ["name", "description", "code", "title"];
+        commonFields.forEach((commonField) => {
+          puts.push(
+            `         if l_${refTable}_${commonField} is not null then`
+          );
+          puts.push(
+            `            l_record_object.put('${refTable}_${commonField}', l_${refTable}_${commonField});`
+          );
+          puts.push(`         end if;`);
+        });
+
+        puts.push(`      end if;`);
+      }
+    });
+
+    return puts.join("\n");
   }
 }
