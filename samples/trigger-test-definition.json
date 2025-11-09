@@ -1,0 +1,110 @@
+{
+    "name": "Trigger Test Project",
+    "version": "1.0.0",
+    "description": "Test project for trigger functionality",
+    "author": "Your Name",
+    "license": "EUPL-1.2",
+    "projectFolder": "trigger-test-project",
+    "stack": {
+        "database": {
+            "type": "Oracle",
+            "version": "19c"
+        },
+        "backend": {
+            "type": "Node.js",
+            "framework": "Express"
+        },
+        "frontend": {
+            "type": "eUI",
+            "framework": "Angular"
+        }
+    },
+    "database": {
+        "type": "Oracle",
+        "tables": [
+            {
+                "name": "test_table",
+                "fields": [
+                    {
+                        "name": "pk",
+                        "type": "number",
+                        "nullable": false,
+                        "isPrimaryKey": true,
+                        "comment": "Primary key"
+                    },
+                    {
+                        "name": "name",
+                        "type": "varchar2(100 char)",
+                        "nullable": false,
+                        "comment": "Name field"
+                    },
+                    {
+                        "name": "created_by",
+                        "type": "varchar2(50 char)",
+                        "nullable": true,
+                        "trigger": {
+                            "enabled": true,
+                            "event": "before_insert",
+                            "action": "user"
+                        },
+                        "comment": "User who created this record"
+                    },
+                    {
+                        "name": "created_on",
+                        "type": "timestamp(6)",
+                        "trigger": {
+                            "enabled": true,
+                            "event": "before_insert",
+                            "action": "systimestamp"
+                        },
+                        "comment": "Creation timestamp"
+                    },
+                    {
+                        "name": "updated_by",
+                        "type": "varchar2(50 char)",
+                        "nullable": true,
+                        "trigger": {
+                            "enabled": true,
+                            "event": "before_update",
+                            "action": "user"
+                        },
+                        "comment": "User who last updated this record"
+                    },
+                    {
+                        "name": "modified_on",
+                        "type": "timestamp(6)",
+                        "trigger": {
+                            "enabled": true,
+                            "event": "before_update",
+                            "action": "systimestamp"
+                        },
+                        "comment": "Last update timestamp"
+                    },
+                    {
+                        "name": "version_number",
+                        "type": "number",
+                        "nullable": false,
+                        "default": "1",
+                        "trigger": {
+                            "enabled": true,
+                            "event": "before_update",
+                            "action": ":OLD.version_number + 1",
+                            "condition": "WHEN (OLD.version_number IS NOT NULL)"
+                        },
+                        "comment": "Optimistic locking version number"
+                    },
+                    {
+                        "name": "last_activity",
+                        "type": "timestamp(6)",
+                        "trigger": {
+                            "enabled": true,
+                            "event": "before_insert_update",
+                            "action": "systimestamp"
+                        },
+                        "comment": "Last activity timestamp"
+                    }
+                ]
+            }
+        ]
+    }
+}

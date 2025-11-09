@@ -35,7 +35,6 @@ export class OracleService {
 
     // Ensure the database directories exist
     await FileHelper.ensureDatabaseDir(projectFolder, "tables");
-    await FileHelper.ensureDatabaseDir(projectFolder, "triggers");
 
     // Process each table
     for (let i = 0; i < sortedTables.length; i++) {
@@ -52,7 +51,6 @@ export class OracleService {
       });
 
       await this.populateTable(table);
-      await this.createTrigger(table, projectFolder);
       await this.createView(table);
       await this.createCrudPackage(table);
     }
@@ -128,6 +126,12 @@ export class OracleService {
     const constraintsScript = await this.createConstrains(table);
     if (constraintsScript) {
       script += "\n\n" + constraintsScript;
+    }
+
+    // Add triggers to the same script
+    const triggersScript = await this.createTableTriggers(table);
+    if (triggersScript) {
+      script += "\n\n" + triggersScript;
     }
 
     await this.delay(500);
@@ -206,37 +210,17 @@ export class OracleService {
     return null;
   }
 
-  // TODO: Insert initial data (for each table)
-
-  private async populateTable(table: DatabaseTable): Promise<void> {
-    console.log(
-      chalk.blue(
-        `🔧 Oracle Service: Inserting initial data for table ${table.name}`
-      )
-    );
-    // Placeholder for data population logic
-    await this.delay(500);
-  }
-
-  // Create Triggers (for each table)
-
-  private async createTrigger(
-    table: DatabaseTable,
-    projectFolder?: string
-  ): Promise<void> {
-    console.log(
-      chalk.blue(`🔧 Oracle Service: Creating trigger for table ${table.name}`)
-    );
-
+  // Create triggers for inclusion in table script
+  private async createTableTriggers(
+    table: DatabaseTable
+  ): Promise<string | null> {
     // Find fields that have triggers enabled
     const fieldsWithTriggers = table.fields.filter(
       (field) => field.trigger?.enabled === true
     );
 
     if (fieldsWithTriggers.length === 0) {
-      console.log(chalk.gray(`   No triggers defined for table ${table.name}`));
-      await this.delay(200);
-      return;
+      return null;
     }
 
     // Group fields by trigger event type to create combined triggers when possible
@@ -253,28 +237,32 @@ export class OracleService {
       triggerGroups.get(key)!.push(field);
     });
 
+    const triggerScripts: string[] = [];
+
     // Generate triggers for each group
-    let triggerIndex = 1;
     for (const [key, fields] of triggerGroups) {
       const triggerScript = await this.generateTriggerScript(table, fields);
-
       if (triggerScript) {
-        // Save the trigger script to file
-        const [event, timing] = key.split("_", 2);
-        const hasCondition = key.includes("WHEN");
-        const suffix = hasCondition ? "conditional" : timing || "trigger";
-        const triggerFileName = `${table.name}_${event}_${suffix}`;
-
-        await FileHelper.saveDatabaseScript({
-          projectFolder: projectFolder || "default-project",
-          scriptType: "triggers",
-          fileName: triggerFileName,
-          content: triggerScript,
-          order: triggerIndex++,
-        });
+        triggerScripts.push(triggerScript);
       }
     }
 
+    if (triggerScripts.length > 0) {
+      return [`-- Table Triggers`, ...triggerScripts].join("\n\n");
+    }
+
+    return null;
+  }
+
+  // TODO: Insert initial data (for each table)
+
+  private async populateTable(table: DatabaseTable): Promise<void> {
+    console.log(
+      chalk.blue(
+        `🔧 Oracle Service: Inserting initial data for table ${table.name}`
+      )
+    );
+    // Placeholder for data population logic
     await this.delay(500);
   }
 
@@ -297,16 +285,29 @@ export class OracleService {
       .map((op: string) => op.toUpperCase())
       .join(" OR "); // INSERT, UPDATE, or INSERT OR UPDATE
 
-    // Generate unique trigger name based on fields and condition
-    const fieldsHash = fields
-      .map((f) => f.name)
-      .join("_")
-      .substring(0, 10);
-    const conditionHash = condition ? "COND" : "";
-    const triggerName = `${tableName}_${timing.substring(
-      0,
-      2
-    )}_${operations.replace(" OR ", "_")}_${fieldsHash}_${conditionHash}_TRG`;
+    // Generate proper trigger abbreviation
+    let triggerAbbrev = "";
+    if (timing === "BEFORE") {
+      if (operations.includes("INSERT") && operations.includes("UPDATE")) {
+        triggerAbbrev = "BIU"; // Before Insert Update
+      } else if (operations.includes("INSERT")) {
+        triggerAbbrev = "BI"; // Before Insert
+      } else if (operations.includes("UPDATE")) {
+        triggerAbbrev = "BU"; // Before Update
+      }
+    } else if (timing === "AFTER") {
+      if (operations.includes("INSERT") && operations.includes("UPDATE")) {
+        triggerAbbrev = "AIU"; // After Insert Update
+      } else if (operations.includes("INSERT")) {
+        triggerAbbrev = "AI"; // After Insert
+      } else if (operations.includes("UPDATE")) {
+        triggerAbbrev = "AU"; // After Update
+      }
+    }
+
+    // Generate trigger name
+    const conditionSuffix = condition ? "_COND" : "";
+    const triggerName = `${tableName}_${triggerAbbrev}${conditionSuffix}_TRG`;
 
     let script = `-- Trigger: ${triggerName}\n`;
     script += `-- Generated by Stackcraft Oracle Service\n`;
