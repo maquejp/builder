@@ -1,0 +1,269 @@
+/**
+ * Oracle Trigger Generator for handling Oracle database triggers
+ * Author: Jean-Philippe Maquestiaux
+ * License: EUPL-1.2
+ */
+
+import {
+  DatabaseTable,
+  DatabaseField,
+  ProjectMetadata,
+} from "../../../../interfaces";
+import { DatabaseHelper, OracleHelper } from "../../helpers";
+import { AbstractScriptGenerator } from "../../generators";
+
+/**
+ * Generates Oracle trigger scripts (Auto-increment triggers and custom triggers)
+ */
+export class OracleTriggerGenerator extends AbstractScriptGenerator {
+  constructor(projectMetadata?: ProjectMetadata) {
+    super(projectMetadata);
+  }
+
+  /**
+   * Generate triggers section with header
+   */
+  public generate(table: DatabaseTable): string | null {
+    const triggersScript = this.createTriggersScript(table);
+    if (!triggersScript) {
+      return null;
+    }
+
+    const sectionHeader = DatabaseHelper.generateSectionHeader(
+      this.getSectionName(),
+      this.getSectionDescription()
+    );
+
+    return `${sectionHeader}
+
+${triggersScript}`;
+  }
+
+  /**
+   * Get the section name for triggers
+   */
+  public getSectionName(): string {
+    return "TABLE TRIGGERS";
+  }
+
+  /**
+   * Get the section description for triggers
+   */
+  public getSectionDescription(): string {
+    return "Auto-increment triggers and custom triggers";
+  }
+
+  /**
+   * Generate triggers script content
+   */
+  private createTriggersScript(table: DatabaseTable): string | null {
+    // Find fields that have triggers enabled
+    const fieldsWithTriggers = table.fields.filter(
+      (field) => field.trigger?.enabled === true
+    );
+
+    if (fieldsWithTriggers.length === 0) {
+      return null;
+    }
+
+    // Group fields by trigger event type to create combined triggers when possible
+    const triggerGroups = this.groupTriggerFields(fieldsWithTriggers);
+    const triggerScripts: string[] = [];
+
+    // Generate triggers for each group
+    for (const [key, fields] of triggerGroups) {
+      if (fields.length === 0) continue;
+
+      const triggerScript = this.generateTriggerScript(table, fields);
+      if (triggerScript) {
+        triggerScripts.push(triggerScript);
+      }
+    }
+
+    if (triggerScripts.length > 0) {
+      return triggerScripts.join("\n\n");
+    }
+
+    return null;
+  }
+
+  /**
+   * Group fields by trigger event type and condition
+   */
+  private groupTriggerFields(
+    fieldsWithTriggers: DatabaseField[]
+  ): Map<string, DatabaseField[]> {
+    const triggerGroups = new Map<string, DatabaseField[]>();
+
+    fieldsWithTriggers.forEach((field) => {
+      const event = field.trigger?.event || "before_update";
+      const condition = field.trigger?.condition || "";
+      const key = `${event}_${condition}`; // Group by event and condition
+
+      if (!triggerGroups.has(key)) {
+        triggerGroups.set(key, []);
+      }
+      triggerGroups.get(key)!.push(field);
+    });
+
+    return triggerGroups;
+  }
+
+  /**
+   * Generate a single trigger script for a group of fields
+   */
+  private generateTriggerScript(
+    table: DatabaseTable,
+    fields: DatabaseField[]
+  ): string | null {
+    if (fields.length === 0) return null;
+
+    const tableName = table.name.toUpperCase();
+    const firstField = fields[0];
+    const event = firstField.trigger?.event || "before_update";
+    const condition = firstField.trigger?.condition;
+
+    // Parse event type for Oracle syntax
+    const { timing, operations } = this.parseEventType(event);
+
+    // Generate trigger name
+    const triggerName = OracleHelper.generateTriggerName(
+      tableName,
+      timing as "BEFORE" | "AFTER",
+      operations,
+      condition
+    );
+
+    // Use author and license from project metadata if available
+    const author = this.projectMetadata?.author || "Jean-Philippe Maquestiaux";
+    const license = this.projectMetadata?.license || "EUPL-1.2";
+
+    // Build trigger script
+    let script = this.generateTriggerHeader(
+      triggerName,
+      fields,
+      author,
+      license
+    );
+    script += this.generateTriggerDefinition(
+      triggerName,
+      timing,
+      operations,
+      tableName,
+      condition
+    );
+    script += this.generateTriggerBody(fields);
+    script += this.generateTriggerFooter(triggerName);
+
+    return script;
+  }
+
+  /**
+   * Parse event type into timing and operations
+   */
+  private parseEventType(event: string): {
+    timing: string;
+    operations: string;
+  } {
+    const eventParts = event.split("_");
+    const timing = eventParts[0].toUpperCase(); // BEFORE or AFTER
+    const operations = eventParts
+      .slice(1)
+      .map((op: string) => op.toUpperCase())
+      .join(" OR "); // INSERT, UPDATE, or INSERT OR UPDATE
+
+    return { timing, operations };
+  }
+
+  /**
+   * Generate trigger header with comments
+   */
+  private generateTriggerHeader(
+    triggerName: string,
+    fields: DatabaseField[],
+    author: string,
+    license: string
+  ): string {
+    let script = `-- Trigger: ${triggerName}\n`;
+    script += `-- Generated by Stackcraft Oracle Service\n`;
+    script += `-- Automatically updates: ${fields
+      .map((f) => f.name)
+      .join(", ")}\n`;
+    script += `-- Author: ${author}\n`;
+    script += `-- License: ${license}\n\n`;
+    return script;
+  }
+
+  /**
+   * Generate trigger definition (CREATE OR REPLACE TRIGGER...)
+   */
+  private generateTriggerDefinition(
+    triggerName: string,
+    timing: string,
+    operations: string,
+    tableName: string,
+    condition?: string
+  ): string {
+    let script = `CREATE OR REPLACE TRIGGER ${triggerName}\n`;
+    script += `    ${timing} ${operations} ON ${tableName}\n`;
+    script += `    FOR EACH ROW\n`;
+
+    // Add condition if specified
+    if (condition) {
+      script += `    ${condition}\n`;
+    }
+
+    script += `BEGIN\n`;
+    return script;
+  }
+
+  /**
+   * Generate trigger body with field updates
+   */
+  private generateTriggerBody(fields: DatabaseField[]): string {
+    let script = "";
+
+    fields.forEach((field) => {
+      const fieldName = field.name.toUpperCase();
+      const action = field.trigger?.action || "systimestamp";
+
+      script += `    -- Auto-update ${fieldName}\n`;
+      script += this.generateFieldAction(fieldName, action);
+      script += `\n`;
+    });
+
+    return script;
+  }
+
+  /**
+   * Generate the action for a specific field
+   */
+  private generateFieldAction(fieldName: string, action: string): string {
+    // Handle different action types
+    if (action.toLowerCase() === "systimestamp") {
+      return `    :NEW.${fieldName} := SYSTIMESTAMP;\n`;
+    } else if (action.toLowerCase() === "user") {
+      return `    :NEW.${fieldName} := USER;\n`;
+    } else if (action.toLowerCase() === "sysdate") {
+      return `    :NEW.${fieldName} := SYSDATE;\n`;
+    } else if (action.startsWith("'") && action.endsWith("'")) {
+      // String literal
+      return `    :NEW.${fieldName} := ${action};\n`;
+    } else if (/^\d+(\.\d+)?$/.test(action)) {
+      // Numeric literal
+      return `    :NEW.${fieldName} := ${action};\n`;
+    } else {
+      // Custom PL/SQL expression or function call
+      return `    :NEW.${fieldName} := ${action};\n`;
+    }
+  }
+
+  /**
+   * Generate trigger footer
+   */
+  private generateTriggerFooter(triggerName: string): string {
+    let script = `END ${triggerName};\n`;
+    script += `/\n`; // Oracle SQL*Plus terminator
+    return script;
+  }
+}

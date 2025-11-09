@@ -9,7 +9,7 @@ import {
   TechnologyStack,
   ProjectMetadata,
 } from "../../interfaces";
-import { OracleService } from "./OracleService";
+import { OracleService } from "./oracle";
 
 export class DatabaseService {
   /**

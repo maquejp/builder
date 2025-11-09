@@ -5,5 +5,6 @@
  */
 
 export * from "./DatabaseService";
-export * from "./OracleService";
+export * from "./oracle";
+export * from "./generators";
 export * from "./helpers";
