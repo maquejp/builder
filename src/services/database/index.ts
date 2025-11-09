@@ -6,4 +6,4 @@
 
 export * from "./DatabaseService";
 export * from "./OracleService";
-export * from "./DatabaseHelper";
+export * from "./helpers";

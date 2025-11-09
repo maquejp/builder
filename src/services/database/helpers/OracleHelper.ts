@@ -9,7 +9,7 @@ import {
   DatabaseField,
   ScriptFormatOptions,
   ProjectMetadata,
-} from "../../interfaces";
+} from "../../../interfaces";
 
 export class OracleHelper {
   private static defaultFormatOptions: ScriptFormatOptions = {

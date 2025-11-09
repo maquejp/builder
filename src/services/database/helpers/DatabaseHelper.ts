@@ -6,7 +6,7 @@
 
 import boxen from "boxen";
 import chalk from "chalk";
-import { DatabaseConfiguration } from "../../interfaces";
+import { DatabaseConfiguration } from "../../../interfaces";
 
 export class DatabaseHelper {
   /**

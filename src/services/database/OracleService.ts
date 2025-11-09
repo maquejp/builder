@@ -12,8 +12,7 @@ import {
   ProjectMetadata,
   ScriptFormatOptions,
 } from "../../interfaces";
-import { DatabaseHelper } from "./DatabaseHelper";
-import { OracleHelper } from "./OracleHelper";
+import { DatabaseHelper, OracleHelper } from "./helpers";
 import { FileHelper } from "../../helpers";
 
 export class OracleService {
@@ -22,13 +21,6 @@ export class OracleService {
 
   constructor() {
     this.formatOptions = OracleHelper.getFormatOptions();
-  }
-
-  /**
-   * Configure script formatting options
-   */
-  public setFormatOptions(options: Partial<ScriptFormatOptions>): void {
-    this.formatOptions = OracleHelper.getFormatOptions(options);
   }
 
   /**
