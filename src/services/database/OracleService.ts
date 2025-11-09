@@ -82,12 +82,17 @@ export class OracleService {
     console.log(chalk.blue(`🔧 Oracle Service: Creating table ${table.name}`));
 
     const sections = [
-      this.generateScriptHeader(table),
+      DatabaseHelper.generateScriptHeader(
+        table.name,
+        "ORACLE",
+        this.formatOptions,
+        this.projectMetadata
+      ),
       this.generateTableDefinition(table),
       this.generateConstraints(table),
       this.generateTriggers(table),
       this.generateComments(table),
-      this.generateScriptFooter(table),
+      DatabaseHelper.generateScriptFooter(table.name),
     ].filter((section) => section && section.trim().length > 0);
 
     const completeScript = sections.join("\n\n");
@@ -97,18 +102,6 @@ export class OracleService {
 
     await this.delay(500);
     return completeScript;
-  }
-
-  /**
-   * Generate script header with metadata
-   */
-  private generateScriptHeader(table: DatabaseTable): string {
-    return DatabaseHelper.generateScriptHeader(
-      table.name,
-      "ORACLE",
-      this.formatOptions,
-      this.projectMetadata
-    );
   }
 
   /**
@@ -200,13 +193,6 @@ ${triggersScript}`;
     return `${sectionHeader}
 
 ${comments.join("\n")}`;
-  }
-
-  /**
-   * Generate script footer
-   */
-  private generateScriptFooter(table: DatabaseTable): string {
-    return DatabaseHelper.generateScriptFooter(table.name);
   }
 
   /**
