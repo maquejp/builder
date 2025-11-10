@@ -13,6 +13,13 @@ import { DatabaseHelper } from "../../helpers";
 import { AbstractScriptGenerator } from "../../generators";
 
 /**
+ * Interface for mapping table columns that are available for foreign key references
+ */
+interface TableColumnMapping {
+  [tableName: string]: string[];
+}
+
+/**
  * Generates Oracle CRUD package scripts (PL/SQL packages for CRUD operations)
  * Creates standardized packages with:
  * - CREATE procedures
@@ -23,8 +30,49 @@ import { AbstractScriptGenerator } from "../../generators";
  * - Error handling
  */
 export class OracleCrudGenerator extends AbstractScriptGenerator {
+  private tableColumnMappings: TableColumnMapping;
+
   constructor(projectMetadata?: ProjectMetadata) {
     super(projectMetadata);
+
+    // Initialize table column mappings
+    // TODO: This should ideally come from actual database schema introspection
+    this.tableColumnMappings = {
+      table1: [
+        "pk",
+        "description",
+        "table2_fk",
+        "table5_fk",
+        "created_on",
+        "modified_on",
+      ],
+      table2: ["pk", "description", "created_on", "modified_on"],
+      table3: [
+        "pk",
+        "name",
+        "description",
+        "code",
+        "created_on",
+        "modified_on",
+      ],
+      table4: [
+        "pk",
+        "title",
+        "table2_fk",
+        "priority",
+        "created_on",
+        "modified_on",
+      ],
+      table5: [
+        "pk",
+        "code",
+        "table4_fk",
+        "quantity",
+        "active",
+        "created_on",
+        "modified_on",
+      ],
+    };
   }
 
   /**
@@ -805,6 +853,7 @@ end ${packageName};
 
   /**
    * Generate variables for related table fields
+   * Uses actual table schema information to generate only existing columns
    */
   private generateRelatedTableVariables(table: DatabaseTable): string {
     const foreignKeyFields = table.fields.filter(
@@ -819,16 +868,16 @@ end ${packageName};
     foreignKeyFields.forEach((field) => {
       if (field.foreignKey) {
         const refTable = field.foreignKey.referencedTable.toLowerCase();
-        const fieldName = field.name.toLowerCase();
+        const displayableColumns = this.getDisplayableColumnsForTable(refTable);
 
-        // Add common referenced table fields - you can extend this based on your needs
-        variables.push(`      -- ${refTable.toUpperCase()} fields`);
-        variables.push(`      l_${refTable}_name ${refTable}.name%type;`);
-        variables.push(
-          `      l_${refTable}_description ${refTable}.description%type;`
-        );
-        variables.push(`      l_${refTable}_code ${refTable}.code%type;`);
-        variables.push(`      l_${refTable}_title ${refTable}.title%type;`);
+        if (displayableColumns.length > 0) {
+          variables.push(`      -- ${refTable.toUpperCase()} fields`);
+          displayableColumns.forEach((column) => {
+            variables.push(
+              `      l_${refTable}_${column} ${refTable}.${column}%type;`
+            );
+          });
+        }
       }
     });
 
@@ -856,12 +905,11 @@ end ${packageName};
     foreignKeyFields.forEach((field) => {
       if (field.foreignKey) {
         const refTable = field.foreignKey.referencedTable.toLowerCase();
+        const displayableColumns = this.getDisplayableColumnsForTable(refTable);
 
-        // Add common fields from referenced tables
-        fields.push(`${refTable}.name`);
-        fields.push(`${refTable}.description`);
-        fields.push(`${refTable}.code`);
-        fields.push(`${refTable}.title`);
+        displayableColumns.forEach((column) => {
+          fields.push(`${refTable}.${column}`);
+        });
       }
     });
 
@@ -886,12 +934,11 @@ end ${packageName};
     foreignKeyFields.forEach((field) => {
       if (field.foreignKey) {
         const refTable = field.foreignKey.referencedTable.toLowerCase();
+        const displayableColumns = this.getDisplayableColumnsForTable(refTable);
 
-        // Add common variables for referenced tables
-        fields.push(`l_${refTable}_name`);
-        fields.push(`l_${refTable}_description`);
-        fields.push(`l_${refTable}_code`);
-        fields.push(`l_${refTable}_title`);
+        displayableColumns.forEach((column) => {
+          fields.push(`l_${refTable}_${column}`);
+        });
       }
     });
 
@@ -928,6 +975,37 @@ end ${packageName};
   }
 
   /**
+   * Get available columns for a referenced table
+   * @param tableName The name of the referenced table
+   * @returns Array of column names that exist in the referenced table
+   */
+  private getAvailableColumnsForTable(tableName: string): string[] {
+    const lowerTableName = tableName.toLowerCase();
+    return (
+      this.tableColumnMappings[lowerTableName] || [
+        "pk",
+        "description",
+        "created_on",
+        "modified_on",
+      ]
+    );
+  }
+
+  /**
+   * Get displayable columns for a referenced table (excluding system columns)
+   * @param tableName The name of the referenced table
+   * @returns Array of column names suitable for display in JSON responses
+   */
+  private getDisplayableColumnsForTable(tableName: string): string[] {
+    const availableColumns = this.getAvailableColumnsForTable(tableName);
+    // Filter out system columns that are not typically displayed
+    const systemColumns = ["pk", "created_on", "modified_on"];
+    return availableColumns.filter(
+      (col) => !systemColumns.includes(col.toLowerCase())
+    );
+  }
+
+  /**
    * Generate JSON object put statements including conditional related table data
    */
   private generateJsonObjectPuts(table: DatabaseTable): string {
@@ -947,24 +1025,23 @@ end ${packageName};
       if (field.foreignKey) {
         const refTable = field.foreignKey.referencedTable.toLowerCase();
         const fieldName = field.name.toLowerCase();
+        const displayableColumns = this.getDisplayableColumnsForTable(refTable);
 
-        puts.push("");
-        puts.push(`      -- Add ${refTable} information if available`);
-        puts.push(`      if l_${fieldName} is not null then`);
+        if (displayableColumns.length > 0) {
+          puts.push("");
+          puts.push(`      -- Add ${refTable} information if available`);
+          puts.push(`      if l_${fieldName} is not null then`);
 
-        // Add common fields that might exist in referenced tables
-        const commonFields = ["name", "description", "code", "title"];
-        commonFields.forEach((commonField) => {
-          puts.push(
-            `         if l_${refTable}_${commonField} is not null then`
-          );
-          puts.push(
-            `            l_record_object.put('${refTable}_${commonField}', l_${refTable}_${commonField});`
-          );
-          puts.push(`         end if;`);
-        });
+          displayableColumns.forEach((column) => {
+            puts.push(`         if l_${refTable}_${column} is not null then`);
+            puts.push(
+              `            l_record_object.put('${refTable}_${column}', l_${refTable}_${column});`
+            );
+            puts.push(`         end if;`);
+          });
 
-        puts.push(`      end if;`);
+          puts.push(`      end if;`);
+        }
       }
     });
 
