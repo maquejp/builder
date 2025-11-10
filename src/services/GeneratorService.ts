@@ -57,6 +57,7 @@ export class GeneratorService {
           author: projectDefinition.author,
           license: projectDefinition.license,
         },
+        projectDefinition: projectDefinition,
       });
     }
 
