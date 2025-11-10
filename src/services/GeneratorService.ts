@@ -66,6 +66,7 @@ export class GeneratorService {
       await this.backendService.execute({
         stack: projectDefinition.stack.backend,
         config: projectDefinition.backend,
+        projectFolder: projectDefinition.projectFolder,
         metadata: {
           author: projectDefinition.author,
           license: projectDefinition.license,
