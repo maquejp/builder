@@ -7,6 +7,7 @@
 import { DatabaseTable, ProjectMetadata } from "../../../../interfaces";
 import { DatabaseHelper } from "../../helpers";
 import { AbstractScriptGenerator } from "../../generators";
+import { faker } from "@faker-js/faker";
 
 /**
  * Generates Oracle data population scripts (INSERT statements)
@@ -151,7 +152,7 @@ ${dataScript}`;
   }
 
   /**
-   * Generate string values based on field name and constraints
+   * Generate string values based on field name and constraints using Faker for realistic data
    */
   private generateStringValue(
     field: any,
@@ -160,58 +161,211 @@ ${dataScript}`;
   ): string {
     const fieldName = field.name.toLowerCase();
 
-    // Special handling for common field names
+    // Set a consistent seed based on record index for reproducible results
+    faker.seed(recordIndex * 1000 + fieldName.charCodeAt(0));
+
+    // Special handling for common field names with realistic fake data
     if (fieldName.includes("description")) {
-      return `'${tableName} description ${recordIndex}'`;
+      const descriptions = [
+        faker.lorem.sentence({ min: 4, max: 8 }),
+        faker.company.catchPhrase(),
+        faker.hacker.phrase(),
+        `${faker.color.human()} ${faker.commerce.productAdjective()} ${faker.commerce.productMaterial()}`,
+        faker.commerce.productDescription(),
+      ];
+      const desc = descriptions[recordIndex % descriptions.length];
+      return `'${desc.replace(/'/g, "''")}'`; // Escape single quotes for SQL
     }
 
     if (fieldName.includes("name")) {
-      return `'${tableName} name ${recordIndex}'`;
+      const names = [
+        faker.person.fullName(),
+        faker.company.name(),
+        faker.commerce.productName(),
+        `${faker.color.human()} ${faker.animal.type()}`,
+        faker.music.songName(),
+      ];
+      const name = names[recordIndex % names.length];
+      return `'${name.replace(/'/g, "''")}'`;
     }
 
     if (fieldName.includes("title")) {
-      return `'${tableName} title ${recordIndex}'`;
+      const titles = [
+        faker.person.jobTitle(),
+        faker.book.title(),
+        faker.lorem.words({ min: 2, max: 4 }),
+        faker.company.buzzPhrase(),
+        `${
+          faker.science.chemicalElement().name
+        } ${faker.commerce.department()}`,
+      ];
+      const title = titles[recordIndex % titles.length];
+      return `'${title.replace(/'/g, "''")}'`;
     }
 
     if (fieldName.includes("code")) {
-      return `'${tableName.toUpperCase()}_${recordIndex
-        .toString()
-        .padStart(3, "0")}'`;
+      const codes = [
+        faker.string.alphanumeric({ length: 6, casing: "upper" }),
+        `${faker.location.countryCode()}-${faker.string.numeric(4)}`,
+        `${tableName.toUpperCase()}_${faker.string.alphanumeric({
+          length: 4,
+          casing: "upper",
+        })}`,
+        faker.finance.accountNumber(8),
+        faker.vehicle.vin().substring(0, 10),
+      ];
+      const code = codes[recordIndex % codes.length];
+      return `'${code}'`;
     }
 
     if (fieldName.includes("status")) {
-      const statuses = ["ACTIVE", "INACTIVE", "PENDING", "COMPLETED"];
+      const statuses = [
+        "ACTIVE",
+        "INACTIVE",
+        "PENDING",
+        "COMPLETED",
+        "SUSPENDED",
+        "IN_PROGRESS",
+        "CANCELLED",
+        "DRAFT",
+        "PUBLISHED",
+        "ARCHIVED",
+      ];
       const statusIndex = (recordIndex - 1) % statuses.length;
       return `'${statuses[statusIndex]}'`;
     }
 
-    // Default string value
-    return `'${tableName} ${fieldName} ${recordIndex}'`;
+    if (fieldName.includes("email")) {
+      return `'${faker.internet.email()}'`;
+    }
+
+    if (fieldName.includes("phone")) {
+      return `'${faker.phone.number()}'`;
+    }
+
+    if (fieldName.includes("address")) {
+      return `'${faker.location.streetAddress()}'`;
+    }
+
+    if (fieldName.includes("city")) {
+      return `'${faker.location.city()}'`;
+    }
+
+    if (fieldName.includes("country")) {
+      return `'${faker.location.country()}'`;
+    }
+
+    if (fieldName.includes("url") || fieldName.includes("website")) {
+      return `'${faker.internet.url()}'`;
+    }
+
+    if (fieldName.includes("color")) {
+      return `'${faker.color.human()}'`;
+    }
+
+    if (fieldName.includes("category") || fieldName.includes("type")) {
+      const categories = [
+        faker.commerce.department(),
+        faker.music.genre(),
+        faker.vehicle.type(),
+        faker.animal.type(),
+        faker.commerce.productAdjective(),
+      ];
+      const category = categories[recordIndex % categories.length];
+      return `'${category.replace(/'/g, "''")}'`;
+    }
+
+    // Default realistic string values
+    const defaultValues = [
+      faker.lorem.words({ min: 1, max: 3 }),
+      faker.commerce.productAdjective(),
+      faker.color.human(),
+      faker.word.adjective(),
+      faker.word.noun(),
+    ];
+    const defaultValue = defaultValues[recordIndex % defaultValues.length];
+    return `'${defaultValue.replace(/'/g, "''")}'`;
   }
 
   /**
-   * Generate number values with some variation
+   * Generate number values with realistic variation using Faker
    */
   private generateNumberValue(field: any, recordIndex: number): string {
     const fieldName = field.name.toLowerCase();
 
+    // Set a consistent seed for reproducible results
+    faker.seed(recordIndex * 2000 + fieldName.charCodeAt(0));
+
     if (fieldName.includes("priority")) {
       // Priority between 1-5
-      return ((recordIndex % 5) + 1).toString();
+      return faker.number.int({ min: 1, max: 5 }).toString();
     }
 
-    if (fieldName.includes("quantity")) {
-      // Quantity between 1-100
-      return ((recordIndex % 100) + 1).toString();
+    if (fieldName.includes("quantity") || fieldName.includes("count")) {
+      // Realistic quantity values
+      return faker.number.int({ min: 1, max: 250 }).toString();
     }
 
-    if (fieldName.includes("amount") || fieldName.includes("price")) {
-      // Amount/price with decimal places
-      const amount = ((recordIndex * 10.5) % 1000) + 10;
-      return amount.toFixed(2);
+    if (
+      fieldName.includes("amount") ||
+      fieldName.includes("price") ||
+      fieldName.includes("cost")
+    ) {
+      // Realistic monetary amounts
+      const amount = faker.number.float({
+        min: 10,
+        max: 9999,
+        fractionDigits: 2,
+      });
+      return amount.toString();
     }
 
-    // Default number value
-    return ((recordIndex * 10) % 1000).toString();
+    if (fieldName.includes("percentage") || fieldName.includes("percent")) {
+      // Percentage values 0-100
+      return faker.number.int({ min: 0, max: 100 }).toString();
+    }
+
+    if (fieldName.includes("age")) {
+      // Realistic age values
+      return faker.number.int({ min: 18, max: 95 }).toString();
+    }
+
+    if (fieldName.includes("year")) {
+      // Recent years
+      return faker.number.int({ min: 2020, max: 2025 }).toString();
+    }
+
+    if (fieldName.includes("month")) {
+      // Month values 1-12
+      return faker.number.int({ min: 1, max: 12 }).toString();
+    }
+
+    if (fieldName.includes("day")) {
+      // Day values 1-31
+      return faker.number.int({ min: 1, max: 31 }).toString();
+    }
+
+    if (fieldName.includes("rating") || fieldName.includes("score")) {
+      // Rating scale 1-10
+      return faker.number.int({ min: 1, max: 10 }).toString();
+    }
+
+    if (fieldName.includes("weight")) {
+      // Weight in reasonable range
+      return faker.number.int({ min: 1, max: 1000 }).toString();
+    }
+
+    if (fieldName.includes("height")) {
+      // Height in centimeters
+      return faker.number.int({ min: 150, max: 200 }).toString();
+    }
+
+    if (fieldName.includes("duration") || fieldName.includes("time")) {
+      // Duration in minutes
+      return faker.number.int({ min: 5, max: 480 }).toString();
+    }
+
+    // Default realistic number value
+    return faker.number.int({ min: 1, max: 1000 }).toString();
   }
 }
