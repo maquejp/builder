@@ -294,6 +294,72 @@
         ]
     },
     "backend": {
-        "apiEndpoints": []
+        "apiType": "REST",
+        "apiVersion": "v1",
+        "basePath": "/api/v1",
+        "apiEndpoints": [
+            {
+                "parentFolder": "programme_1",
+                "basePath": "/table1",
+                "operations": {
+                    "getAll": {
+                        "path": "/",
+                        "method": "GET",
+                        "name": "getAll"
+                    },
+                    "getByID": {
+                        "path": "/:id",
+                        "method": "GET",
+                        "name": "getByID"
+                    },
+                    "create": {
+                        "path": "/",
+                        "method": "POST",
+                        "name": "create"
+                    },
+                    "update": {
+                        "path": "/:id",
+                        "method": "PUT",
+                        "name": "update"
+                    },
+                    "delete": {
+                        "path": "/:id",
+                        "method": "DELETE",
+                        "name": "delete"
+                    }
+                }
+            },
+            {
+                "parentFolder": "programme_1",
+                "basePath": "/table2",
+                "operations": {
+                    "getAll": {
+                        "path": "/",
+                        "method": "GET",
+                        "name": "getAll"
+                    },
+                    "getByID": {
+                        "path": "/:id",
+                        "method": "GET",
+                        "name": "getByID"
+                    },
+                    "create": {
+                        "path": "/",
+                        "method": "POST",
+                        "name": "create"
+                    },
+                    "update": {
+                        "path": "/:id",
+                        "method": "PUT",
+                        "name": "update"
+                    },
+                    "delete": {
+                        "path": "/:id",
+                        "method": "DELETE",
+                        "name": "delete"
+                    }
+                }
+            }
+        ]
     }
 }

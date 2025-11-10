@@ -25,6 +25,111 @@
             "type": "string",
             "description": "The backend framework",
             "minLength": 1
+        },
+        "apiType": {
+            "type": "string",
+            "description": "The API architecture type",
+            "enum": [
+                "REST",
+                "GraphQL",
+                "gRPC"
+            ],
+            "default": "REST"
+        },
+        "apiVersion": {
+            "type": "string",
+            "description": "The API version",
+            "pattern": "^v\\d+$",
+            "default": "v1"
+        },
+        "basePath": {
+            "type": "string",
+            "description": "Base path for all API endpoints",
+            "pattern": "^/.*",
+            "default": "/api/v1"
+        },
+        "apiEndpoints": {
+            "type": "array",
+            "description": "API endpoints configuration",
+            "items": {
+                "$ref": "#/$defs/apiEndpoint"
+            }
+        }
+    },
+    "$defs": {
+        "apiEndpoint": {
+            "type": "object",
+            "required": [
+                "basePath",
+                "operations"
+            ],
+            "properties": {
+                "parentFolder": {
+                    "type": "string",
+                    "description": "Parent folder for organizing related endpoints",
+                    "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$"
+                },
+                "basePath": {
+                    "type": "string",
+                    "description": "Base path for this resource endpoints",
+                    "pattern": "^/[a-zA-Z0-9_\\-]*$"
+                },
+                "operations": {
+                    "type": "object",
+                    "description": "CRUD operations configuration",
+                    "properties": {
+                        "getAll": {
+                            "$ref": "#/$defs/operation"
+                        },
+                        "getByID": {
+                            "$ref": "#/$defs/operation"
+                        },
+                        "create": {
+                            "$ref": "#/$defs/operation"
+                        },
+                        "update": {
+                            "$ref": "#/$defs/operation"
+                        },
+                        "delete": {
+                            "$ref": "#/$defs/operation"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": false
+        },
+        "operation": {
+            "type": "object",
+            "required": [
+                "path",
+                "method",
+                "name"
+            ],
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "description": "Endpoint path (Express.js syntax with :param for parameters)",
+                    "pattern": "^/.*"
+                },
+                "method": {
+                    "type": "string",
+                    "description": "HTTP method",
+                    "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE"
+                    ]
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Operation name (used for method naming in controllers)",
+                    "pattern": "^[a-zA-Z][a-zA-Z0-9]*$"
+                }
+            },
+            "additionalProperties": false
         }
     },
     "additionalProperties": false
