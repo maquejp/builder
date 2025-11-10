@@ -31,7 +31,6 @@ export class BackendService {
   }): Promise<void> {
     console.log("\n\n");
     console.log(`🔧 Setting up backend...`);
-    console.log(`Stack backend:`, stack);
     if (config) {
       console.log(`Project backend:`, config);
       await this.delay(1000);
