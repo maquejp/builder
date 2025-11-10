@@ -97,8 +97,11 @@ export class OracleService {
 
       await this.createCrudPackage(table, projectFolder, i + 1);
 
-      await this.populateTable(table, projectFolder, i + 1);
+      await this.createPopulateData(table, projectFolder, i + 1);
     }
+
+    // Generate master execution script after all individual scripts are created
+    await this.generateExecutionScript(sortedTables, projectFolder);
 
     console.log(
       chalk.green("✅ Oracle Service: Operations completed successfully")
@@ -161,7 +164,7 @@ export class OracleService {
   /**
    * Generate and save initial data for the given table
    */
-  private async populateTable(
+  private async createPopulateData(
     table: DatabaseTable,
     projectFolder: string,
     order: number
@@ -224,6 +227,149 @@ ${scriptFooter}`;
         )
       );
     }
+
+    await this.delay(500);
+  }
+
+  /**
+   * Generate master execution script that runs all generated scripts in the correct order
+   */
+  private async generateExecutionScript(
+    tables: DatabaseTable[],
+    projectFolder: string
+  ): Promise<void> {
+    console.log(
+      chalk.blue("🔧 Oracle Service: Generating master execution script")
+    );
+
+    const scriptHeader = DatabaseHelper.generateScriptHeader(
+      "master_execution",
+      "ORACLE",
+      this.formatOptions,
+      this.projectMetadata
+    );
+
+    const scriptSections = [];
+    scriptSections.push(scriptHeader);
+
+    // Add script execution instructions
+    scriptSections.push(`-- Master Execution Script
+-- This script executes all generated database scripts in the correct order
+-- Execute this script in your Oracle database to create the complete schema
+
+PROMPT ========================================
+PROMPT Starting database schema creation...
+PROMPT ========================================
+
+-- Set session parameters for optimal execution
+SET SERVEROUTPUT ON SIZE UNLIMITED
+SET VERIFY OFF
+SET ECHO ON
+SET FEEDBACK ON
+SET PAGESIZE 0
+SET LINESIZE 1000
+
+-- Enable error handling
+WHENEVER SQLERROR EXIT SQL.SQLCODE ROLLBACK
+
+PROMPT
+PROMPT ========================================
+PROMPT 1. Creating Tables and Constraints
+PROMPT ========================================`);
+
+    // Add table script executions
+    for (let i = 0; i < tables.length; i++) {
+      const table = tables[i];
+      const order = String(i + 1).padStart(3, "0");
+      scriptSections.push(`
+PROMPT Creating table: ${table.name}
+@@tables/${order}_${table.name}.sql`);
+    }
+
+    scriptSections.push(`
+PROMPT
+PROMPT ========================================
+PROMPT 2. Creating Views
+PROMPT ========================================`);
+
+    // Add view script executions
+    for (let i = 0; i < tables.length; i++) {
+      const table = tables[i];
+      const order = String(i + 1).padStart(3, "0");
+      scriptSections.push(`
+PROMPT Creating view: ${table.name}_v
+@@views/${order}_${table.name.toLowerCase()}_v.sql`);
+    }
+
+    scriptSections.push(`
+PROMPT
+PROMPT ========================================
+PROMPT 3. Creating CRUD Packages
+PROMPT ========================================`);
+
+    // Add package script executions
+    for (let i = 0; i < tables.length; i++) {
+      const table = tables[i];
+      const order = String(i + 1).padStart(3, "0");
+      scriptSections.push(`
+PROMPT Creating package: p_${table.name.toLowerCase()}
+@@packages/${order}_p_${table.name.toLowerCase()}.sql`);
+    }
+
+    scriptSections.push(`
+PROMPT
+PROMPT ========================================
+PROMPT 4. Populating Initial Data
+PROMPT ========================================`);
+
+    // Add data script executions
+    for (let i = 0; i < tables.length; i++) {
+      const table = tables[i];
+      const order = String(i + 1).padStart(3, "0");
+      scriptSections.push(`
+PROMPT Populating table: ${table.name}
+@@data/${order}_${table.name.toLowerCase()}_data.sql`);
+    }
+
+    scriptSections.push(`
+PROMPT
+PROMPT ========================================
+PROMPT Schema creation completed successfully!
+PROMPT ========================================
+
+-- Reset session parameters
+SET VERIFY ON
+SET ECHO OFF
+SET FEEDBACK ON
+SET PAGESIZE 14
+SET LINESIZE 80
+
+-- Commit all changes
+COMMIT;
+
+PROMPT
+PROMPT All database objects have been created successfully.
+PROMPT You can now use the generated CRUD packages to interact with your data.
+PROMPT`);
+
+    const scriptFooter =
+      DatabaseHelper.generateScriptFooter("master_execution");
+    scriptSections.push(scriptFooter);
+
+    const completeScript = scriptSections.join("\n");
+
+    // Save the execution script to the project root database folder
+    await FileHelper.saveDatabaseScript({
+      projectFolder,
+      scriptType: "", // Root level
+      fileName: "00_master_execution",
+      content: completeScript,
+      order: 0,
+    });
+
+    console.log(
+      chalk.green("✅ Oracle Service: Master execution script generated")
+    );
 
     await this.delay(500);
   }
