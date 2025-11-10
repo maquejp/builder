@@ -1,10 +1,10 @@
 {
     "name": "My sample project 2",
     "version": "0.5.0",
-    "description": "A sample project to demonstrate the Stackcraft tool",
+    "description": "Game, Digital, Space",
     "author": "Your Name",
     "license": "EUPL-1.2",
-    "projectFolder": "my-sample-project",
+    "projectFolder": "my-sample-project-2",
     "stack": {
         "database": {
             "type": "Oracle",
