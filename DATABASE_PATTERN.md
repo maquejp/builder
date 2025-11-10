@@ -61,7 +61,6 @@ The package should also include appropriate comments and documentation for each 
 You can find samples of table definitions and CRUD packages in the `samples` directory:
 
 - [Sample Table Definition and CRUD Package (Oracle)](samples/oracle_table_and_crud_example.sql)
-- [Sample Table Definition and CRUD Package (PostgreSQL)](samples/postgresql_table_and_crud_example.sql)
 
 An extra file is in the samples files for a supporting packages
 

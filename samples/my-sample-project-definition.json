@@ -292,5 +292,8 @@
                 ]
             }
         ]
+    },
+    "backend": {
+        "apiEndpoints": []
     }
 }
