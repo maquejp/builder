@@ -13,9 +13,11 @@ export class BackendService {
   public async execute({
     stack,
     config,
+    metadata,
   }: {
     stack: any;
     config?: any;
+    metadata?: any;
   }): Promise<void> {
     console.log("\n\n");
     console.log(`🔧 Setting up backend...`);
