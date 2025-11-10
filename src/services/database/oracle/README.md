@@ -82,14 +82,19 @@ To add a new generator:
 3. Add it to the generators array in `OracleService.ts`
 4. Export it from `generators/index.ts`
 
-## Future Enhancements
+## A Database for playing
 
-The following generators are placeholders ready for implementation:
+```sql
+ALTER SESSION SET "_ORACLE_SCRIPT"= TRUE;
 
-- **OracleViewGenerator**: Generate views based on table configuration
-- **OracleDataGenerator**: Generate INSERT statements for initial data
-- **OracleCrudGenerator**: Generate PL/SQL packages for CRUD operations
+CREATE TABLESPACE DEV_PLAYGROUND_DB DATAFILE '/opt/oracle/oradata/ORCLCDB/DEV_PLAYGROUND_DB' SIZE 100 M AUTOEXTEND ON NEXT 100 M MAXSIZE 10 G;
 
-## Migration from Old Service
+CREATE USER DEV_PLAYGROUND_DB IDENTIFIED BY "DEV_PLAYGROUND_DB_pwd" DEFAULT TABLESPACE DEV_PLAYGROUND_DB;
 
-The old monolithic `OracleService.ts` has been backed up as `OracleService.ts.backup`. The new architecture maintains 100% API compatibility while providing better internal structure.
+GRANT CONNECT, RESOURCE TO DEV_PLAYGROUND_DB;
+
+GRANT UNLIMITED TABLESPACE TO DEV_PLAYGROUND_DB;
+
+GRANT
+    CREATE VIEW TO DEV_PLAYGROUND_DB;
+```
