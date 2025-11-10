@@ -30,6 +30,12 @@ export interface ProjectMetadata {
   license: string;
 }
 
+// Domain context interface for data generation services
+export interface DomainContext {
+  name: string;
+  description?: string;
+}
+
 // Main project definition interface
 export interface ProjectDefinition {
   name: string;

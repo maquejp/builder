@@ -57,7 +57,10 @@ export class GeneratorService {
           author: projectDefinition.author,
           license: projectDefinition.license,
         },
-        projectDefinition: projectDefinition,
+        domainContext: {
+          name: projectDefinition.name,
+          description: projectDefinition.description,
+        },
       });
     }
 

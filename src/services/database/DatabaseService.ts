@@ -8,7 +8,7 @@ import {
   DatabaseConfiguration,
   TechnologyStack,
   ProjectMetadata,
-  ProjectDefinition,
+  DomainContext,
 } from "../../interfaces";
 import { OracleService } from "./oracle";
 
@@ -19,20 +19,20 @@ export class DatabaseService {
    * @param config Database configuration from project definition
    * @param projectFolder The project folder name from the project definition
    * @param metadata Project metadata (author, license) for script generation
-   * @param projectDefinition Full project definition for domain inference
+   * @param domainContext Domain context for realistic data generation
    */
   public async execute({
     stack,
     config,
     projectFolder,
     metadata,
-    projectDefinition,
+    domainContext,
   }: {
     stack: TechnologyStack["database"];
     config?: DatabaseConfiguration;
     projectFolder: string;
     metadata?: ProjectMetadata;
-    projectDefinition?: ProjectDefinition;
+    domainContext?: DomainContext;
   }): Promise<void> {
     console.log(`🔧 Setting up database...`);
     if (config) {
@@ -45,7 +45,7 @@ export class DatabaseService {
             config,
             projectFolder,
             metadata,
-            projectDefinition
+            domainContext
           );
           break;
         default:

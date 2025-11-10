@@ -7,7 +7,7 @@
 import {
   DatabaseTable,
   ProjectMetadata,
-  ProjectDefinition,
+  DomainContext,
 } from "../../../../interfaces";
 import { DatabaseHelper } from "../../helpers";
 import { AbstractScriptGenerator } from "../../generators";
@@ -21,10 +21,10 @@ export class OracleDataGenerator extends AbstractScriptGenerator {
 
   constructor(
     projectMetadata?: ProjectMetadata,
-    projectDefinition?: ProjectDefinition
+    domainContext?: DomainContext
   ) {
     super(projectMetadata);
-    this.dataGenerationService = new DataGenerationService(projectDefinition);
+    this.dataGenerationService = new DataGenerationService(domainContext);
   }
 
   /**

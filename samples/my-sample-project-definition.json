@@ -294,6 +294,8 @@
         ]
     },
     "backend": {
+        "type": "Node.js",
+        "framework": "Express",
         "apiType": "REST",
         "apiVersion": "v1",
         "basePath": "/api/v1",

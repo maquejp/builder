@@ -5,7 +5,7 @@
  */
 
 import { faker } from "@faker-js/faker";
-import { ProjectDefinition, DatabaseField } from "../interfaces";
+import { DomainContext, DatabaseField } from "../interfaces";
 
 export type DomainType =
   | "health"
@@ -25,20 +25,18 @@ export type DomainType =
 export class DataGenerationService {
   private domainContext: DomainType = null;
 
-  constructor(projectDefinition?: ProjectDefinition) {
-    this.domainContext = this.inferDomainFromProject(projectDefinition);
+  constructor(domainContext?: DomainContext) {
+    this.domainContext = this.inferDomainFromContext(domainContext);
   }
 
   /**
-   * Infer domain context from project definition
+   * Infer domain context from domain context info
    */
-  private inferDomainFromProject(
-    projectDefinition?: ProjectDefinition
-  ): DomainType {
-    if (!projectDefinition) return null;
+  private inferDomainFromContext(domainContext?: DomainContext): DomainType {
+    if (!domainContext) return null;
 
-    const description = projectDefinition.description?.toLowerCase() || "";
-    const name = projectDefinition.name?.toLowerCase() || "";
+    const description = domainContext.description?.toLowerCase() || "";
+    const name = domainContext.name?.toLowerCase() || "";
     const combined = `${name} ${description}`;
 
     console.log(`🔍 Analyzing project for domain context: "${combined}"`);

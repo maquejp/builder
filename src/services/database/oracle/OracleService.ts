@@ -9,7 +9,7 @@ import {
   DatabaseConfiguration,
   DatabaseTable,
   ProjectMetadata,
-  ProjectDefinition,
+  DomainContext,
   ScriptFormatOptions,
 } from "../../../interfaces";
 import { DatabaseHelper, OracleHelper } from "../helpers";
@@ -28,7 +28,7 @@ import {
 export class OracleService {
   private formatOptions: ScriptFormatOptions;
   private projectMetadata: ProjectMetadata | null = null;
-  private projectDefinition: ProjectDefinition | null = null;
+  private domainContext: DomainContext | null = null;
   private generators: BaseScriptGenerator[] = [];
 
   constructor() {
@@ -53,17 +53,17 @@ export class OracleService {
    * @param config Database configuration from project definition
    * @param projectFolder The project folder name from the project definition
    * @param metadata Project metadata (author, license) for script generation
-   * @param projectDefinition Full project definition for domain inference
+   * @param domainContext Domain context for realistic data generation
    */
   public async execute(
     config: DatabaseConfiguration,
     projectFolder: string,
     metadata?: ProjectMetadata,
-    projectDefinition?: ProjectDefinition
+    domainContext?: DomainContext
   ): Promise<void> {
-    // Store project metadata and definition for use in script generation
+    // Store project metadata and domain context for use in script generation
     this.projectMetadata = metadata || null;
-    this.projectDefinition = projectDefinition || null;
+    this.domainContext = domainContext || null;
     this.updateGeneratorsMetadata();
 
     console.log(
@@ -178,7 +178,7 @@ export class OracleService {
     // Create a data generator instance
     const dataGenerator = new OracleDataGenerator(
       this.projectMetadata || undefined,
-      this.projectDefinition || undefined
+      this.domainContext || undefined
     );
 
     // Generate the data script
