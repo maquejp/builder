@@ -21,6 +21,7 @@ import {
   OracleCommentGenerator,
   OracleViewGenerator,
   OracleCrudGenerator,
+  OracleDataGenerator,
 } from "./generators";
 
 export class OracleService {
@@ -91,7 +92,7 @@ export class OracleService {
 
       await this.createCrudPackage(table, projectFolder, i + 1);
 
-      await this.populateTable(table);
+      await this.populateTable(table, projectFolder, i + 1);
     }
 
     console.log(
@@ -152,14 +153,72 @@ export class OracleService {
     return completeScript;
   }
 
-  // TODO: Insert initial data (for each table)
-  private async populateTable(table: DatabaseTable): Promise<void> {
+  /**
+   * Generate and save initial data for the given table
+   */
+  private async populateTable(
+    table: DatabaseTable,
+    projectFolder: string,
+    order: number
+  ): Promise<void> {
     console.log(
       chalk.blue(
-        `🔧 Oracle Service: Inserting initial data for table ${table.name}`
+        `🔧 Oracle Service: Generating initial data for table ${table.name}`
       )
     );
-    // Placeholder for data population logic
+
+    // Create a data generator instance
+    const dataGenerator = new OracleDataGenerator(
+      this.projectMetadata || undefined
+    );
+
+    // Generate the data script
+    const dataScript = dataGenerator.generate(table);
+
+    if (dataScript) {
+      // Create a complete data script with header and footer
+      const scriptHeader = DatabaseHelper.generateScriptHeader(
+        `${table.name}_data`,
+        "ORACLE",
+        this.formatOptions,
+        this.projectMetadata
+      );
+
+      const scriptFooter = DatabaseHelper.generateScriptFooter(
+        `${table.name}_data`
+      );
+
+      const completeDataScript = `${scriptHeader}
+
+${dataScript}
+
+${scriptFooter}`;
+
+      // Ensure the data directory exists
+      await FileHelper.ensureDatabaseDir(projectFolder, "data");
+
+      // Save the data script to file with the same order as the table
+      await FileHelper.saveDatabaseScript({
+        projectFolder,
+        scriptType: "data",
+        fileName: `${table.name.toLowerCase()}_data`,
+        content: completeDataScript,
+        order: order,
+      });
+
+      console.log(
+        chalk.green(
+          `✅ Oracle Service: Generated 22 data records for table ${table.name}`
+        )
+      );
+    } else {
+      console.log(
+        chalk.yellow(
+          `⚠️ Oracle Service: Data script not generated for table ${table.name} (no primary key found or no applicable fields)`
+        )
+      );
+    }
+
     await this.delay(500);
   }
 
